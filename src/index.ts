@@ -9,9 +9,8 @@ import {
   VariableDeclaration,
 } from 'solc-typed-ast';
 
-export async function compile() {
-  const { data } = await compileSol('test/samples/basic.sol', 'auto', []);
-  console.log(data);
+export async function compile(path: string) {
+  const { data } = await compileSol(path, 'auto', []);
   return data;
 }
 
