@@ -1,7 +1,14 @@
-import { generateAST, compile } from '../src';
+import {
+  generateAST,
+  compile,
+  getContractDefinition,
+  getASTStorageFromContractDefinition,
+} from '../src';
 
 describe('generateAST', () => {
   it('works', async () => {
-    generateAST(await compile());
+    const ast = await generateAST(await compile());
+    const contractDefinition = getContractDefinition(ast, 'Basic');
+    console.log(getASTStorageFromContractDefinition(contractDefinition));
   });
 });
