@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@size-limit/preset-small-lib': ^7.0.8
+  dotenv: ^16.0.0
   husky: ^7.0.4
   size-limit: ^7.0.8
   solc-typed-ast: ^9.0.0
@@ -10,6 +11,7 @@ specifiers:
   typescript: ^4.6.2
 
 dependencies:
+  dotenv: 16.0.0
   solc-typed-ast: 9.0.0
 
 devDependencies:
@@ -2983,6 +2985,11 @@ packages:
     dependencies:
       webidl-conversions: 4.0.2
     dev: true
+
+  /dotenv/16.0.0:
+    resolution: {integrity: sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==}
+    engines: {node: '>=12'}
+    dev: false
 
   /ecc-jsbn/0.1.2:
     resolution: {integrity: sha1-OoOpBOVDUyh4dMVkt1SThoSamMk=}

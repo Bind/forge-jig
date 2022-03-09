@@ -1,6 +1,5 @@
-import { ASTReader, compileSol } from 'solc-typed-ast';
-// import * as util from 'util';
-import { ASTToTreeString } from './utils/tree';
+import * as dotenv from 'dotenv';
+dotenv.config();
 export async function compile() {
   const { data } = await compileSol('test/samples/basic.sol', 'auto', []);
   console.log(data);
