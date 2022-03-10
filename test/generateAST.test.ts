@@ -42,6 +42,11 @@ const assertions = {
     variables: ['uint256[]'],
     skip: false,
   },
+  'basic-enum.sol': {
+    storage: true,
+    variables: ['enum AliveEnum'],
+    skip: false,
+  },
 } as const;
 
 for (let idx in files) {
