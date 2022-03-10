@@ -1,7 +1,12 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import * as fs from 'fs';
-import { ElementaryTypeName, UserDefinedTypeName } from 'solc-typed-ast';
+import {
+  ArrayTypeName,
+  ElementaryTypeName,
+  Mapping,
+  UserDefinedTypeName,
+} from 'solc-typed-ast';
 import {
   generateAST,
   compile,
@@ -15,19 +20,33 @@ const assertions = {
   'basic.sol': {
     storage: true,
     variables: ['uint256'],
+    skip: false,
   },
   'basic-struct.sol': {
     storage: true,
-    variables: ['Initialized'],
+    variables: ['struct Initialized'],
+    skip: false,
   },
   'basic-foo.sol': {
     storage: false,
     variables: [],
+    skip: false,
+  },
+  'basic-mapping.sol': {
+    storage: true,
+    variables: ['mapping(uint256 => uint256)'],
+    skip: false,
+  },
+  'basic-array.sol': {
+    storage: true,
+    variables: ['uint256[]'],
+    skip: false,
   },
 } as const;
 
 for (let idx in files) {
   let file = files[idx];
+  if (assertions[file as keyof typeof assertions]?.skip) continue;
   describe('\ngenerate and parse Solidity AST for ' + file, () => {
     it('parsed AST', async () => {
       const ast = await generateAST(await compile('test/samples/' + file));
@@ -43,13 +62,11 @@ for (let idx in files) {
       if (assertions[file as keyof typeof assertions].storage) {
         expect(
           children[0].vType instanceof ElementaryTypeName ||
-            children[0].vType instanceof UserDefinedTypeName
+            children[0].vType instanceof UserDefinedTypeName ||
+            children[0].vType instanceof Mapping ||
+            children[0].vType instanceof ArrayTypeName
         ).toBe(true);
-
-        const vtype = children[0].vType as
-          | ElementaryTypeName
-          | UserDefinedTypeName;
-        expect(vtype.name).toBe(
+        expect(children[0].vType?.typeString).toBe(
           assertions[file as keyof typeof assertions].variables[0]
         );
       }
