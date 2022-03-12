@@ -120,6 +120,9 @@ export function isInt(value: string): value is INT {
 export function isFixedBytes(value: string): value is FIXED_BYTES {
   return !!FIXED_BYTE_TYPES.find(validKey => validKey === value);
 }
+export function isSolidityType(value: string): value is SOLIDITY_TYPES {
+  return isFixedBytes(value) || isInt(value) || isUint(value);
+}
 
 export function getByteSizeFromType(t: SOLIDITY_TYPES) {
   if (isFixedBytes(t)) {
