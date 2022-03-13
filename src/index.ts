@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import {
+  ArrayTypeName,
   ASTNode,
   ASTNodeSelector,
   ASTReader,
@@ -8,6 +9,7 @@ import {
   ContractDefinition,
   ElementaryTypeName,
   EnumDefinition,
+  Mapping,
   SourceUnit,
   StructDefinition,
   UserDefinedTypeName,
@@ -95,6 +97,10 @@ export function countStorageSlots(
     } else if (declaration.vType instanceof UserDefinedTypeName) {
       const structSlots = getStructLayout(ast, declaration.vType);
       stor.appendSlots(structSlots);
+    } else if (declaration.vType instanceof Mapping) {
+      stor.appendSlots(1);
+    } else if (declaration.vType instanceof ArrayTypeName) {
+      stor.appendSlots(1);
     }
   }
   return stor.getLength();
