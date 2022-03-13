@@ -12,7 +12,7 @@ import {
   compile,
   getContractDefinition,
   getASTStorageFromContractDefinition,
-  countStorageSlots,
+  generateStorageMap,
 } from '../src';
 
 const files = fs.readdirSync('test/samples/');
@@ -22,46 +22,47 @@ const assertions = {
     storage: true,
     expectedSlots: 1,
     variables: ['uint256'],
-    skip: false,
   },
   'basic-struct.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['struct Initialized'],
-    skip: false,
+  },
+  'basic-struct2.sol': {
+    storage: true,
+    expectedSlots: 3,
+    variables: ['struct Hello', 'struct Yo'],
   },
   'basic-foo.sol': {
     storage: false,
     expectedSlots: 0,
     variables: [],
-    skip: false,
   },
   'basic-mapping.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['mapping(uint256 => uint256)'],
-    skip: false,
   },
   'basic-array.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['uint256[]'],
-    skip: false,
   },
   'basic-enum.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['enum AliveEnum'],
-    skip: false,
   },
 } as const;
 
+const isolate = ['basic-struct2.sol'];
 for (let idx in files) {
   let file = files[idx] as keyof typeof assertions;
-  if (assertions[file]?.skip) continue;
+  if (isolate.length > 0 && !isolate.includes(file)) continue;
   describe('\ngenerate and parse Solidity AST for ' + file, () => {
     it('parsed AST', async () => {
       const ast = await generateAST(await compile('test/samples/' + file));
+      console.log(ast);
       const contractDefinition = getContractDefinition(ast, 'Basic');
       const children = getASTStorageFromContractDefinition(contractDefinition);
       expect(children).toBeTruthy();
@@ -73,9 +74,9 @@ for (let idx in files) {
       const declarations = getASTStorageFromContractDefinition(
         contractDefinition
       );
-      const slots = countStorageSlots(ast, declarations);
+      const storage = generateStorageMap(ast, declarations);
       if (assertions[file].storage) {
-        expect(slots).toBe(assertions[file].expectedSlots);
+        expect(storage.getLength()).toBe(assertions[file].expectedSlots);
         expect(
           declarations[0].vType instanceof ElementaryTypeName ||
             declarations[0].vType instanceof UserDefinedTypeName ||

@@ -15,8 +15,8 @@ import {
   UserDefinedTypeName,
   VariableDeclaration,
 } from 'solc-typed-ast';
-import { ContractStorage } from './storage';
-import { getByteSizeFromType, isSolidityType } from './types';
+import { StorageLayout } from './storage';
+import { isSolidityType } from './types';
 
 export async function compile(path: string) {
   const { data } = await compileSol(path, 'auto', []);
@@ -57,29 +57,34 @@ export function getASTStorageFromContractDefinition(
   return node.getChildrenBySelector(selector);
 }
 
-export function getStructLayout(
+function isEnum(
   ast: SourceUnit[],
   structDeclaration: UserDefinedTypeName
-): number {
+): boolean {
   const selector: ASTNodeSelector = node =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
-  if (structDefinition instanceof EnumDefinition) {
-    return 1;
-  } else if (structDefinition instanceof StructDefinition) {
-    return countStorageSlots(ast, structDefinition.children);
-  } else {
-    console.log(structDefinition);
-
-    throw new Error('definitionType not handled');
-  }
+  return structDefinition instanceof EnumDefinition;
 }
 
-export function countStorageSlots(
+export function getStructStorageLayout(
+  ast: SourceUnit[],
+  structDeclaration: UserDefinedTypeName
+): StorageLayout {
+  const selector: ASTNodeSelector = node =>
+    node.id === structDeclaration.referencedDeclaration;
+  const structDefinition = getBySelector(ast, selector) as StructDefinition;
+  if (!(structDefinition instanceof StructDefinition))
+    throw new Error('not StructDefinition');
+  return generateStorageMap(ast, structDefinition.children);
+}
+
+export function generateStorageMap(
   ast: SourceUnit[],
   declarations: readonly ASTNode[]
-): number {
-  const stor = new ContractStorage();
+): StorageLayout {
+  const stor = new StorageLayout();
+  ast;
   for (let idx in declarations) {
     let declaration = declarations[idx];
 
@@ -92,16 +97,23 @@ export function countStorageSlots(
       declaration.vType instanceof ElementaryTypeName &&
       isSolidityType(declaration.typeString)
     ) {
-      const bytes = getByteSizeFromType(declaration.typeString);
-      stor.appendBytes(bytes);
+      stor.appendVariableDeclaration(declaration.name, declaration.typeString);
     } else if (declaration.vType instanceof UserDefinedTypeName) {
-      const structSlots = getStructLayout(ast, declaration.vType);
-      stor.appendSlots(structSlots);
+      if (isEnum(ast, declaration.vType)) {
+        stor.appendVariableDeclaration(declaration.name, 'enum');
+      } else {
+        const structLayout = getStructStorageLayout(ast, declaration.vType);
+        stor.appendVariableDeclaration(
+          declaration.name,
+          'struct',
+          structLayout
+        );
+      }
     } else if (declaration.vType instanceof Mapping) {
-      stor.appendSlots(1);
+      stor.appendVariableDeclaration(declaration.name, 'mapping');
     } else if (declaration.vType instanceof ArrayTypeName) {
-      stor.appendSlots(1);
+      stor.appendVariableDeclaration(declaration.name, 'array');
     }
   }
-  return stor.getLength();
+  return stor;
 }
