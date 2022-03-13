@@ -4,7 +4,7 @@ export class ContractStorage {
   willOverflow(size: number): boolean {
     return this.offset + size > 32;
   }
-  appendData(size: number) {
+  appendBytes(size: number) {
     if (size == 32 && this.offset == 0) {
       // Nothing currently packed in slot write to current slot and increment counter
       this.slotPointer += 1;
@@ -21,6 +21,13 @@ export class ContractStorage {
     } else {
       this.offset += size;
     }
+  }
+  appendSlots(count: number) {
+    if (this.offset > 0) {
+      this.slotPointer += 1;
+      this.offset = 0;
+    }
+    this.slotPointer += count;
   }
   getLength() {
     if (this.offset > 0) {

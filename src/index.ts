@@ -7,7 +7,10 @@ import {
   compileSol,
   ContractDefinition,
   ElementaryTypeName,
+  EnumDefinition,
   SourceUnit,
+  StructDefinition,
+  UserDefinedTypeName,
   VariableDeclaration,
 } from 'solc-typed-ast';
 import { ContractStorage } from './storage';
@@ -52,21 +55,46 @@ export function getASTStorageFromContractDefinition(
   return node.getChildrenBySelector(selector);
 }
 
+export function getStructLayout(
+  ast: SourceUnit[],
+  structDeclaration: UserDefinedTypeName
+): number {
+  const selector: ASTNodeSelector = node =>
+    node.id === structDeclaration.referencedDeclaration;
+  const structDefinition = getBySelector(ast, selector) as StructDefinition;
+  if (structDefinition instanceof EnumDefinition) {
+    return 1;
+  } else if (structDefinition instanceof StructDefinition) {
+    return countStorageSlots(ast, structDefinition.children);
+  } else {
+    console.log(structDefinition);
+
+    throw new Error('definitionType not handled');
+  }
+}
+
 export function countStorageSlots(
   ast: SourceUnit[],
-  declarations: VariableDeclaration[]
+  declarations: readonly ASTNode[]
 ): number {
   const stor = new ContractStorage();
-  ast;
   for (let idx in declarations) {
     let declaration = declarations[idx];
-    console.log(declarations);
+
+    if (!(declaration instanceof VariableDeclaration)) {
+      console.log('Is not Instance');
+      console.log(declaration);
+      continue;
+    }
     if (
       declaration.vType instanceof ElementaryTypeName &&
       isSolidityType(declaration.typeString)
     ) {
       const bytes = getByteSizeFromType(declaration.typeString);
-      stor.appendData(bytes);
+      stor.appendBytes(bytes);
+    } else if (declaration.vType instanceof UserDefinedTypeName) {
+      const structSlots = getStructLayout(ast, declaration.vType);
+      stor.appendSlots(structSlots);
     }
   }
   return stor.getLength();

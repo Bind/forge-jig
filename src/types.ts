@@ -106,11 +106,22 @@ export const UINT_TYPES = [
   'uint248',
   'uint256',
 ] as const;
-
 export type UINT = typeof UINT_TYPES[number];
 
-export type SOLIDITY_TYPES = FIXED_BYTES | INT | UINT;
+export const BOOL_TYPES = ['bool'] as const;
+export type BOOL = typeof BOOL_TYPES[number];
 
+export const ADDRESS_TYPES = ['address'] as const;
+export type ADDRESS = typeof ADDRESS_TYPES[number];
+
+export type SOLIDITY_TYPES = FIXED_BYTES | INT | UINT | BOOL | ADDRESS;
+
+export function isBool(value: string): value is BOOL {
+  return !!BOOL_TYPES.find(validKey => validKey === value);
+}
+export function isAddress(value: string): value is ADDRESS {
+  return !!ADDRESS_TYPES.find(validKey => validKey === value);
+}
 export function isUint(value: string): value is UINT {
   return !!UINT_TYPES.find(validKey => validKey === value);
 }
@@ -121,20 +132,28 @@ export function isFixedBytes(value: string): value is FIXED_BYTES {
   return !!FIXED_BYTE_TYPES.find(validKey => validKey === value);
 }
 export function isSolidityType(value: string): value is SOLIDITY_TYPES {
-  return isFixedBytes(value) || isInt(value) || isUint(value);
+  return (
+    isFixedBytes(value) ||
+    isInt(value) ||
+    isUint(value) ||
+    isBool(value) ||
+    isAddress(value)
+  );
 }
 
 export function getByteSizeFromType(t: SOLIDITY_TYPES) {
   if (isFixedBytes(t)) {
     return FIXED_BYTE_TYPES.indexOf(t as FIXED_BYTES) + 1;
-  }
-  if (isUint(t)) {
+  } else if (isUint(t)) {
     return UINT_TYPES.indexOf(t as UINT) === 0
       ? 32
       : UINT_TYPES.indexOf(t as UINT);
-  }
-  if (isInt(t)) {
+  } else if (isInt(t)) {
     return INT_TYPES.indexOf(t as INT) === 0 ? 32 : INT_TYPES.indexOf(t as INT);
+  } else if (isBool(t)) {
+    return 1;
+  } else if (isAddress(t)) {
+    return 20;
   }
-  return 0;
+  throw new Error('unhandled type: ' + t);
 }

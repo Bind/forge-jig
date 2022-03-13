@@ -12,6 +12,7 @@ import {
   compile,
   getContractDefinition,
   getASTStorageFromContractDefinition,
+  countStorageSlots,
 } from '../src';
 
 const files = fs.readdirSync('test/samples/');
@@ -19,39 +20,45 @@ const files = fs.readdirSync('test/samples/');
 const assertions = {
   'basic.sol': {
     storage: true,
+    expectedSlots: 1,
     variables: ['uint256'],
     skip: false,
   },
   'basic-struct.sol': {
     storage: true,
+    expectedSlots: 1,
     variables: ['struct Initialized'],
     skip: false,
   },
   'basic-foo.sol': {
     storage: false,
+    expectedSlots: 0,
     variables: [],
     skip: false,
   },
   'basic-mapping.sol': {
     storage: true,
+    expectedSlots: 1,
     variables: ['mapping(uint256 => uint256)'],
     skip: false,
   },
   'basic-array.sol': {
     storage: true,
+    expectedSlots: 1,
     variables: ['uint256[]'],
     skip: false,
   },
   'basic-enum.sol': {
     storage: true,
+    expectedSlots: 1,
     variables: ['enum AliveEnum'],
     skip: false,
   },
 } as const;
 
 for (let idx in files) {
-  let file = files[idx];
-  if (assertions[file as keyof typeof assertions]?.skip) continue;
+  let file = files[idx] as keyof typeof assertions;
+  if (assertions[file]?.skip) continue;
   describe('\ngenerate and parse Solidity AST for ' + file, () => {
     it('parsed AST', async () => {
       const ast = await generateAST(await compile('test/samples/' + file));
@@ -63,16 +70,20 @@ for (let idx in files) {
     it(`plucked storage`, async () => {
       const ast = await generateAST(await compile('test/samples/' + file));
       const contractDefinition = getContractDefinition(ast, 'Basic');
-      const children = getASTStorageFromContractDefinition(contractDefinition);
-      if (assertions[file as keyof typeof assertions].storage) {
+      const declarations = getASTStorageFromContractDefinition(
+        contractDefinition
+      );
+      const slots = countStorageSlots(ast, declarations);
+      if (assertions[file].storage) {
+        expect(slots).toBe(assertions[file].expectedSlots);
         expect(
-          children[0].vType instanceof ElementaryTypeName ||
-            children[0].vType instanceof UserDefinedTypeName ||
-            children[0].vType instanceof Mapping ||
-            children[0].vType instanceof ArrayTypeName
+          declarations[0].vType instanceof ElementaryTypeName ||
+            declarations[0].vType instanceof UserDefinedTypeName ||
+            declarations[0].vType instanceof Mapping ||
+            declarations[0].vType instanceof ArrayTypeName
         ).toBe(true);
-        expect(children[0].vType?.typeString).toBe(
-          assertions[file as keyof typeof assertions].variables[0]
+        expect(declarations[0].vType?.typeString).toBe(
+          assertions[file].variables[0]
         );
       }
     });
