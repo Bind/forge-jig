@@ -14,55 +14,118 @@ import {
   getASTStorageFromContractDefinition,
   generateStorageMap,
 } from '../src';
+import { isStorageInfoStruct } from '../src/storage';
 
 const files = fs.readdirSync('test/samples/');
 
-const assertions = {
+type SlotAssertion = {
+  name: string;
+  offset?: number;
+  slot?: number;
+  children?: SlotAssertion[];
+};
+
+type Assertions = {
+  [key: string]: {
+    storage: boolean;
+    expectedSlots: number;
+    variables: string[];
+    explicitSlotChecks: SlotAssertion[];
+  };
+};
+
+const assertions: Assertions = {
   'basic.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['uint256'],
+    explicitSlotChecks: [
+      {
+        name: 'test',
+        slot: 0,
+        offset: 0,
+      },
+    ],
   },
   'basic-struct.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['struct Initialized'],
+    explicitSlotChecks: [
+      {
+        name: 'init',
+        children: [
+          {
+            name: 'initialized',
+            slot: 0,
+            offset: 0,
+          },
+          {
+            name: 'owner',
+            slot: 0,
+            offset: 1,
+          },
+        ],
+      },
+    ],
   },
   'basic-struct2.sol': {
     storage: true,
     expectedSlots: 3,
     variables: ['struct Hello', 'struct Yo'],
+    explicitSlotChecks: [
+      {
+        name: 'greetings',
+        children: [
+          { name: 'hello', offset: 0, slot: 0 },
+          { name: 'howdy', offset: 8, slot: 0 },
+          { name: 'hi', offset: 16, slot: 0 },
+          { name: 'hola', offset: 24, slot: 0 },
+          { name: 'salutations', offset: 0, slot: 1 },
+        ],
+      },
+      {
+        name: 'ack',
+        children: [
+          { name: 'yo', offset: 0, slot: 2 },
+          { name: 'wassup', offset: 1, slot: 2 },
+        ],
+      },
+    ],
   },
   'basic-foo.sol': {
     storage: false,
     expectedSlots: 0,
     variables: [],
+    explicitSlotChecks: [],
   },
   'basic-mapping.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['mapping(uint256 => uint256)'],
+    explicitSlotChecks: [],
   },
   'basic-array.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['uint256[]'],
+    explicitSlotChecks: [],
   },
   'basic-enum.sol': {
     storage: true,
     expectedSlots: 1,
     variables: ['enum AliveEnum'],
+    explicitSlotChecks: [],
   },
-} as const;
+};
 
-const isolate = ['basic-struct2.sol'];
+const isolate: string[] = [];
 for (let idx in files) {
   let file = files[idx] as keyof typeof assertions;
-  if (isolate.length > 0 && !isolate.includes(file)) continue;
+  if (isolate.length > 0 && !isolate.includes(file as string)) continue;
   describe('\ngenerate and parse Solidity AST for ' + file, () => {
     it('parsed AST', async () => {
       const ast = await generateAST(await compile('test/samples/' + file));
-      console.log(ast);
       const contractDefinition = getContractDefinition(ast, 'Basic');
       const children = getASTStorageFromContractDefinition(contractDefinition);
       expect(children).toBeTruthy();
@@ -86,6 +149,21 @@ for (let idx in files) {
         expect(declarations[0].vType?.typeString).toBe(
           assertions[file].variables[0]
         );
+      }
+      if (assertions[file].explicitSlotChecks) {
+        assertions[file].explicitSlotChecks.forEach(v => {
+          const storageInfo = storage.get(v.name);
+          if (isStorageInfoStruct(storageInfo)) {
+            v.children!.forEach(child => {
+              const childLayout = storageInfo.layout.get(child.name);
+              expect(child.slot).toBe(childLayout.pointer.slot);
+              expect(child.offset).toBe(childLayout.pointer.offset);
+            });
+          } else {
+            expect(v.slot).toBe(storageInfo.pointer.slot);
+            expect(v.offset).toBe(storageInfo.pointer.offset);
+          }
+        });
       }
     });
   });

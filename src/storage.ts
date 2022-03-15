@@ -1,28 +1,42 @@
 import { getByteSizeFromType, isSolidityType, SOLIDITY_TYPES } from './types';
+type StoragePointer = {
+  slot: number; // Storage Slot Number
+  offset: number; // Storage Slot Offset Bytes
+};
 
 type StorageInfoVariants = 'simple' | 'struct' | 'mapping' | 'array' | 'enum';
 type StorageInfo = {
   variant: StorageInfoVariants;
   size: number; // Number of bytes long
-  offset: number; // Number of Bytes from start of slot
-  slotPointer: number; // Slot Number
+  pointer: StoragePointer;
 };
 type StorageInfoMapping = StorageInfo & {
   variant: 'mapping';
   key: SOLIDITY_TYPES;
   value: SOLIDITY_TYPES | 'struct';
+  pointer: StoragePointer;
 };
 type StorageInfoStruct = {
   variant: 'struct';
   layout: StorageLayout;
-  slotPointer: number; // Slot Number
+  pointer: StoragePointer; // Slot Number
 };
 type StorageInfos = StorageInfo | StorageInfoMapping | StorageInfoStruct;
 
+export function isStorageInfoStruct(
+  value: StorageInfos
+): value is StorageInfoStruct {
+  return (<StorageInfoStruct>value).layout !== undefined;
+}
 export class StorageLayout {
   variables: { [key: string]: StorageInfos } = {};
+  slotRoot: number = 0;
   slotPointer: number = 0; // current slot being written to
   private offset: number = 0; // bytes
+  constructor(rootSlot: number) {
+    this.slotPointer = rootSlot;
+    this.slotRoot = rootSlot;
+  }
 
   willOverflow(size: number): boolean {
     return this.offset + size > 32;
@@ -34,37 +48,62 @@ export class StorageLayout {
   ) {
     if (isSolidityType(typeString)) {
       const byteSize = getByteSizeFromType(typeString);
-      this.variables[name] = {
-        variant: 'simple',
-        size: byteSize,
-        offset: this.offset,
-        slotPointer: this.slotPointer,
-      };
+      if (this.willOverflow(byteSize)) {
+        const pointer = {
+          offset: 0,
+          slot: this.slotPointer + 1,
+        };
+        this.variables[name] = {
+          variant: 'simple',
+          size: byteSize,
+          pointer,
+        };
+      } else {
+        const pointer = {
+          offset: this.offset,
+          slot: this.slotPointer,
+        };
+        this.variables[name] = {
+          variant: 'simple',
+          size: byteSize,
+          pointer,
+        };
+      }
       this.appendBytes(byteSize);
     } else if (typeString == 'struct') {
       if (!layout) throw new Error('struct requires layout param');
       const slotSize = layout?.getLength();
+      const pointer = {
+        offset: 0,
+        slot: this.nextEmptySlot(),
+      };
       this.variables[name] = {
         variant: 'struct',
-        slotPointer: this.nextEmptySlot(),
         layout,
+        pointer,
       };
       this.appendSlots(slotSize);
     } else if (typeString == 'enum') {
+      const pointer = {
+        offset: this.offset,
+        slot: this.slotPointer,
+      };
       this.variables[name] = {
         variant: 'enum',
         size: 1,
-        offset: this.offset,
-        slotPointer: this.slotPointer,
+        pointer,
       };
       this.appendBytes(1);
     } else {
       const slot = this.nextEmptySlot();
+      const pointer = {
+        offset: 0,
+        slot,
+      };
       this.variables[name] = {
         variant: typeString,
         size: 32,
-        offset: 0,
-        slotPointer: slot,
+        pointer,
       };
       this.appendSlots(1);
     }
@@ -80,9 +119,9 @@ export class StorageLayout {
       this.offset = 0;
     } else if (this.willOverflow(size)) {
       // active slot has data, increment slot pointer, write to slot, increment again
-      this.slotPointer += 2;
+      this.slotPointer += 1;
       // reset offset
-      this.offset = 0;
+      this.offset = size;
     } else {
       this.offset += size;
     }
@@ -99,9 +138,15 @@ export class StorageLayout {
   }
   getLength() {
     if (this.offset > 0) {
-      return this.slotPointer + 1;
+      return this.slotPointer + 1 - this.slotRoot;
     } else {
-      return this.slotPointer;
+      return this.slotPointer - this.slotRoot;
     }
+  }
+  get(name: string) {
+    return this.variables[name];
+  }
+  getStoragePointer(name: string) {
+    this.variables[name].pointer;
   }
 }

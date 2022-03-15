@@ -69,21 +69,23 @@ function isEnum(
 
 export function getStructStorageLayout(
   ast: SourceUnit[],
-  structDeclaration: UserDefinedTypeName
+  structDeclaration: UserDefinedTypeName,
+  rootSlot: number
 ): StorageLayout {
   const selector: ASTNodeSelector = node =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
     throw new Error('not StructDefinition');
-  return generateStorageMap(ast, structDefinition.children);
+  return generateStorageMap(ast, structDefinition.children, rootSlot);
 }
 
 export function generateStorageMap(
   ast: SourceUnit[],
-  declarations: readonly ASTNode[]
+  declarations: readonly ASTNode[],
+  rootSlot: number = 0
 ): StorageLayout {
-  const stor = new StorageLayout();
+  const stor = new StorageLayout(rootSlot);
   ast;
   for (let idx in declarations) {
     let declaration = declarations[idx];
@@ -102,7 +104,12 @@ export function generateStorageMap(
       if (isEnum(ast, declaration.vType)) {
         stor.appendVariableDeclaration(declaration.name, 'enum');
       } else {
-        const structLayout = getStructStorageLayout(ast, declaration.vType);
+        const structLayout = getStructStorageLayout(
+          ast,
+          declaration.vType,
+          stor.getLength()
+        );
+        console.log(declaration.name);
         stor.appendVariableDeclaration(
           declaration.name,
           'struct',
