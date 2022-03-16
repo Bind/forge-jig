@@ -7,13 +7,13 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
 
 # TODO
 
-- [ ] parse out top level contract storage
-- [ ] parse out struct declarations
-- [ ] automate testing of slot parsing
+- [x] parse out top level contract storage
+- [x] parse out struct declarations
+- [x] automate testing of slot parsing
 - [ ] map contract storage vars to slots
   - [ ] Mappings
   - [ ] Arrays
-  - [ ] Custom structs
+  - [x] Custom structs
 - [ ] generate HelperContract
   - [ ] helper methods per variable for better DX
   - [ ] store custom struct into packed slot
@@ -24,3 +24,10 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
 
 - uses [pnpm](https://pnpm.io/)
 - uses [tsdx](https://tsdx.io/)
+
+Storage Slot Tricks
+
+- multiple structs will not be packed into 1 slot
+- structs will always start in a new storage slot
+- in order to add an element to an arraym you must also increment the length
+-

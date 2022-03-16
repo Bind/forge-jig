@@ -12,7 +12,8 @@ import {
   compile,
   getContractDefinition,
   getASTStorageFromContractDefinition,
-  generateStorageMap,
+  generateStorageLayout,
+  compileStorageLayout,
 } from '../src';
 import { isStorageInfoStruct } from '../src/storage';
 
@@ -137,7 +138,7 @@ for (let idx in files) {
       const declarations = getASTStorageFromContractDefinition(
         contractDefinition
       );
-      const storage = generateStorageMap(ast, declarations);
+      const storage = generateStorageLayout(ast, declarations);
       if (assertions[file].storage) {
         expect(storage.getLength()).toBe(assertions[file].expectedSlots);
         expect(
@@ -150,6 +151,12 @@ for (let idx in files) {
           assertions[file].variables[0]
         );
       }
+    });
+    it('generated layout', async () => {
+      const storage = await compileStorageLayout(
+        'test/samples/' + file,
+        'Basic'
+      );
       if (assertions[file].explicitSlotChecks) {
         assertions[file].explicitSlotChecks.forEach(v => {
           const storageInfo = storage.get(v.name);

@@ -77,10 +77,10 @@ export function getStructStorageLayout(
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
     throw new Error('not StructDefinition');
-  return generateStorageMap(ast, structDefinition.children, rootSlot);
+  return generateStorageLayout(ast, structDefinition.children, rootSlot);
 }
 
-export function generateStorageMap(
+export function generateStorageLayout(
   ast: SourceUnit[],
   declarations: readonly ASTNode[],
   rootSlot: number = 0
@@ -109,7 +109,6 @@ export function generateStorageMap(
           declaration.vType,
           stor.getLength()
         );
-        console.log(declaration.name);
         stor.appendVariableDeclaration(
           declaration.name,
           'struct',
@@ -123,4 +122,14 @@ export function generateStorageMap(
     }
   }
   return stor;
+}
+
+export async function compileStorageLayout(
+  file: string,
+  contractName: string
+): Promise<StorageLayout> {
+  const ast = await generateAST(await compile(file));
+  const contractDefinition = getContractDefinition(ast, contractName);
+  const declarations = getASTStorageFromContractDefinition(contractDefinition);
+  return generateStorageLayout(ast, declarations);
 }
