@@ -14,10 +14,12 @@ import {
   getASTStorageFromContractDefinition,
   generateStorageLayout,
   compileStorageLayout,
-} from '../src';
-import { isStorageInfoStruct } from '../src/storage';
+} from '../ts';
+import { isStorageInfoStruct } from '../ts/storage';
 
-const files = fs.readdirSync('test/samples/');
+const CONTRACT_DIR = 'src/';
+
+const files = fs.readdirSync(CONTRACT_DIR);
 
 type SlotAssertion = {
   name: string;
@@ -124,16 +126,17 @@ const isolate: string[] = [];
 for (let idx in files) {
   let file = files[idx] as keyof typeof assertions;
   if (isolate.length > 0 && !isolate.includes(file as string)) continue;
+  if (typeof assertions?.[file] == 'undefined') continue;
   describe('\ngenerate and parse Solidity AST for ' + file, () => {
     it('parsed AST', async () => {
-      const ast = await generateAST(await compile('test/samples/' + file));
+      const ast = await generateAST(await compile(CONTRACT_DIR + file));
       const contractDefinition = getContractDefinition(ast, 'Basic');
       const children = getASTStorageFromContractDefinition(contractDefinition);
       expect(children).toBeTruthy();
     });
 
     it(`plucked storage`, async () => {
-      const ast = await generateAST(await compile('test/samples/' + file));
+      const ast = await generateAST(await compile(CONTRACT_DIR + file));
       const contractDefinition = getContractDefinition(ast, 'Basic');
       const declarations = getASTStorageFromContractDefinition(
         contractDefinition
@@ -153,10 +156,7 @@ for (let idx in files) {
       }
     });
     it('generated layout', async () => {
-      const storage = await compileStorageLayout(
-        'test/samples/' + file,
-        'Basic'
-      );
+      const storage = await compileStorageLayout('src/' + file, 'Basic');
       if (assertions[file].explicitSlotChecks) {
         assertions[file].explicitSlotChecks.forEach(v => {
           const storageInfo = storage.get(v.name);

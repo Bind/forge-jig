@@ -13,7 +13,8 @@ import "forge-std/Vm.sol";
 
 contract ${contractName}Molding {
     address mold;
-    Vm public constant vm = Vm(HEVM_ADDRESS);
+    Vm public constant vm =
+        Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
     constructor(address _contractAddress){
        mold = _contractAddress;
     }
@@ -26,12 +27,12 @@ function solidityConstFromStorageInfo(name: string, info: StorageInfos) {
 }
 function soliditySetFunctionFromStorageInfo(name: string, info: StorageInfo) {
   return `
-    function ${name}(${info.type} value) {
-        vm.store(mold, ${info.pointer.slot}, value);
+    function ${name}(${info.type} value) public {
+        vm.store(mold, ${name}_storage_slot, bytes32(value);
     }
     `;
 }
-function generateMoldingBody(layout: StorageLayout) {
+export function generateMoldingBody(layout: StorageLayout) {
   let body = '';
   const vars = Object.keys(layout.variables);
   vars.forEach(key => {
@@ -44,4 +45,8 @@ function generateMoldingBody(layout: StorageLayout) {
     }
   });
   return body;
+}
+
+export function generateMolding(contractName: string, layout: StorageLayout) {
+  return template(contractName, generateMoldingBody(layout));
 }

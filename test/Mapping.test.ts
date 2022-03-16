@@ -1,10 +1,12 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import * as fs from 'fs';
-import { compileStorageLayout } from '../src';
-import { encoder } from '../src/utils/mapping';
+import { compileStorageLayout } from '../ts';
+import { encoder } from '../ts/utils/mapping';
 
-const files = fs.readdirSync('test/samples/');
+const CONTRACT_DIR = 'src/';
+
+const files = fs.readdirSync(CONTRACT_DIR);
 
 const assertions = {
   'basic-mapping.sol': {
@@ -23,10 +25,7 @@ for (let idx in files) {
   if (typeof assertions?.[file] == 'undefined') continue;
   describe('mappings are being handled correctly', () => {
     it('succefully recognizes mappings', async () => {
-      const layout = await compileStorageLayout(
-        'test/samples/' + file,
-        'Basic'
-      );
+      const layout = await compileStorageLayout(CONTRACT_DIR + file, 'Basic');
       for (let vidx in assertions[file].variables) {
         let variable = assertions[file].variables[vidx];
         layout.get(variable.name);

@@ -4,7 +4,7 @@ import {
   INT_TYPES,
   SOLIDITY_TYPES,
   UINT_TYPES,
-} from '../src/types';
+} from '../ts/types';
 
 type Assertions = {
   [key in SOLIDITY_TYPES]: {

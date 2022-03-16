@@ -11,6 +11,7 @@
     "node": ">=10"
   },
   "scripts": {
+    "setup": "echo 'be sure to run ./setup/download_compilers.sh'",
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test",
@@ -53,6 +54,8 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0",
-    "solc-typed-ast": "^9.0.0"
+    "ethers": "^5.6.0",
+    "solc-typed-ast": "^9.0.0",
+    "ts-toolbelt": "^9.6.0"
   }
 }
