@@ -79,6 +79,15 @@ export function getStructStorageLayout(
     throw new Error('not StructDefinition');
   return generateStorageLayout(ast, structDefinition.children, rootSlot);
 }
+export function getMappingLayout(
+  ast: SourceUnit[],
+  mappingDeclaration: Mapping,
+  rootSlot: number
+) {
+  ast;
+  rootSlot;
+  console.log(mappingDeclaration);
+}
 
 export function generateStorageLayout(
   ast: SourceUnit[],
@@ -116,6 +125,7 @@ export function generateStorageLayout(
         );
       }
     } else if (declaration.vType instanceof Mapping) {
+      getMappingLayout(ast, declaration.vType, stor.getLength());
       stor.appendVariableDeclaration(declaration.name, 'mapping');
     } else if (declaration.vType instanceof ArrayTypeName) {
       stor.appendVariableDeclaration(declaration.name, 'array');
