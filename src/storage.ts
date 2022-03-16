@@ -5,29 +5,39 @@ type StoragePointer = {
 };
 
 type StorageInfoVariants = 'simple' | 'struct' | 'mapping' | 'array' | 'enum';
-type StorageInfo = {
+export type StorageInfo = {
   variant: StorageInfoVariants;
+  type: SOLIDITY_TYPES;
   size: number; // Number of bytes long
   pointer: StoragePointer;
 };
-type StorageInfoMapping = StorageInfo & {
+export type StorageInfoEnum = {
+  variant: 'enum';
+  size: number; // Number of bytes long
+  pointer: StoragePointer;
+};
+export type StorageInfoMapping = {
   variant: 'mapping';
   key: SOLIDITY_TYPES;
   value: SOLIDITY_TYPES | 'struct';
   pointer: StoragePointer;
 };
-type StorageInfoStruct = {
+export type StorageInfoStruct = {
   variant: 'struct';
   layout: StorageLayout;
   pointer: StoragePointer; // Slot Number
 };
-type StorageInfos = StorageInfo | StorageInfoMapping | StorageInfoStruct;
+export type StorageInfos = StorageInfo | StorageInfoMapping | StorageInfoStruct;
 
 export function isStorageInfoStruct(
   value: StorageInfos
 ): value is StorageInfoStruct {
   return (<StorageInfoStruct>value).layout !== undefined;
 }
+export function isStorageInfo(value: StorageInfos): value is StorageInfo {
+  return isSolidityType((<StorageInfo>value).type);
+}
+
 export class StorageLayout {
   variables: { [key: string]: StorageInfos } = {};
   slotRoot: number = 0;
@@ -46,6 +56,7 @@ export class StorageLayout {
     typeString: SOLIDITY_TYPES | StorageInfoVariants,
     layout?: StorageLayout
   ) {
+    // TODO: Refactor
     if (isSolidityType(typeString)) {
       const byteSize = getByteSizeFromType(typeString);
       if (this.willOverflow(byteSize)) {
@@ -57,6 +68,7 @@ export class StorageLayout {
           variant: 'simple',
           size: byteSize,
           pointer,
+          type: typeString,
         };
       } else {
         const pointer = {
@@ -67,6 +79,7 @@ export class StorageLayout {
           variant: 'simple',
           size: byteSize,
           pointer,
+          type: typeString,
         };
       }
       this.appendBytes(byteSize);
@@ -76,6 +89,7 @@ export class StorageLayout {
       const pointer = {
         offset: 0,
         slot: this.nextEmptySlot(),
+        size: 0,
       };
       this.variables[name] = {
         variant: 'struct',
@@ -92,16 +106,31 @@ export class StorageLayout {
         variant: 'enum',
         size: 1,
         pointer,
-      };
+      } as StorageInfo;
       this.appendBytes(1);
-    } else {
+    } else if (typeString == 'mapping') {
       const slot = this.nextEmptySlot();
       const pointer = {
         offset: 0,
         slot,
       };
       this.variables[name] = {
-        variant: typeString,
+        variant: 'mapping',
+        // TODO: FIXME
+        key: 'address',
+        value: 'address',
+        pointer,
+      };
+      this.appendSlots(1);
+    } else if (typeString == 'array') {
+      const slot = this.nextEmptySlot();
+      const pointer = {
+        offset: 0,
+        slot,
+      };
+      this.variables[name] = {
+        variant: 'array',
+        type: 'uint256',
         size: 32,
         pointer,
       };

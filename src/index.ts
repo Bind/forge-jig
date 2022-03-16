@@ -86,7 +86,7 @@ export function getMappingLayout(
 ) {
   ast;
   rootSlot;
-  console.log(mappingDeclaration);
+  mappingDeclaration;
 }
 
 export function generateStorageLayout(
