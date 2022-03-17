@@ -15,7 +15,6 @@
   },
   "scripts": {
     "setup": "echo 'be sure to run ./setup/download_compilers.sh'",
-    "start": "tsdx watch",
     "build": "tsc",
     "test": "tsdx test",
     "lint": "tsdx lint",

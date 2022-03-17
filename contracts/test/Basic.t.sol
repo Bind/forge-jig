@@ -2,24 +2,24 @@
 pragma solidity >0.8.0;
 
 import 'ds-test/test.sol';
-import 'contracts/molding/BasicMolding.sol';
+import 'contracts/jig/BasicJig.sol';
 import 'contracts/basic.sol';
 
-contract BasicMoldingTest is DSTest {
+contract BasicJigTest is DSTest {
     Basic b;
-    BasicMolding m;
+    BasicJig m;
 
     function setUp() public {
         b = new Basic();
-        m = new BasicMolding(address(b));
+        m = new BasicJig(address(b));
     }
 
-    function testMoldingBasic() public {
+    function testJigBasic() public {
         m.simple(1);
         assert(b.simple() == 1);
     }
 
-    function testMolding(uint256 rand) public {
+    function testJig(uint256 rand) public {
         m.simple(rand);
         assert(b.simple() == rand);
     }

@@ -1,6 +1,6 @@
 import type { Arguments, CommandBuilder } from 'yargs';
 import { compileStorageLayout } from '../ast';
-import { generateMolding } from '../codegen';
+import { generateJig } from '../codegen';
 import * as fs from 'fs';
 
 type Options = {
@@ -24,11 +24,11 @@ export const handler = async (argv: Arguments<Options>): Promise<void> => {
   process.stdout.write(greeting);
 
   const layout = await compileStorageLayout(file, contractName);
-  const molding = generateMolding(contractName, layout);
+  const jig = generateJig(contractName, layout);
   if (out) {
-    fs.writeFileSync(out, molding);
+    fs.writeFileSync(out, jig);
   } else {
-    console.log(molding);
+    console.log(jig);
   }
   process.exit(0);
 };

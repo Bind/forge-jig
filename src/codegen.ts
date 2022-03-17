@@ -13,12 +13,12 @@ pragma solidity >=0.4.22 <0.9.0;
 import "forge-std/stdlib.sol";
 import "forge-std/Vm.sol";
 
-contract ${contractName}Molding {
-    address mold;
+contract ${contractName}Jig {
+    address target;
     Vm public constant vm =
         Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
     constructor(address _contractAddress){
-       mold = _contractAddress;
+      target = _contractAddress;
     }
     ${body}
 }`;
@@ -30,11 +30,11 @@ function solidityConstFromStorageInfo(name: string, info: StorageInfos) {
 function soliditySetFunctionFromStorageInfo(name: string, info: StorageInfo) {
   return `
     function ${name}(${info.type} value) public {
-        vm.store(mold, ${name}_storage_slot, bytes32(value));
+        vm.store(target, ${name}_storage_slot, bytes32(value));
     }
     `;
 }
-export function generateMoldingBody(layout: StorageLayout) {
+export function generateJigBody(layout: StorageLayout) {
   let body = '';
   const vars = Object.keys(layout.variables);
   vars.forEach((key) => {
@@ -49,6 +49,6 @@ export function generateMoldingBody(layout: StorageLayout) {
   return body;
 }
 
-export function generateMolding(contractName: string, layout: StorageLayout) {
-  return template(contractName, generateMoldingBody(layout));
+export function generateJig(contractName: string, layout: StorageLayout) {
+  return template(contractName, generateJigBody(layout));
 }
