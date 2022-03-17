@@ -7,6 +7,7 @@ import {
 
 function template(contractName: string, body: string) {
   return `
+// THIS FILE WAS GENERATED
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.9.0;
 import "forge-std/stdlib.sol";

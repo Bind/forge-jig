@@ -15,12 +15,12 @@ contract BasicMoldingTest is DSTest {
     }
 
     function testMoldingBasic() public {
-        m.set_simple(1);
+        m.simple(1);
         assert(b.simple() == 1);
     }
 
     function testMolding(uint256 rand) public {
-        m.set_simple(rand);
+        m.simple(rand);
         assert(b.simple() == rand);
     }
 }
