@@ -1,10 +1,10 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import * as fs from 'fs';
-import { compileStorageLayout } from '../ts';
-import { generateMolding } from '../ts/codegen';
+import { compileStorageLayout } from '../src/ast';
+import { generateMolding } from '../src/codegen';
 
-const CONTRACT_DIR = 'src/';
+const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 const files = fs.readdirSync(CONTRACT_DIR);
 
 const assertions = {

@@ -1,7 +1,7 @@
 [default]
-src = 'src'
-out = 'out'
 libs = ['node_modules']
+out = 'out'
 remappings = ['ds-test/=lib/ds-test/src/']
+src = 'contracts'
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config

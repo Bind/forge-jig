@@ -1,10 +1,9 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import * as fs from 'fs';
-import { compileStorageLayout } from '../ts';
-import { encoder } from '../ts/utils/mapping';
-
-const CONTRACT_DIR = 'src/';
+import { compileStorageLayout } from '../src/ast';
+import { encoder } from '../src/utils/mapping';
+const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 
 const files = fs.readdirSync(CONTRACT_DIR);
 

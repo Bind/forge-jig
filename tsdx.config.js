@@ -1,16 +1,15 @@
-const replace = require('@rollup/plugin-replace');
+const commonjs = require('@rollup/plugin-commonjs');
 
 module.exports = {
-  // This function will run for each entry/format/env combination
-  rollup(config, opts) {
-    config.plugins = config.plugins.map(p =>
-      p.name === 'replace'
-        ? replace({
-            'process.env.NODE_ENV': JSON.stringify(opts.env),
-            preventAssignment: true,
-          })
-        : p
-    );
-    return config; // always return a config.
+  rollup(config) {
+    // Delete the external config property.
+    // This essentially means we're allowing all packages to be bundled.
+    delete config.external;
+
+    // Manually use the commonjs plugin.
+    // This is opposed to specifying umd as the format as there's more implications that, again, are unclear.
+    config.plugins.push(commonjs());
+
+    return config;
   },
 };

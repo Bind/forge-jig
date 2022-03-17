@@ -14,10 +14,10 @@ import {
   getASTStorageFromContractDefinition,
   generateStorageLayout,
   compileStorageLayout,
-} from '../ts';
-import { isStorageInfoStruct } from '../ts/storage';
+} from '../src/ast';
+import { isStorageInfoStruct } from '../src/storage';
 
-const CONTRACT_DIR = 'src/';
+const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 
 const files = fs.readdirSync(CONTRACT_DIR);
 
@@ -138,9 +138,8 @@ for (let idx in files) {
     it(`plucked storage`, async () => {
       const ast = await generateAST(await compile(CONTRACT_DIR + file));
       const contractDefinition = getContractDefinition(ast, 'Basic');
-      const declarations = getASTStorageFromContractDefinition(
-        contractDefinition
-      );
+      const declarations =
+        getASTStorageFromContractDefinition(contractDefinition);
       const storage = generateStorageLayout(ast, declarations);
       if (assertions[file].storage) {
         expect(storage.getLength()).toBe(assertions[file].expectedSlots);
@@ -156,12 +155,12 @@ for (let idx in files) {
       }
     });
     it('generated layout', async () => {
-      const storage = await compileStorageLayout('src/' + file, 'Basic');
+      const storage = await compileStorageLayout(CONTRACT_DIR + file, 'Basic');
       if (assertions[file].explicitSlotChecks) {
-        assertions[file].explicitSlotChecks.forEach(v => {
+        assertions[file].explicitSlotChecks.forEach((v) => {
           const storageInfo = storage.get(v.name);
           if (isStorageInfoStruct(storageInfo)) {
-            v.children!.forEach(child => {
+            v.children!.forEach((child) => {
               const childLayout = storageInfo.layout.get(child.name);
               expect(child.slot).toBe(childLayout.pointer.slot);
               expect(child.offset).toBe(childLayout.pointer.offset);
