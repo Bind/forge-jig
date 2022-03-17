@@ -9,6 +9,7 @@ function template(contractName: string, body: string) {
   return `
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.9.0;
+import "forge-std/stdlib.sol";
 import "forge-std/Vm.sol";
 
 contract ${contractName}Molding {
@@ -28,17 +29,17 @@ function solidityConstFromStorageInfo(name: string, info: StorageInfos) {
 function soliditySetFunctionFromStorageInfo(name: string, info: StorageInfo) {
   return `
     function ${name}(${info.type} value) public {
-        vm.store(mold, ${name}_storage_slot, bytes32(value);
+        vm.store(mold, ${name}_storage_slot, bytes32(value));
     }
     `;
 }
 export function generateMoldingBody(layout: StorageLayout) {
   let body = '';
   const vars = Object.keys(layout.variables);
-  vars.forEach(key => {
+  vars.forEach((key) => {
     body += solidityConstFromStorageInfo(key, layout.variables[key]);
   });
-  vars.forEach(key => {
+  vars.forEach((key) => {
     const storageInfo = layout.variables[key];
     if (isStorageInfo(storageInfo)) {
       body += soliditySetFunctionFromStorageInfo(key, storageInfo);

@@ -7,5 +7,5 @@ enum AliveEnum {
 }
 
 contract Basic {
-    AliveEnum test_enum;
+    AliveEnum simple_enum;
 }

@@ -2,5 +2,5 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract Basic {
-    uint256[] test_array;
+    uint256[] simple_array;
 }
