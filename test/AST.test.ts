@@ -44,7 +44,7 @@ const assertions: Assertions = {
     variables: ['uint256'],
     explicitSlotChecks: [
       {
-        name: 'test',
+        name: 'simple',
         slot: 0,
         offset: 0,
       },
