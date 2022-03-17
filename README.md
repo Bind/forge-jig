@@ -1,3 +1,5 @@
+Jig: a tool used to expedite some repetitive task and ensure that the results do not vary from project to project.
+
 # Why
 
 `vm.store(address, slot, data)` is still fairly hard to reason about.
@@ -14,8 +16,8 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
   - [ ] Mappings
   - [ ] Arrays
   - [x] Custom structs
-- [ ] generate HelperContract
-  - [ ] helper methods per variable for better DX
+- [x] generate HelperContract
+  - [x] helper methods per variable for better DX
   - [ ] store custom struct into packed slot
 - [ ] improve DX with storage slot shenanigans
   - [ ] Make sure to increase the length an array when adding an element
