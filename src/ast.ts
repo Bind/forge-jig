@@ -17,9 +17,11 @@ import {
 } from 'solc-typed-ast';
 import { StorageLayout } from './storage';
 import { isSolidityType } from './types';
+import { findNearest } from './utils/findNearest';
+import { getRemappings } from './utils/mappings';
 
 export async function compile(path: string) {
-  const { data } = await compileSol(path, 'auto', []);
+  const { data } = await compileSol(path, 'auto', getRemappings());
   return data;
 }
 
@@ -32,7 +34,7 @@ export function getBySelector(
   ast: SourceUnit[],
   selector: ASTNodeSelector
 ): ASTNode {
-  const unit = ast.find(s => s.getChildrenBySelector(selector));
+  const unit = ast.find((s) => s.getChildrenBySelector(selector));
   if (!unit) throw new Error('Unable to find node with selector');
   return unit.getChildrenBySelector(selector)[0];
 }
@@ -41,9 +43,9 @@ export function getContractDefinition(
   ast: SourceUnit[],
   contractName: string
 ): ContractDefinition {
-  const selector: ASTNodeSelector = n =>
+  const selector: ASTNodeSelector = (n) =>
     n instanceof ContractDefinition && n.raw.name == contractName;
-  const unit = ast.find(s => s.getChildrenBySelector(selector));
+  const unit = ast.find((s) => s.getChildrenBySelector(selector));
   if (!unit)
     throw new Error('Unable to find contract with name ' + contractName);
   return unit.getChildrenBySelector(selector)[0] as ContractDefinition;
@@ -52,7 +54,7 @@ export function getContractDefinition(
 export function getASTStorageFromContractDefinition(
   node: ContractDefinition
 ): VariableDeclaration[] {
-  const selector: ASTNodeSelector = n =>
+  const selector: ASTNodeSelector = (n) =>
     n instanceof VariableDeclaration && n.parent instanceof ContractDefinition;
   return node.getChildrenBySelector(selector);
 }
@@ -61,7 +63,7 @@ function isEnum(
   ast: SourceUnit[],
   structDeclaration: UserDefinedTypeName
 ): boolean {
-  const selector: ASTNodeSelector = node =>
+  const selector: ASTNodeSelector = (node) =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   return structDefinition instanceof EnumDefinition;
@@ -72,7 +74,7 @@ export function getStructStorageLayout(
   structDeclaration: UserDefinedTypeName,
   rootSlot: number
 ): StorageLayout {
-  const selector: ASTNodeSelector = node =>
+  const selector: ASTNodeSelector = (node) =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
@@ -138,6 +140,10 @@ export async function compileStorageLayout(
   file: string,
   contractName: string
 ): Promise<StorageLayout> {
+  try {
+    const remappingPath = findNearest('remapping.txt', process.cwd.toString());
+    console.log(remappingPath);
+  } catch (err) {}
   const ast = await generateAST(await compile(file));
   const contractDefinition = getContractDefinition(ast, contractName);
   const declarations = getASTStorageFromContractDefinition(contractDefinition);

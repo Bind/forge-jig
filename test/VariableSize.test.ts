@@ -112,6 +112,7 @@ const assertions: Assertions = {
   uint256: { size: 32 },
   bool: { size: 1 },
   address: { size: 32 },
+  string: { size: 32 },
 };
 
 describe('validates number of bytes used for different solidity data types', () => {

@@ -114,22 +114,28 @@ export type BOOL = typeof BOOL_TYPES[number];
 export const ADDRESS_TYPES = ['address'] as const;
 export type ADDRESS = typeof ADDRESS_TYPES[number];
 
-export type SOLIDITY_TYPES = FIXED_BYTES | INT | UINT | BOOL | ADDRESS;
+export const STRING_TYPES = ['string'] as const;
+export type STRING = typeof STRING_TYPES[number];
+
+export type SOLIDITY_TYPES = FIXED_BYTES | INT | UINT | BOOL | ADDRESS | STRING;
 
 export function isBool(value: string): value is BOOL {
-  return !!BOOL_TYPES.find(validKey => validKey === value);
+  return !!BOOL_TYPES.find((validKey) => validKey === value);
 }
 export function isAddress(value: string): value is ADDRESS {
-  return !!ADDRESS_TYPES.find(validKey => validKey === value);
+  return !!ADDRESS_TYPES.find((validKey) => validKey === value);
+}
+export function isStringType(value: string): value is STRING {
+  return !!STRING_TYPES.find((validKey) => validKey === value);
 }
 export function isUint(value: string): value is UINT {
-  return !!UINT_TYPES.find(validKey => validKey === value);
+  return !!UINT_TYPES.find((validKey) => validKey === value);
 }
 export function isInt(value: string): value is INT {
-  return !!INT_TYPES.find(validKey => validKey === value);
+  return !!INT_TYPES.find((validKey) => validKey === value);
 }
 export function isFixedBytes(value: string): value is FIXED_BYTES {
-  return !!FIXED_BYTE_TYPES.find(validKey => validKey === value);
+  return !!FIXED_BYTE_TYPES.find((validKey) => validKey === value);
 }
 export function isSolidityType(value: string): value is SOLIDITY_TYPES {
   return (
@@ -137,7 +143,8 @@ export function isSolidityType(value: string): value is SOLIDITY_TYPES {
     isInt(value) ||
     isUint(value) ||
     isBool(value) ||
-    isAddress(value)
+    isAddress(value) ||
+    isStringType(value)
   );
 }
 
@@ -154,6 +161,8 @@ export function getByteSizeFromType(t: SOLIDITY_TYPES) {
     return 1;
   } else if (isAddress(t)) {
     return 20;
+  } else if (isStringType(t)) {
+    return 32;
   }
   throw new Error('unhandled type: ' + t);
 }
