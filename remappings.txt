@@ -1,2 +1,3 @@
 ds-test/=/Users/douglasbinder/workspace/forge-fixture/lib/ds-test/src/
 forge-std/=/Users/douglasbinder/workspace/forge-fixture/lib/forge-std/src/
+solmate/=/Users/douglasbinder/workspace/forge-fixture/lib/solmate/src/
