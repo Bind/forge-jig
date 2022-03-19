@@ -120,6 +120,23 @@ const assertions: Assertions = {
     variables: ['enum AliveEnum'],
     explicitSlotChecks: [],
   },
+  'basic-erc20.sol': {
+    storage: true,
+    expectedSlots: 10,
+    variables: [
+      'string',
+      'string',
+      'uint8',
+      'uint256',
+      'mapping(address => uint256)',
+      'mapping(address => mapping(address => uint256))',
+      'uint256',
+      'bytes32',
+      'mapping(address => uint256)',
+      'uint8',
+    ],
+    explicitSlotChecks: [],
+  },
 };
 
 const isolate: string[] = [];
@@ -131,15 +148,20 @@ for (let idx in files) {
     it('parsed AST', async () => {
       const ast = await generateAST(await compile(CONTRACT_DIR + file));
       const contractDefinition = getContractDefinition(ast, 'Basic');
-      const children = getASTStorageFromContractDefinition(contractDefinition);
+      const children = getASTStorageFromContractDefinition(
+        ast,
+        contractDefinition
+      );
       expect(children).toBeTruthy();
     });
 
     it(`plucked storage`, async () => {
       const ast = await generateAST(await compile(CONTRACT_DIR + file));
       const contractDefinition = getContractDefinition(ast, 'Basic');
-      const declarations =
-        getASTStorageFromContractDefinition(contractDefinition);
+      const declarations = getASTStorageFromContractDefinition(
+        ast,
+        contractDefinition
+      );
       const storage = generateStorageLayout(ast, declarations);
       if (assertions[file].storage) {
         expect(storage.getLength()).toBe(assertions[file].expectedSlots);

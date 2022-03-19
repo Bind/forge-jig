@@ -64,6 +64,7 @@ export class StorageLayout {
           offset: 0,
           slot: this.slotPointer + 1,
         };
+
         this.variables[name] = {
           variant: 'simple',
           size: byteSize,
@@ -75,6 +76,7 @@ export class StorageLayout {
           offset: this.offset,
           slot: this.slotPointer,
         };
+
         this.variables[name] = {
           variant: 'simple',
           size: byteSize,
