@@ -102,8 +102,9 @@ export function getASTStorageFromContractDefinition(
   const implSlots = node.getChildrenBySelector(
     selector
   ) as VariableDeclaration[];
-
-  return [...inheritedSlots, ...implSlots];
+  return [...inheritedSlots, ...implSlots].filter(
+    (n) => n.mutability !== 'immutable'
+  );
 }
 
 function isEnum(

@@ -122,16 +122,13 @@ const assertions: Assertions = {
   },
   'basic-erc20.sol': {
     storage: true,
-    expectedSlots: 10,
+    expectedSlots: 7,
     variables: [
       'string',
       'string',
-      'uint8',
       'uint256',
       'mapping(address => uint256)',
       'mapping(address => mapping(address => uint256))',
-      'uint256',
-      'bytes32',
       'mapping(address => uint256)',
       'uint8',
     ],
