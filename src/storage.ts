@@ -3,6 +3,11 @@ type StoragePointer = {
   slot: number; // Storage Slot Number
   offset: number; // Storage Slot Offset Bytes
 };
+export interface MappingPointer {
+  slot: number;
+  key: SOLIDITY_TYPES;
+  value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct;
+}
 
 type StorageInfoVariants = 'simple' | 'struct' | 'mapping' | 'array' | 'enum';
 export type StorageInfo = {
@@ -19,7 +24,7 @@ export type StorageInfoEnum = {
 export type StorageInfoMapping = {
   variant: 'mapping';
   key: SOLIDITY_TYPES;
-  value: SOLIDITY_TYPES | 'struct';
+  value: SOLIDITY_TYPES | StorageInfoStruct | StorageInfoMapping;
   pointer: StoragePointer;
 };
 export type StorageInfoStruct = {
@@ -34,8 +39,32 @@ export function isStorageInfoStruct(
 ): value is StorageInfoStruct {
   return (<StorageInfoStruct>value).layout !== undefined;
 }
+export function isStorageInfoMapping(
+  value: StorageInfos
+): value is StorageInfoMapping {
+  return (<StorageInfoMapping>value).variant == 'mapping';
+}
 export function isStorageInfo(value: StorageInfos): value is StorageInfo {
   return isSolidityType((<StorageInfo>value).type);
+}
+export function isMappingPointer(
+  value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct
+): value is MappingPointer {
+  return (<MappingPointer>value).slot !== undefined;
+}
+
+export function mappingPointerToStorage(
+  mapping: MappingPointer
+): StorageInfoMapping {
+  const value = mapping.value;
+  return {
+    variant: 'mapping',
+    key: mapping.key,
+    value: isMappingPointer(value)
+      ? mappingPointerToStorage(value)
+      : (mapping.value as SOLIDITY_TYPES | StorageInfoMapping),
+    pointer: { slot: 0, offset: 0 },
+  };
 }
 
 export class StorageLayout {
@@ -50,6 +79,18 @@ export class StorageLayout {
 
   willOverflow(size: number): boolean {
     return this.offset + size > 32;
+  }
+  appendMappingDeclaration(name: string, mapping: MappingPointer) {
+    const slot = this.nextEmptySlot();
+    const mappingStorage = mappingPointerToStorage(mapping);
+    const pointer = {
+      offset: 0,
+      slot,
+    };
+    mappingStorage.pointer = pointer;
+
+    this.variables[name] = mappingStorage;
+    this.appendSlots(1);
   }
   appendVariableDeclaration(
     name: string,

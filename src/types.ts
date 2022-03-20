@@ -179,13 +179,15 @@ export function getTypeFunctionSignature(t: SOLIDITY_TYPES | any) {
 
 export function getDataToStoreCasting(t: SOLIDITY_TYPES | any) {
   if (!isSolidityType(t)) {
-    throw new Error(`${t} not handled in casting`);
+    throw new Error(`${JSON.stringify(t)} not handled in casting`);
   } else if (isStringType(t)) {
     return `bytes32(bytes(value))`;
   } else if (isUint(t)) {
     return `bytes32(uint256(value))`;
   } else if (isInt(t)) {
     return `bytes32(int256(value))`;
+  } else if (isAddress(t)) {
+    return `bytes32(uint256(uint160(value)) << 96)`;
   } else {
     return 'bytes32(value)';
   }

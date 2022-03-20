@@ -16,7 +16,7 @@ import {
   UserDefinedTypeName,
   VariableDeclaration,
 } from 'solc-typed-ast';
-import { StorageLayout } from './storage';
+import { MappingPointer, StorageLayout } from './storage';
 import { isSolidityType } from './types';
 import { getRemappings } from './utils/remappings';
 
@@ -129,14 +129,30 @@ export function getStructStorageLayout(
     throw new Error('not StructDefinition');
   return generateStorageLayout(ast, structDefinition.children, rootSlot);
 }
+
 export function getMappingLayout(
   ast: SourceUnit[],
-  mappingDeclaration: Mapping,
-  rootSlot: number
-) {
-  ast;
-  rootSlot;
-  mappingDeclaration;
+  mappingDeclaration: Mapping
+): MappingPointer {
+  const keyTypeString = mappingDeclaration.vKeyType.typeString;
+  const valueTypeString = mappingDeclaration.vValueType.typeString;
+  const valueType = mappingDeclaration.vValueType;
+
+  if (isSolidityType(keyTypeString) && isSolidityType(valueTypeString)) {
+    return {
+      slot: 0,
+      key: keyTypeString,
+      value: valueTypeString,
+    };
+  } else if (isSolidityType(keyTypeString) && valueType instanceof Mapping) {
+    return {
+      slot: 0,
+      key: keyTypeString,
+      value: getMappingLayout(ast, valueType),
+    };
+  } else {
+    throw new Error(`${keyTypeString} or ${valueTypeString} is not handled `);
+  }
 }
 
 export function generateStorageLayout(
@@ -175,8 +191,11 @@ export function generateStorageLayout(
         );
       }
     } else if (declaration.vType instanceof Mapping) {
-      getMappingLayout(ast, declaration.vType, stor.getLength());
-      stor.appendVariableDeclaration(declaration.name, 'mapping');
+      stor.appendMappingDeclaration(
+        declaration.name,
+        getMappingLayout(ast, declaration.vType)
+      );
+      // getMappingLayout(ast, declaration.vType, stor.getLength());
     } else if (declaration.vType instanceof ArrayTypeName) {
       stor.appendVariableDeclaration(declaration.name, 'array');
     }
