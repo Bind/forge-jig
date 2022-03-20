@@ -11,7 +11,7 @@ import './utils/console.sol';
 contract BasicERC20JigTest is DSTest {
     using stdStorage for StdStorage;
     Basic b;
-    BasicERC20Jig m;
+    BasicJig jig;
     StdStorage stdstore;
 
     Vm public constant vm =
@@ -19,16 +19,30 @@ contract BasicERC20JigTest is DSTest {
 
     function setUp() public {
         b = new Basic();
-        m = new BasicERC20Jig(address(b));
+        jig = new BasicJig(address(b));
     }
 
     function testJigBasic() public {
-        m.simple(1);
+        jig.simple(1);
         assert(b.simple() == 1);
     }
 
     function testJig(uint8 rand) public {
-        m.simple(rand);
+        jig.simple(rand);
         assert(b.simple() == rand);
+    }
+
+    function testJigBalance(address owner, uint256 rand) public {
+        jig.balanceOf(owner, rand);
+        assert(b.balanceOf(owner) == rand);
+    }
+
+    function testJigAllowance(
+        address owner,
+        address allowed,
+        uint256 rand
+    ) public {
+        jig.allowance(owner, allowed, rand);
+        assert(b.allowance(owner, allowed) == rand);
     }
 }
