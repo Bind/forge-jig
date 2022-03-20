@@ -4,6 +4,7 @@ import {
   StorageInfos,
   StorageLayout,
 } from './storage';
+import { getDataToStoreCasting, getTypeFunctionSignature } from './types';
 
 function template(contractName: string, body: string) {
   return `
@@ -25,12 +26,14 @@ contract ${contractName}Jig {
 }
 
 function solidityConstFromStorageInfo(name: string, info: StorageInfos) {
-  return `bytes32 ${name}_storage_slot = ${info.pointer.slot};`;
+  return `bytes32 ${name}_storage_slot = bytes32(uint256(${info.pointer.slot}));\n`;
 }
 function soliditySetFunctionFromStorageInfo(name: string, info: StorageInfo) {
   return `
-    function ${name}(${info.type} value) public {
-        vm.store(target, ${name}_storage_slot, bytes32(value));
+    function ${name}(${getTypeFunctionSignature(info.type)} value) public {
+        vm.store(target, ${name}_storage_slot, ${getDataToStoreCasting(
+    info.type
+  )});
     }
     `;
 }

@@ -166,3 +166,27 @@ export function getByteSizeFromType(t: SOLIDITY_TYPES) {
   }
   throw new Error('unhandled type: ' + t);
 }
+
+export function getTypeFunctionSignature(t: SOLIDITY_TYPES | any) {
+  if (!isSolidityType(t)) {
+    return `${t} memory`;
+  } else if (isStringType(t)) {
+    return `${t} memory`;
+  } else {
+    return t;
+  }
+}
+
+export function getDataToStoreCasting(t: SOLIDITY_TYPES | any) {
+  if (!isSolidityType(t)) {
+    throw new Error(`${t} not handled in casting`);
+  } else if (isStringType(t)) {
+    return `bytes32(bytes(value))`;
+  } else if (isUint(t)) {
+    return `bytes32(uint256(value))`;
+  } else if (isInt(t)) {
+    return `bytes32(int256(value))`;
+  } else {
+    return 'bytes32(value)';
+  }
+}
