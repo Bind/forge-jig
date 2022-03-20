@@ -4,7 +4,7 @@ pragma solidity >=0.4.22 <0.9.0;
 import 'forge-std/stdlib.sol';
 import 'forge-std/Vm.sol';
 
-contract BasicERC20Jig {
+contract BasicJig {
     address target;
     Vm public constant vm =
         Vm(address(bytes20(uint160(uint256(keccak256('hevm cheat code'))))));
@@ -31,6 +31,30 @@ contract BasicERC20Jig {
 
     function totalSupply(uint256 value) public {
         vm.store(target, totalSupply_storage_slot, bytes32(uint256(value)));
+    }
+
+    function balanceOf(address key0, uint256 value) public {
+        bytes32 slot = keccak256(abi.encode(key0, balanceOf_storage_slot));
+        vm.store(target, slot, bytes32(uint256(value)));
+    }
+
+    function allowance(
+        address key0,
+        address key1,
+        uint256 value
+    ) public {
+        bytes32 slot = keccak256(
+            abi.encode(
+                key1,
+                keccak256(abi.encode(key0, allowance_storage_slot))
+            )
+        );
+        vm.store(target, slot, bytes32(uint256(value)));
+    }
+
+    function nonces(address key0, uint256 value) public {
+        bytes32 slot = keccak256(abi.encode(key0, nonces_storage_slot));
+        vm.store(target, slot, bytes32(uint256(value)));
     }
 
     function simple(uint8 value) public {
