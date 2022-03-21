@@ -1,34 +1,44 @@
 import type { Arguments, CommandBuilder } from 'yargs';
-import { compileStorageLayout } from '../ast';
+import { compileStorageLayouts } from '../ast';
 import { generateJig } from '../codegen';
+import * as glob from 'glob';
 import * as fs from 'fs';
 
 type Options = {
-  contractName: string;
-  file: string;
+  pattern: string;
   out: string | undefined;
 };
 
-export const command: string = 'layout <contractName> <file> [options]';
+export const command: string = 'layout <pattern> [options]';
 export const desc: string = 'generate layout for solidity contract';
 
 export const builder: CommandBuilder<Options, Options> = (yargs) =>
   yargs
     .options({ out: { type: 'string', alias: 'o' } })
-    .positional('contractName', { type: 'string', demandOption: true })
-    .positional('file', { type: 'string', demandOption: true });
+    .options({ all: { type: 'string', alias: 'a' } })
+    .positional('pattern', { type: 'string', demandOption: true });
 
 export const handler = async (argv: Arguments<Options>): Promise<void> => {
-  const { out, contractName, file } = argv;
-  const greeting = `generate storage contract for ${contractName} from ${file}`;
-  process.stdout.write(greeting);
+  const { out, pattern } = argv;
 
-  const layout = await compileStorageLayout(file, contractName);
-  const jig = generateJig(contractName, layout);
-  if (out) {
-    fs.writeFileSync(out, jig);
-  } else {
-    console.log(jig);
+  const files = glob.sync(pattern);
+
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+
+    const layouts = await compileStorageLayouts(file);
+    layouts.forEach((layout) => {
+      const greeting = `generate storage contract for ${layout.name} from ${file}\n`;
+      process.stdout.write(greeting);
+      const jig = generateJig(`${layout.name}`, layout);
+      if (out) {
+        console.log(`writing to ${out + `/${layout.name}Jig.sol`}`);
+        fs.writeFileSync(out + `/${layout.name}Jig.sol`, jig);
+      } else {
+        console.log(jig);
+      }
+    });
   }
+
   process.exit(0);
 };

@@ -1,5 +1,6 @@
 import {
   isStorageInfoMapping,
+  isStorageInfoStruct,
   StorageInfo,
   StorageInfoMapping,
   StorageInfos,
@@ -50,6 +51,7 @@ function soliditySetEnumFunctionFromStorageInfo(name: string, _: StorageInfo) {
     }
     `;
 }
+
 function soliditySetMappingFunctionFromStorageInfo(
   name: string,
   info: StorageInfoMapping
@@ -58,13 +60,24 @@ function soliditySetMappingFunctionFromStorageInfo(
   let final_value: SOLIDITY_TYPES = 'uint';
 
   const flatten = (info: StorageInfoMapping) => {
-    if (isSolidityType(info.value as string)) {
+    const value = info.value;
+
+    if (isSolidityType(value)) {
       flattened_keys.push(info.key);
       final_value = info.value as SOLIDITY_TYPES;
       return;
-    } else {
+    } else if (isStorageInfoMapping(value)) {
       flattened_keys.push(info.key);
-      flatten(info.value as StorageInfoMapping);
+      flatten(value);
+    } else if (isStorageInfoStruct(value)) {
+      // Accept up a custom struct
+      // value.layout
+      // TODO
+    } else {
+      console.log(value);
+      throw new Error(
+        'unhandled type in soliditySetMappingFunctionFromStorageInfo'
+      );
     }
   };
   flatten(info);
