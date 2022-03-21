@@ -1,5 +1,5 @@
 import type { Arguments, CommandBuilder } from 'yargs';
-import { compileStorageLayouts } from '../ast';
+import { compileContractLayouts } from '../ast';
 import { generateJig } from '../codegen';
 import * as glob from 'glob';
 import * as fs from 'fs';
@@ -26,7 +26,7 @@ export const handler = async (argv: Arguments<Options>): Promise<void> => {
   for (let i = 0; i < files.length; i++) {
     let file = files[i];
 
-    const layouts = await compileStorageLayouts(file);
+    const layouts = await compileContractLayouts(file);
     layouts.forEach((layout) => {
       const greeting = `generate storage contract for ${layout.name} from ${file}\n`;
       process.stdout.write(greeting);

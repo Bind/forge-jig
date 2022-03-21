@@ -13,12 +13,19 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
 - [x] parse out struct declarations
 - [x] automate testing of slot parsing
 - [ ] map contract storage vars to slots
-  - [ ] Mappings
-  - [ ] Arrays
-  - [x] Custom structs
+
+  - [x] Mappings
+  - [x] Arrays
+  - [ ] Custom structs
+    - [ ] Packed Struct
+    - [ ] Multi Slot Struct
+
 - [x] generate HelperContract
   - [x] helper methods per variable for better DX
+  - [x] nested mapping helpers
   - [ ] store custom struct into packed slot
+  - [ ] nested mapping custom struct into packed slot
+  - [ ] generate contract imports for helper functions to consume
 - [ ] improve DX with storage slot shenanigans
   - [ ] Make sure to increase the length an array when adding an element
 

@@ -1,17 +1,12 @@
-import {
-  isStorageInfoMapping,
-  isStorageInfoStruct,
-  StorageInfo,
-  StorageInfoMapping,
-  StorageInfos,
-  StorageLayout,
-} from './storage';
+import { StorageLayout } from './storage';
+import { StorageInfo, StorageInfoMapping, StorageInfos } from './storage/types';
+import { isStorageInfoMapping, isStorageInfoStruct } from './storage/predicate';
 import {
   getDataToStoreCasting,
   getTypeFunctionSignature,
   isSolidityType,
   SOLIDITY_TYPES,
-} from './types';
+} from './solidityTypes';
 
 function template(contractName: string, body: string) {
   return `

@@ -8,14 +8,13 @@ import {
   UserDefinedTypeName,
 } from 'solc-typed-ast';
 import {
-  generateAST,
-  compile,
   getContractDefinition,
-  getASTStorageFromContractDefinition,
-  generateStorageLayout,
-  compileStorageLayout,
-} from '../src/ast';
-import { isStorageInfoStruct } from '../src/storage';
+  getVariableDeclarationsForContract,
+} from '../src/ast/find';
+import { generateContractLayout } from '../src/layout';
+import { generateAST, compile } from '../src/solc';
+import { compileContractLayout } from '../src/ast';
+import { isStorageInfoStruct } from '../src/storage/predicate';
 
 const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 
@@ -157,7 +156,7 @@ for (let idx in files) {
         ast,
         assertions[file].name
       );
-      const children = getASTStorageFromContractDefinition(
+      const children = getVariableDeclarationsForContract(
         ast,
         contractDefinition
       );
@@ -170,11 +169,11 @@ for (let idx in files) {
         ast,
         assertions[file].name
       );
-      const declarations = getASTStorageFromContractDefinition(
+      const declarations = getVariableDeclarationsForContract(
         ast,
         contractDefinition
       );
-      const storage = generateStorageLayout(
+      const storage = generateContractLayout(
         ast,
         contractDefinition.name,
         declarations
@@ -193,7 +192,7 @@ for (let idx in files) {
       }
     });
     it('generated layout', async () => {
-      const storage = await compileStorageLayout(
+      const storage = await compileContractLayout(
         CONTRACT_DIR + file,
         assertions[file].name
       );

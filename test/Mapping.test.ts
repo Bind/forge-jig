@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import * as fs from 'fs';
-import { compileStorageLayout } from '../src/ast';
+import { compileContractLayout } from '../src/ast';
 import { encoder } from '../src/utils/mapping';
 const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 
@@ -25,7 +25,7 @@ for (let idx in files) {
   if (typeof assertions?.[file] == 'undefined') continue;
   describe('mappings are being handled correctly', () => {
     it('succefully recognizes mappings', async () => {
-      const layout = await compileStorageLayout(
+      const layout = await compileContractLayout(
         CONTRACT_DIR + file,
         assertions[file].name
       );
