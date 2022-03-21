@@ -9,6 +9,7 @@ const files = fs.readdirSync(CONTRACT_DIR);
 
 const assertions = {
   'basic-mapping.sol': {
+    name: 'BasicMapping',
     variables: [
       {
         name: 'test-mapping',
@@ -24,7 +25,10 @@ for (let idx in files) {
   if (typeof assertions?.[file] == 'undefined') continue;
   describe('mappings are being handled correctly', () => {
     it('succefully recognizes mappings', async () => {
-      const layout = await compileStorageLayout(CONTRACT_DIR + file, 'Basic');
+      const layout = await compileStorageLayout(
+        CONTRACT_DIR + file,
+        assertions[file].name
+      );
       for (let vidx in assertions[file].variables) {
         let variable = assertions[file].variables[vidx];
         layout.get(variable.name);

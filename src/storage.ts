@@ -34,14 +34,10 @@ export type StorageInfoStruct = {
 };
 export type StorageInfos = StorageInfo | StorageInfoMapping | StorageInfoStruct;
 
-export function isStorageInfoStruct(
-  value: StorageInfos
-): value is StorageInfoStruct {
+export function isStorageInfoStruct(value: any): value is StorageInfoStruct {
   return (<StorageInfoStruct>value).layout !== undefined;
 }
-export function isStorageInfoMapping(
-  value: StorageInfos
-): value is StorageInfoMapping {
+export function isStorageInfoMapping(value: any): value is StorageInfoMapping {
   return (<StorageInfoMapping>value).variant == 'mapping';
 }
 export function isStorageInfo(value: StorageInfos): value is StorageInfo {
@@ -68,11 +64,13 @@ export function mappingPointerToStorage(
 }
 
 export class StorageLayout {
+  name: string;
   variables: { [key: string]: StorageInfos } = {};
   slotRoot: number = 0;
   slotPointer: number = 0; // current slot being written to
   private offset: number = 0; // bytes
-  constructor(rootSlot: number) {
+  constructor(name: string, rootSlot: number) {
+    this.name = name;
     this.slotPointer = rootSlot;
     this.slotRoot = rootSlot;
   }
@@ -82,6 +80,7 @@ export class StorageLayout {
   }
   appendMappingDeclaration(name: string, mapping: MappingPointer) {
     const slot = this.nextEmptySlot();
+
     const mappingStorage = mappingPointerToStorage(mapping);
     const pointer = {
       offset: 0,

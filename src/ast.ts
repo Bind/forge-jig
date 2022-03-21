@@ -17,7 +17,7 @@ import {
   VariableDeclaration,
 } from 'solc-typed-ast';
 import { MappingPointer, StorageLayout } from './storage';
-import { isSolidityType } from './types';
+import { isSolidityType, SOLIDITY_TYPES } from './types';
 import { getRemappings } from './utils/remappings';
 
 export async function compile(path: string) {
@@ -39,6 +39,13 @@ export function getBySelector(
   return unit.getChildrenBySelector(selector)[0];
 }
 
+export function getContractDefinitions(
+  ast: SourceUnit[]
+): ContractDefinition[] {
+  const selector: ASTNodeSelector = (n) => n instanceof ContractDefinition;
+  const cdefs = ast.map((unit) => unit.getChildrenBySelector(selector));
+  return cdefs.flat(1) as ContractDefinition[];
+}
 export function getContractDefinition(
   ast: SourceUnit[],
   contractName: string
@@ -113,8 +120,17 @@ function isEnum(
 ): boolean {
   const selector: ASTNodeSelector = (node) =>
     node.id === structDeclaration.referencedDeclaration;
-  const structDefinition = getBySelector(ast, selector) as StructDefinition;
+  const structDefinition = getBySelector(ast, selector);
   return structDefinition instanceof EnumDefinition;
+}
+function isStruct(
+  ast: SourceUnit[],
+  structDeclaration: UserDefinedTypeName
+): boolean {
+  const selector: ASTNodeSelector = (node) =>
+    node.id === structDeclaration.referencedDeclaration;
+  const structDefinition = getBySelector(ast, selector);
+  return structDefinition instanceof StructDefinition;
 }
 
 export function getStructStorageLayout(
@@ -127,12 +143,18 @@ export function getStructStorageLayout(
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
     throw new Error('not StructDefinition');
-  return generateStorageLayout(ast, structDefinition.children, rootSlot);
+  return generateStorageLayout(
+    ast,
+    structDefinition.name,
+    structDefinition.children,
+    rootSlot
+  );
 }
 
 export function getMappingLayout(
   ast: SourceUnit[],
-  mappingDeclaration: Mapping
+  mappingDeclaration: Mapping,
+  rootSlot: number
 ): MappingPointer {
   const keyTypeString = mappingDeclaration.vKeyType.typeString;
   const valueTypeString = mappingDeclaration.vValueType.typeString;
@@ -140,27 +162,46 @@ export function getMappingLayout(
 
   if (isSolidityType(keyTypeString) && isSolidityType(valueTypeString)) {
     return {
-      slot: 0,
+      slot: rootSlot,
       key: keyTypeString,
       value: valueTypeString,
     };
   } else if (isSolidityType(keyTypeString) && valueType instanceof Mapping) {
     return {
-      slot: 0,
+      slot: rootSlot,
       key: keyTypeString,
-      value: getMappingLayout(ast, valueType),
+      value: getMappingLayout(ast, valueType, rootSlot),
+    };
+  } else if (
+    isSolidityType(keyTypeString) &&
+    valueType instanceof UserDefinedTypeName &&
+    isStruct(ast, valueType)
+  ) {
+    return {
+      slot: 0,
+      key: keyTypeString as SOLIDITY_TYPES,
+      value: {
+        variant: 'struct',
+        layout: getStructStorageLayout(ast, valueType, rootSlot),
+        pointer: {
+          slot: rootSlot,
+          offset: 0,
+        },
+      },
     };
   } else {
+    console.log(valueType);
     throw new Error(`${keyTypeString} or ${valueTypeString} is not handled `);
   }
 }
 
 export function generateStorageLayout(
   ast: SourceUnit[],
+  storageName: string,
   declarations: readonly ASTNode[],
   rootSlot: number = 0
 ): StorageLayout {
-  const stor = new StorageLayout(rootSlot);
+  const stor = new StorageLayout(storageName, rootSlot);
   ast;
   for (let idx in declarations) {
     let declaration = declarations[idx];
@@ -193,9 +234,8 @@ export function generateStorageLayout(
     } else if (declaration.vType instanceof Mapping) {
       stor.appendMappingDeclaration(
         declaration.name,
-        getMappingLayout(ast, declaration.vType)
+        getMappingLayout(ast, declaration.vType, stor.getLength())
       );
-      // getMappingLayout(ast, declaration.vType, stor.getLength());
     } else if (declaration.vType instanceof ArrayTypeName) {
       stor.appendVariableDeclaration(declaration.name, 'array');
     }
@@ -213,5 +253,16 @@ export async function compileStorageLayout(
     ast,
     contractDefinition
   );
-  return generateStorageLayout(ast, declarations);
+  return generateStorageLayout(ast, contractName, declarations);
+}
+
+export async function compileStorageLayouts(
+  file: string
+): Promise<StorageLayout[]> {
+  const ast = await generateAST(await compile(file));
+  const contractDefinitions = getContractDefinitions(ast);
+  return contractDefinitions.map((c) => {
+    const dec = getASTStorageFromContractDefinition(ast, c);
+    return generateStorageLayout(ast, c.name, dec);
+  });
 }

@@ -6,6 +6,6 @@ enum AliveEnum {
     ALIVE
 }
 
-contract Basic {
+contract BasicEnum {
     AliveEnum simple_enum;
 }

@@ -30,6 +30,7 @@ type SlotAssertion = {
 
 type Assertions = {
   [key: string]: {
+    name: string;
     storage: boolean;
     expectedSlots: number;
     variables: string[];
@@ -37,8 +38,9 @@ type Assertions = {
   };
 };
 
-const assertions: Assertions = {
+export const assertions: Assertions = {
   'basic.sol': {
+    name: 'Basic',
     storage: true,
     expectedSlots: 1,
     variables: ['uint256'],
@@ -51,6 +53,7 @@ const assertions: Assertions = {
     ],
   },
   'basic-struct.sol': {
+    name: 'BasicStruct',
     storage: true,
     expectedSlots: 1,
     variables: ['struct Initialized'],
@@ -73,6 +76,7 @@ const assertions: Assertions = {
     ],
   },
   'basic-struct2.sol': {
+    name: 'BasicStruct2',
     storage: true,
     expectedSlots: 3,
     variables: ['struct Hello', 'struct Yo'],
@@ -96,31 +100,36 @@ const assertions: Assertions = {
       },
     ],
   },
-  'basic-foo.sol': {
+  'basic-empty.sol': {
+    name: 'BasicEmpty',
     storage: false,
     expectedSlots: 0,
     variables: [],
     explicitSlotChecks: [],
   },
   'basic-mapping.sol': {
+    name: 'BasicMapping',
     storage: true,
     expectedSlots: 1,
     variables: ['mapping(uint256 => uint256)'],
     explicitSlotChecks: [],
   },
   'basic-array.sol': {
+    name: 'BasicArray',
     storage: true,
     expectedSlots: 1,
     variables: ['uint256[]'],
     explicitSlotChecks: [],
   },
   'basic-enum.sol': {
+    name: 'BasicEnum',
     storage: true,
     expectedSlots: 1,
     variables: ['enum AliveEnum'],
     explicitSlotChecks: [],
   },
   'basic-erc20.sol': {
+    name: 'BasicERC20',
     storage: true,
     expectedSlots: 7,
     variables: [
@@ -144,7 +153,10 @@ for (let idx in files) {
   describe('\ngenerate and parse Solidity AST for ' + file, () => {
     it('parsed AST', async () => {
       const ast = await generateAST(await compile(CONTRACT_DIR + file));
-      const contractDefinition = getContractDefinition(ast, 'Basic');
+      const contractDefinition = getContractDefinition(
+        ast,
+        assertions[file].name
+      );
       const children = getASTStorageFromContractDefinition(
         ast,
         contractDefinition
@@ -154,12 +166,19 @@ for (let idx in files) {
 
     it(`plucked storage`, async () => {
       const ast = await generateAST(await compile(CONTRACT_DIR + file));
-      const contractDefinition = getContractDefinition(ast, 'Basic');
+      const contractDefinition = getContractDefinition(
+        ast,
+        assertions[file].name
+      );
       const declarations = getASTStorageFromContractDefinition(
         ast,
         contractDefinition
       );
-      const storage = generateStorageLayout(ast, declarations);
+      const storage = generateStorageLayout(
+        ast,
+        contractDefinition.name,
+        declarations
+      );
       if (assertions[file].storage) {
         expect(storage.getLength()).toBe(assertions[file].expectedSlots);
         expect(
@@ -174,7 +193,10 @@ for (let idx in files) {
       }
     });
     it('generated layout', async () => {
-      const storage = await compileStorageLayout(CONTRACT_DIR + file, 'Basic');
+      const storage = await compileStorageLayout(
+        CONTRACT_DIR + file,
+        assertions[file].name
+      );
       if (assertions[file].explicitSlotChecks) {
         assertions[file].explicitSlotChecks.forEach((v) => {
           const storageInfo = storage.get(v.name);

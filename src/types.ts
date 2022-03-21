@@ -119,25 +119,25 @@ export type STRING = typeof STRING_TYPES[number];
 
 export type SOLIDITY_TYPES = FIXED_BYTES | INT | UINT | BOOL | ADDRESS | STRING;
 
-export function isBool(value: string): value is BOOL {
+export function isBool(value: any): value is BOOL {
   return !!BOOL_TYPES.find((validKey) => validKey === value);
 }
-export function isAddress(value: string): value is ADDRESS {
+export function isAddress(value: any): value is ADDRESS {
   return !!ADDRESS_TYPES.find((validKey) => validKey === value);
 }
-export function isStringType(value: string): value is STRING {
+export function isStringType(value: any): value is STRING {
   return !!STRING_TYPES.find((validKey) => validKey === value);
 }
-export function isUint(value: string): value is UINT {
+export function isUint(value: any): value is UINT {
   return !!UINT_TYPES.find((validKey) => validKey === value);
 }
-export function isInt(value: string): value is INT {
+export function isInt(value: any): value is INT {
   return !!INT_TYPES.find((validKey) => validKey === value);
 }
-export function isFixedBytes(value: string): value is FIXED_BYTES {
+export function isFixedBytes(value: any): value is FIXED_BYTES {
   return !!FIXED_BYTE_TYPES.find((validKey) => validKey === value);
 }
-export function isSolidityType(value: string): value is SOLIDITY_TYPES {
+export function isSolidityType(value: any): value is SOLIDITY_TYPES {
   return (
     isFixedBytes(value) ||
     isInt(value) ||

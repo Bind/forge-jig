@@ -6,6 +6,6 @@ struct Initialized {
     address owner;
 }
 
-contract Basic {
+contract BasicStruct {
     Initialized init;
 }

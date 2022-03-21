@@ -13,7 +13,7 @@ struct Yo {
     uint8 wassup;
 }
 
-contract Basic {
+contract BasicStruct2 {
     Hello greetings;
     Yo ack;
 
