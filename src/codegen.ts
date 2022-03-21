@@ -47,7 +47,7 @@ function soliditySetFunctionFromStorageInfo(name: string, info: StorageInfo) {
 function soliditySetEnumFunctionFromStorageInfo(name: string, _: StorageInfo) {
   return `
     function ${name}(uint8 value) public {
-        vm.store(target, ${name}_storage_slot, bytes32(uint256(value));
+        vm.store(target, ${name}_storage_slot, bytes32(uint256(value)));
     }
     `;
 }
