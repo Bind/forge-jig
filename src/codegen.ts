@@ -7,14 +7,16 @@ import {
   isSolidityType,
   SOLIDITY_TYPES,
 } from './solidityTypes';
+import { FoundryContext } from './utils/types';
 
-function template(contractName: string, body: string) {
+function template(contractName: string, imports: string, body: string) {
   return `
 // THIS FILE WAS GENERATED
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.9.0;
 import "forge-std/stdlib.sol";
 import "forge-std/Vm.sol";
+${imports}
 
 contract ${contractName}Jig {
     address target;
@@ -136,6 +138,38 @@ export function generateJigBody(layout: StorageLayout) {
   return body;
 }
 
-export function generateJig(contractName: string, layout: StorageLayout) {
-  return template(contractName, generateJigBody(layout));
+function solidityImportFromStorage(
+  layout: StorageLayout,
+  context: FoundryContext
+) {
+  return `import {${layout.name}} from"${layout.sourceUnitPath.replace(
+    context.rootPath + '/',
+    ''
+  )}";`;
+}
+
+function generateJigImports(layout: StorageLayout, context: FoundryContext) {
+  let importsContent = '';
+  const vars = Object.keys(layout.variables);
+  vars.forEach((key) => {
+    const storageInfo = layout.variables[key];
+    console.log(storageInfo.variant);
+    if (isStorageInfoStruct(storageInfo)) {
+      importsContent += solidityImportFromStorage(storageInfo.layout, context);
+      console.log(importsContent);
+    }
+  });
+  return importsContent;
+}
+
+export function generateJig(
+  contractName: string,
+  layout: StorageLayout,
+  context: FoundryContext
+) {
+  return template(
+    contractName,
+    generateJigImports(layout, context),
+    generateJigBody(layout)
+  );
 }

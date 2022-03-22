@@ -90,3 +90,15 @@ export function getVariableDeclarationsForContract(
     (n) => n.mutability !== 'immutable'
   );
 }
+
+export function getParentSourceUnit(node: ASTNode): SourceUnit {
+  if (!node.parent) throw new Error('no parent for node');
+  let parent = node.parent;
+  while (parent.parent != undefined) {
+    parent = parent.parent;
+    if (parent instanceof SourceUnit) {
+      return parent;
+    }
+  }
+  throw new Error("couldn't find source unit");
+}

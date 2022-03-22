@@ -9,6 +9,7 @@ import {
 export class StorageLayout {
   name: string;
   variables: { [key: string]: StorageInfos } = {};
+  sourceUnitPath: string = '';
   slotRoot: number = 0;
   slotPointer: number = 0; // current slot being written to
   private offset: number = 0; // bytes
@@ -17,7 +18,9 @@ export class StorageLayout {
     this.slotPointer = rootSlot;
     this.slotRoot = rootSlot;
   }
-
+  setSource(sourceUnitPath: string) {
+    this.sourceUnitPath = sourceUnitPath;
+  }
   willOverflow(size: number): boolean {
     return this.offset + size > 32;
   }

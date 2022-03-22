@@ -9,7 +9,8 @@ import {
   UserDefinedTypeName,
   VariableDeclaration,
 } from 'solc-typed-ast';
-import { getBySelector } from './ast/find';
+import * as path from 'path';
+import { getBySelector, getParentSourceUnit } from './ast/find';
 import { isEnum, isStruct } from './ast/predicate';
 import { StorageLayout } from './storage';
 import { MappingPointer } from './storage/mapping';
@@ -25,12 +26,16 @@ export function getStructLayout(
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
     throw new Error('not StructDefinition');
-  return generateContractLayout(
+  const source = getParentSourceUnit(structDeclaration);
+
+  const storage = generateContractLayout(
     ast,
     structDefinition.name,
     structDefinition.children,
     rootSlot
   );
+  storage.setSource(path.resolve(source.sourceEntryKey));
+  return storage;
 }
 
 export function getMappingLayout(
@@ -84,10 +89,8 @@ export function generateContractLayout(
   rootSlot: number = 0
 ): StorageLayout {
   const stor = new StorageLayout(storageName, rootSlot);
-  ast;
   for (let idx in declarations) {
     let declaration = declarations[idx];
-
     if (!(declaration instanceof VariableDeclaration)) {
       console.log('Is not Instance');
       console.log(declaration);
