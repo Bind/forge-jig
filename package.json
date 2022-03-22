@@ -17,7 +17,7 @@
     "setup": "echo 'be sure to run ./setup/download_compilers.sh'",
     "build": "tsc",
     "test": "tsdx test --runInBand --detectOpenHandles",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint --fix",
     "prepare": "tsc",
     "size": "size-limit",
     "analyze": "size-limit --why",

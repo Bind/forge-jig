@@ -9,17 +9,17 @@ import {
 } from './types';
 
 export function isStorageInfoStruct(value: any): value is StorageInfoStruct {
-  return (<StorageInfoStruct>value).layout !== undefined;
+  return (value as StorageInfoStruct).layout !== undefined;
 }
 export function isStorageInfoMapping(value: any): value is StorageInfoMapping {
-  return (<StorageInfoMapping>value).variant == 'mapping';
+  return (value as StorageInfoMapping).variant === 'mapping';
 }
 export function isStorageInfo(value: StorageInfos): value is StorageInfo {
-  return isSolidityType((<StorageInfo>value).type);
+  return isSolidityType((value as StorageInfo).type);
 }
 
 export function isMappingPointer(
   value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct | ArrayPointer
 ): value is MappingPointer {
-  return (<MappingPointer>value).slot !== undefined;
+  return (value as MappingPointer).slot !== undefined;
 }

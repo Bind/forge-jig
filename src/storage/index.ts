@@ -137,10 +137,10 @@ export class StorageLayout {
    * @param num  bytes
    */
   insertBytes(num: number) {
-    if (num == 32 && this.endOfStorage.offset == 0) {
+    if (num === 32 && this.endOfStorage.offset === 0) {
       // Nothing currently packed in slot write to current slot and increment counter
       this.endOfStorage.slot += 1;
-    } else if (num == 32) {
+    } else if (num === 32) {
       // active slot has data, increment slot pointer, write to slot, increment again
       this.endOfStorage.slot += 2;
       // reset offset
@@ -193,6 +193,6 @@ export class StorageLayout {
     return this.variables[name];
   }
   getStoragePointer(name: string) {
-    this.variables[name].pointer;
+    return this.variables[name].pointer;
   }
 }

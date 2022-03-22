@@ -21,7 +21,7 @@ export function getStructLayout(
   structDeclaration: UserDefinedTypeName,
   rootSlot: number
 ): StorageLayout {
-  const selector: ASTNodeSelector = (node) =>
+  const selector: ASTNodeSelector = node =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
