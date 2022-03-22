@@ -1,16 +1,12 @@
 import { SOLIDITY_TYPES } from '../solidityTypes';
+import { ArrayPointer } from './array';
+import { isMappingPointer } from './predicate';
 import { StorageInfoMapping, StorageInfoStruct } from './types';
 
 export interface MappingPointer {
   slot: number;
   key: SOLIDITY_TYPES;
-  value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct;
-}
-
-export function isMappingPointer(
-  value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct
-): value is MappingPointer {
-  return (<MappingPointer>value).slot !== undefined;
+  value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct | ArrayPointer;
 }
 
 export function mappingPointerToStorage(

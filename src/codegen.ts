@@ -71,7 +71,6 @@ function soliditySetMappingFunctionFromStorageInfo(
       // value.layout
       // TODO
     } else {
-      console.log(value);
       throw new Error(
         'unhandled type in soliditySetMappingFunctionFromStorageInfo'
       );
@@ -153,10 +152,8 @@ function generateJigImports(layout: StorageLayout, context: FoundryContext) {
   const vars = Object.keys(layout.variables);
   vars.forEach((key) => {
     const storageInfo = layout.variables[key];
-    console.log(storageInfo.variant);
     if (isStorageInfoStruct(storageInfo)) {
       importsContent += solidityImportFromStorage(storageInfo.layout, context);
-      console.log(importsContent);
     }
   });
   return importsContent;

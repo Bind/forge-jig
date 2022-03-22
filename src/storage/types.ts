@@ -10,6 +10,7 @@ export type StorageInfoVariants =
   | 'mapping'
   | 'array'
   | 'enum';
+
 export type StorageInfo = {
   variant: StorageInfoVariants;
   type: SOLIDITY_TYPES;
@@ -25,6 +26,16 @@ export type StorageInfoMapping = {
   variant: 'mapping';
   key: SOLIDITY_TYPES;
   value: SOLIDITY_TYPES | StorageInfoStruct | StorageInfoMapping;
+  pointer: StoragePointer;
+};
+export type StorageInfoArray = {
+  variant: 'array';
+  value:
+    | SOLIDITY_TYPES
+    | StorageInfoStruct
+    | StorageInfoMapping
+    | StorageInfoArray
+    | StorageInfoEnum;
   pointer: StoragePointer;
 };
 export type StorageInfoStruct = {

@@ -100,29 +100,25 @@ export function generateContractLayout(
       declaration.vType instanceof ElementaryTypeName &&
       isSolidityType(declaration.typeString)
     ) {
-      stor.appendVariableDeclaration(declaration.name, declaration.typeString);
+      stor.appendSolidityType(declaration.name, declaration.typeString);
     } else if (declaration.vType instanceof UserDefinedTypeName) {
       if (isEnum(ast, declaration.vType)) {
-        stor.appendVariableDeclaration(declaration.name, 'enum');
+        stor.appendEnum(declaration.name);
       } else {
         const structLayout = getStructLayout(
           ast,
           declaration.vType,
           stor.getLength()
         );
-        stor.appendVariableDeclaration(
-          declaration.name,
-          'struct',
-          structLayout
-        );
+        stor.appendStruct(declaration.name, structLayout);
       }
     } else if (declaration.vType instanceof Mapping) {
-      stor.appendMappingDeclaration(
+      stor.appendMapping(
         declaration.name,
         getMappingLayout(ast, declaration.vType, stor.getLength())
       );
     } else if (declaration.vType instanceof ArrayTypeName) {
-      stor.appendVariableDeclaration(declaration.name, 'array');
+      stor.appendArray(declaration.name);
     }
   }
   return stor;

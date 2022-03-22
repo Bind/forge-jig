@@ -26,7 +26,6 @@ export const handler = async (argv: Arguments<Options>): Promise<void> => {
     rootPath: projectRoot,
     processPath: process.cwd(),
   };
-  console.log(context);
   const files = glob.sync(pattern);
   for (let i = 0; i < files.length; i++) {
     let file = files[i];
