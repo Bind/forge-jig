@@ -1,6 +1,9 @@
 import { StorageLayout } from '../storage';
 
-import { isStorageInfoMapping } from '../storage/predicate';
+import {
+  isStorageInfoMapping,
+  isStorageInfoStruct,
+} from '../storage/predicate';
 
 import { FoundryContext } from '../utils/types';
 import { soliditySetMappingFunctionFromStorageInfo } from './mapping';
@@ -27,6 +30,24 @@ contract ${contractName}Jig {
     constructor(address _contractAddress){
       target = _contractAddress;
     }
+    function zero_bytes(
+      uint256 slotData,
+      uint8 length,
+      uint8 offset
+  ) internal returns (uint256) {
+      return
+          (slotData & type(uint256).max) ^
+          (((1 << (2**(length + 1))) - 1) << (2**offset));
+  }
+
+  // Must be zeroed out first
+  function set_bytes(
+      uint256 slotData,
+      uint256 value,
+      uint8 offset
+  ) internal returns (uint256) {
+      return slotData | (value << (2**offset));
+  }
     ${body}
 }`;
 }
@@ -34,10 +55,10 @@ contract ${contractName}Jig {
 export function generateJigBody(layout: StorageLayout) {
   let body = '';
   const vars = Object.keys(layout.variables);
-  vars.forEach(key => {
+  vars.forEach((key) => {
     body += solidityConstFromStorageInfo(key, layout.variables[key]);
   });
-  vars.forEach(key => {
+  vars.forEach((key) => {
     const storageInfo = layout.variables[key];
     switch (storageInfo.variant) {
       case 'simple':
@@ -57,8 +78,9 @@ export function generateJigBody(layout: StorageLayout) {
         }
         break;
       case 'struct':
-        // TODO: Implement
-        body += '';
+        if (isStorageInfoStruct(storageInfo)) {
+          body += soliditySetStructFunction(key, storageInfo);
+        }
         break;
       case 'enum':
         body += soliditySetEnumFunctionFromStorageInfo(key, storageInfo);
