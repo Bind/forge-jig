@@ -1,4 +1,3 @@
-import * as dotenv from 'dotenv';
 import {
   getContractDefinition,
   getContractDefinitions,
@@ -7,7 +6,6 @@ import {
 import { generateContractLayout } from '../layout';
 import { generateAST, compile } from '../solc';
 import { StorageLayout } from '../storage';
-dotenv.config();
 
 export async function compileContractLayout(
   file: string,
@@ -27,7 +25,7 @@ export async function compileContractLayouts(
 ): Promise<StorageLayout[]> {
   const ast = await generateAST(await compile(file));
   const contractDefinitions = getContractDefinitions(ast);
-  return contractDefinitions.map(c => {
+  return contractDefinitions.map((c) => {
     const dec = getVariableDeclarationsForContract(ast, c);
     return generateContractLayout(ast, c.name, dec);
   });

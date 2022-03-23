@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
+dotenv.config();
 import * as fs from 'fs';
 import { compileContractLayout } from '../src/ast';
 import { encoder } from '../src/utils/mapping';
-dotenv.config();
 const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 
 const files = fs.readdirSync(CONTRACT_DIR);

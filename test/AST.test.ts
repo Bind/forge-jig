@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+dotenv.config();
 import * as fs from 'fs';
 import {
   ArrayTypeName,
@@ -14,7 +15,6 @@ import { generateContractLayout } from '../src/layout';
 import { generateAST, compile } from '../src/solc';
 import { compileContractLayout } from '../src/ast';
 import { isStorageInfoStruct } from '../src/storage/predicate';
-dotenv.config();
 
 const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
 
@@ -197,10 +197,10 @@ for (let idx in files) {
         assertions[file].name
       );
       if (assertions[file].explicitSlotChecks) {
-        assertions[file].explicitSlotChecks.forEach(v => {
+        assertions[file].explicitSlotChecks.forEach((v) => {
           const storageInfo = storage.get(v.name);
           if (isStorageInfoStruct(storageInfo)) {
-            v.children!.forEach(child => {
+            v.children!.forEach((child) => {
               const childLayout = storageInfo.layout.get(child.name);
               expect(child.slot).toBe(childLayout.pointer.slot);
               expect(child.offset).toBe(childLayout.pointer.offset);
