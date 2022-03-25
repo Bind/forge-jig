@@ -13,6 +13,7 @@ import {
   soliditySetFunctionFromStorageInfo,
 } from './utils';
 import { generateJigImports } from './imports';
+import { soliditySetStructFunction } from './struct';
 
 function template(contractName: string, imports: string, body: string) {
   return `
@@ -30,24 +31,27 @@ contract ${contractName}Jig {
     constructor(address _contractAddress){
       target = _contractAddress;
     }
-    function zero_bytes(
-      uint256 slotData,
-      uint8 length,
-      uint8 offset
-  ) internal returns (uint256) {
-      return
-          (slotData & type(uint256).max) ^
-          (((1 << (2**(length + 1))) - 1) << (2**offset));
-  }
+      function clear(
+        uint256 slotData,
+        uint8 length,
+        uint8 offset
+    ) public returns (uint256) {
+        unchecked {
+            return
+                slotData &
+                (type(uint256).max ^
+                    (((1 << (8 * length)) - 1) << (offset * 8)));
+        }
+    }
 
-  // Must be zeroed out first
-  function set_bytes(
-      uint256 slotData,
-      uint256 value,
-      uint8 offset
-  ) internal returns (uint256) {
-      return slotData | (value << (2**offset));
-  }
+    // Must be zeroed out first
+    function set(
+        uint256 slotData,
+        uint256 value,
+        uint8 offset
+    ) public returns (uint256) {
+        return slotData | (value << (offset * 8));
+    }
     ${body}
 }`;
 }
