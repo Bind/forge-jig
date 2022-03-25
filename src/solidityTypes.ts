@@ -120,22 +120,22 @@ export type STRING = typeof STRING_TYPES[number];
 export type SOLIDITY_TYPES = FIXED_BYTES | INT | UINT | BOOL | ADDRESS | STRING;
 
 export function isBool(value: any): value is BOOL {
-  return !!BOOL_TYPES.find(validKey => validKey === value);
+  return !!BOOL_TYPES.find((validKey) => validKey === value);
 }
 export function isAddress(value: any): value is ADDRESS {
-  return !!ADDRESS_TYPES.find(validKey => validKey === value);
+  return !!ADDRESS_TYPES.find((validKey) => validKey === value);
 }
 export function isStringType(value: any): value is STRING {
-  return !!STRING_TYPES.find(validKey => validKey === value);
+  return !!STRING_TYPES.find((validKey) => validKey === value);
 }
 export function isUint(value: any): value is UINT {
-  return !!UINT_TYPES.find(validKey => validKey === value);
+  return !!UINT_TYPES.find((validKey) => validKey === value);
 }
 export function isInt(value: any): value is INT {
-  return !!INT_TYPES.find(validKey => validKey === value);
+  return !!INT_TYPES.find((validKey) => validKey === value);
 }
 export function isFixedBytes(value: any): value is FIXED_BYTES {
-  return !!FIXED_BYTE_TYPES.find(validKey => validKey === value);
+  return !!FIXED_BYTE_TYPES.find((validKey) => validKey === value);
 }
 export function isSolidityType(value: any): value is SOLIDITY_TYPES {
   return (
@@ -177,18 +177,23 @@ export function getTypeFunctionSignature(t: SOLIDITY_TYPES | any) {
   }
 }
 
-export function getDataToStoreCasting(t: SOLIDITY_TYPES | any) {
+export function getDataToStoreCasting(
+  t: SOLIDITY_TYPES | any,
+  varName: string = 'value'
+) {
   if (!isSolidityType(t)) {
     throw new Error(`${JSON.stringify(t)} not handled in casting`);
   } else if (isStringType(t)) {
-    return `bytes32(bytes(value))`;
+    return `bytes32(bytes(${varName}))`;
   } else if (isUint(t)) {
-    return `bytes32(uint256(value))`;
+    return `bytes32(uint256(${varName}))`;
   } else if (isInt(t)) {
-    return `bytes32(int256(value))`;
+    return `bytes32(int256(${varName}))`;
   } else if (isAddress(t)) {
-    return `bytes32(uint256(uint160(value)) << 96)`;
+    return `bytes32(uint256(uint160(${varName})) << 96)`;
+  } else if (isBool(t)) {
+    return `bytes32(uint256(${varName} ? 1: 0))`;
   } else {
-    return 'bytes32(value)';
+    return `bytes32(${varName})`;
   }
 }
