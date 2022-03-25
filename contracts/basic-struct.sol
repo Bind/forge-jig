@@ -7,5 +7,10 @@ struct Initialized {
 }
 
 contract BasicStruct {
-    Initialized init;
+    Initialized public init;
+
+    constructor() {
+        init.initialized = true;
+        init.owner = address(uint160(type(uint256).max));
+    }
 }

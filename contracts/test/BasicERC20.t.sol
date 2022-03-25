@@ -4,22 +4,22 @@ pragma solidity >0.8.0;
 import 'ds-test/test.sol';
 import 'forge-std/stdlib.sol';
 import 'forge-std/Vm.sol';
-import 'contracts/jig/ERC20Jig.sol';
+import 'contracts/jig/BasicERC20Jig.sol';
 import 'contracts/basic-erc20.sol';
 import './utils/console.sol';
 
 contract BasicERC20JigTest is DSTest {
     using stdStorage for StdStorage;
-    Basic b;
-    BasicJig jig;
+    BasicERC20 b;
+    BasicERC20Jig jig;
     StdStorage stdstore;
 
     Vm public constant vm =
         Vm(address(bytes20(uint160(uint256(keccak256('hevm cheat code'))))));
 
     function setUp() public {
-        b = new Basic();
-        jig = new BasicJig(address(b));
+        b = new BasicERC20();
+        jig = new BasicERC20Jig(address(b));
     }
 
     function testJigBasic() public {

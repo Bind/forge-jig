@@ -17,7 +17,7 @@ const context: FoundryContext = {
   rootPath: projectRoot,
   processPath: process.cwd(),
 };
-const isolate: string[] = ['basic-struct.sol'];
+const isolate: string[] = [];
 for (let idx in files) {
   let file = files[idx] as keyof typeof assertions;
   if (isolate.length > 0 && !isolate.includes(file as string)) continue;

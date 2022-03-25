@@ -6,6 +6,30 @@ library console {
     address constant CONSOLE_ADDRESS =
         address(0x000000000000000000636F6e736F6c652e6c6f67);
 
+    function bprint(uint256 n) public {
+        // revert on out of range input
+        bytes memory output = new bytes(32);
+
+        for (uint8 i = 0; i < 32; i++) {
+            output[31 - i] = (n % 2 == 1) ? bytes1('1') : bytes1('0');
+            n /= 2;
+        }
+
+        console.log(string(output));
+    }
+
+    function bprint(bytes32 b) public {
+        bprint(uint256(b));
+    }
+
+    function print(uint256 number) public {
+        logBytes32(bytes32(number));
+    }
+
+    function print(bytes32 b) public {
+        logBytes32(b);
+    }
+
     function _sendLogPayload(bytes memory payload) private view {
         uint256 payloadLength = payload.length;
         address consoleAddress = CONSOLE_ADDRESS;
