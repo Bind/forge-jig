@@ -14,8 +14,8 @@ struct Yo {
 }
 
 contract BasicStruct2 {
-    Hello greetings;
-    Yo ack;
+    Hello public greetings;
+    Yo public ack;
 
     constructor() {
         greetings.hello = 11;

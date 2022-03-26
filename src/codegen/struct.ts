@@ -11,12 +11,13 @@ import {
 export function overwriteInfo(
   slot_name: string,
   var_name: string,
-  info: StorageInfo
+  info: StorageInfo,
+  offset: number
 ) {
   return `
           ${generateClearCall(info)}
           ${generateMaskCall(var_name, info)}
-          ${generateStoreCall(slot_name)}
+          ${generateStoreCall(slot_name, offset)}
   `;
 }
 
@@ -24,6 +25,7 @@ export function soliditySetStructFunction(
   name: string,
   info: StorageInfoStruct
 ) {
+  let prevSlot = info.layout.slotRoot;
   return `
         function set_${name}(${info.layout.name} memory value) public{
           ${generateLoadCall(name)}
@@ -34,7 +36,22 @@ export function soliditySetStructFunction(
             .map((key: string) => {
               const storage = info.layout.variables[key];
               if (isStorageInfo(storage)) {
-                return overwriteInfo(name, key, storage);
+                let calls = '';
+                if (storage.pointer.slot > prevSlot) {
+                  prevSlot = storage.pointer.slot;
+                  calls += generateLoadCall(
+                    name,
+                    prevSlot - info.layout.slotRoot,
+                    false
+                  );
+                }
+                calls += overwriteInfo(
+                  name,
+                  key,
+                  storage,
+                  prevSlot - info.layout.slotRoot
+                );
+                return calls;
               } else {
                 return '';
               }

@@ -11,9 +11,9 @@ export function solidityConstSlotOffset(name: string, info: StorageInfos) {
 }
 
 export function solidityConstFromStorageInfo(name: string, info: StorageInfos) {
-  return `bytes32 ${name}_storage_slot = bytes32(uint256(${
-    info.pointer.slot
-  }));\n${info.pointer.offset > 0 ? solidityConstSlotOffset(name, info) : ''}`;
+  return `uint256 ${name}_storage_slot = uint256(${info.pointer.slot});\n${
+    info.pointer.offset > 0 ? solidityConstSlotOffset(name, info) : ''
+  }`;
 }
 export function soliditySetFunctionFromStorageInfo(
   name: string,
@@ -21,14 +21,20 @@ export function soliditySetFunctionFromStorageInfo(
 ) {
   return `
       function ${name}(${getTypeFunctionSignature(info.type)} value) public {
-          vm.store(target, ${name}_storage_slot, ${getDataToStoreCasting(
+          vm.store(target, bytes32(${name}_storage_slot), ${getDataToStoreCasting(
     info.type
   )});
       }
       `;
 }
-export function generateLoadCall(name: string) {
-  return `uint256 raw_slot = uint256(vm.load(target, ${name}_storage_slot));`;
+export function generateLoadCall(
+  name: string,
+  offset: number = 0,
+  allocate: boolean = true
+) {
+  return `${
+    allocate ? 'uint256 ' : ''
+  }raw_slot = uint256(vm.load(target, bytes32(${name}_storage_slot + uint256(${offset}))));`;
 }
 export function generateClearCall(info: StorageInfo) {
   return `raw_slot = clear(raw_slot, ${getByteSizeFromType(info.type)}, ${
@@ -42,8 +48,8 @@ export function generateMaskCall(name: string, info: StorageInfo) {
   )}), ${info.pointer.offset});`;
 }
 
-export function generateStoreCall(name: string) {
-  return `vm.store(target, ${name}_storage_slot, bytes32(raw_slot));`;
+export function generateStoreCall(name: string, offset: number = 0) {
+  return `vm.store(target, bytes32(${name}_storage_slot + uint256(${offset})), bytes32(raw_slot));`;
 }
 
 export function soliditySetFunctionFromStorageInfoWithOffset(
@@ -69,7 +75,7 @@ export function soliditySetEnumFunctionFromStorageInfo(
   } else {
     return `
       function ${name}(uint8 value) public {
-          vm.store(target, ${name}_storage_slot, bytes32(uint256(value)));
+          vm.store(target, bytes32(${name}_storage_slot), bytes32(uint256(value)));
       }
       `;
   }
