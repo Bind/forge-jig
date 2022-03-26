@@ -15,13 +15,14 @@ import { isEnum, isStruct } from './ast/predicate';
 import { StorageLayout } from './storage';
 import { MappingPointer } from './storage/mapping';
 import { isSolidityType, SOLIDITY_TYPES } from './solidityTypes';
+import { StorageInfoArray } from './storage/types';
 
 export function getStructLayout(
   ast: SourceUnit[],
   structDeclaration: UserDefinedTypeName,
   rootSlot: number
 ): StorageLayout {
-  const selector: ASTNodeSelector = node =>
+  const selector: ASTNodeSelector = (node) =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
@@ -65,7 +66,7 @@ export function getMappingLayout(
     isStruct(ast, valueType)
   ) {
     return {
-      slot: 0,
+      slot: rootSlot,
       key: keyTypeString as SOLIDITY_TYPES,
       value: {
         variant: 'struct',
@@ -79,6 +80,40 @@ export function getMappingLayout(
   } else {
     console.log(valueType);
     throw new Error(`${keyTypeString} or ${valueTypeString} is not handled `);
+  }
+}
+export function generateArrayLayout(
+  ast: SourceUnit[],
+  arrayDeclaration: ArrayTypeName,
+  rootSlot: number
+): StorageInfoArray {
+  const valueType = arrayDeclaration.vBaseType;
+  const valueTypeString = arrayDeclaration.vBaseType.typeString;
+  if (isSolidityType(valueTypeString)) {
+    return {
+      variant: 'array',
+      pointer: { slot: rootSlot, offset: 0 },
+      value: valueTypeString,
+    };
+  } else if (
+    valueType instanceof UserDefinedTypeName &&
+    isStruct(ast, valueType)
+  ) {
+    return {
+      variant: 'array',
+      pointer: { slot: rootSlot, offset: 0 },
+      value: {
+        variant: 'struct',
+        layout: getStructLayout(ast, valueType, rootSlot),
+        pointer: {
+          slot: rootSlot,
+          offset: 0,
+        },
+      },
+    };
+  } else {
+    console.log(valueType);
+    throw new Error(` ${valueTypeString} is not handled for array layouts`);
   }
 }
 
@@ -118,7 +153,12 @@ export function generateContractLayout(
         getMappingLayout(ast, declaration.vType, stor.getLength())
       );
     } else if (declaration.vType instanceof ArrayTypeName) {
-      stor.appendArray(declaration.name);
+      console.log(declaration);
+
+      stor.appendArray(
+        declaration.name,
+        generateArrayLayout(ast, declaration.vType, stor.getLength())
+      );
     }
   }
   return stor;

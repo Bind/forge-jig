@@ -43,4 +43,8 @@ export type StorageInfoStruct = {
   layout: StorageLayout;
   pointer: StoragePointer; // Slot Number
 };
-export type StorageInfos = StorageInfo | StorageInfoMapping | StorageInfoStruct;
+export type StorageInfos =
+  | StorageInfo
+  | StorageInfoMapping
+  | StorageInfoStruct
+  | StorageInfoArray;

@@ -1,5 +1,10 @@
 import { MappingPointer, mappingPointerToStorage } from './mapping';
-import { StorageInfo, StorageInfos, StoragePointer } from './types';
+import {
+  StorageInfo,
+  StorageInfoArray,
+  StorageInfos,
+  StoragePointer,
+} from './types';
 import { getByteSizeFromType, SOLIDITY_TYPES } from '../solidityTypes';
 
 export class StorageLayout {
@@ -114,19 +119,16 @@ export class StorageLayout {
    * Append an Array Variable to Storage
    * @param name
    */
-  appendArray(name: string) {
+  appendArray(name: string, layout: StorageInfoArray) {
     // TODO
     const slot = this.nextEmptySlot();
     const pointer = {
       offset: 0,
       slot,
     };
-    this.variables[name] = {
-      variant: 'array',
-      type: 'uint256',
-      size: 32,
-      pointer,
-    };
+    layout.pointer = pointer;
+
+    this.variables[name] = layout;
     this.insertSlots(1);
   }
 

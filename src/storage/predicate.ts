@@ -3,6 +3,7 @@ import { ArrayPointer } from './array';
 import { MappingPointer } from './mapping';
 import {
   StorageInfo,
+  StorageInfoArray,
   StorageInfoMapping,
   StorageInfos,
   StorageInfoStruct,
@@ -13,6 +14,9 @@ export function isStorageInfoStruct(value: any): value is StorageInfoStruct {
 }
 export function isStorageInfoMapping(value: any): value is StorageInfoMapping {
   return (value as StorageInfoMapping).variant === 'mapping';
+}
+export function isStorageInfoArray(value: any): value is StorageInfoArray {
+  return (value as StorageInfoArray).variant === 'array';
 }
 export function isStorageInfo(value: StorageInfos): value is StorageInfo {
   return isSolidityType((value as StorageInfo).type);
