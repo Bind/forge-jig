@@ -34,8 +34,9 @@ export function generateLoadCall(
 ) {
   return `${
     allocate ? 'uint256 ' : ''
-  }raw_slot = uint256(vm.load(target, bytes32(${name}_storage_slot + uint256(${offset}))));`;
+  }raw_slot = uint256(vm.load(target, bytes32(${name} + uint256(${offset}))));`;
 }
+
 export function generateClearCall(info: StorageInfo) {
   return `raw_slot = clear(raw_slot, ${getByteSizeFromType(info.type)}, ${
     info.pointer.offset
@@ -49,7 +50,7 @@ export function generateMaskCall(name: string, info: StorageInfo) {
 }
 
 export function generateStoreCall(name: string, offset: number = 0) {
-  return `vm.store(target, bytes32(${name}_storage_slot + uint256(${offset})), bytes32(raw_slot));`;
+  return `vm.store(target, bytes32(${name} + uint256(${offset})), bytes32(raw_slot));`;
 }
 
 export function soliditySetFunctionFromStorageInfoWithOffset(
@@ -58,10 +59,10 @@ export function soliditySetFunctionFromStorageInfoWithOffset(
 ) {
   return `
       function ${name}(${getTypeFunctionSignature(info.type)} value) public {
-          ${generateLoadCall(name)}
+          ${generateLoadCall(name + '_storage_slot')}
           ${generateClearCall(info)}
           ${generateMaskCall(name, info)}
-          ${generateStoreCall(name)}
+          ${generateStoreCall(name + '_storage_slot')}
 
       }
       `;

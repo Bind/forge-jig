@@ -1,6 +1,10 @@
 import { StorageLayout } from '../storage';
-import { isStorageInfoStruct } from '../storage/predicate';
+import {
+  isStorageInfoMapping,
+  isStorageInfoStruct,
+} from '../storage/predicate';
 import { FoundryContext } from '../utils/types';
+import { getMappingValue } from './mapping';
 
 export function solidityImportFromStorage(
   layout: StorageLayout,
@@ -18,10 +22,15 @@ export function generateJigImports(
 ) {
   let importsContent = '';
   const vars = Object.keys(layout.variables);
-  vars.forEach(key => {
+  vars.forEach((key) => {
     const storageInfo = layout.variables[key];
     if (isStorageInfoStruct(storageInfo)) {
       importsContent += solidityImportFromStorage(storageInfo.layout, context);
+    } else if (isStorageInfoMapping(storageInfo)) {
+      const value = getMappingValue(storageInfo);
+      if (isStorageInfoStruct(value)) {
+        importsContent += solidityImportFromStorage(value.layout, context);
+      }
     }
   });
   return importsContent;

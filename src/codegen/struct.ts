@@ -28,7 +28,7 @@ export function soliditySetStructFunction(
   let prevSlot = info.layout.slotRoot;
   return `
         function set_${name}(${info.layout.name} memory value) public{
-          ${generateLoadCall(name)}
+          ${generateLoadCall(name + '_storage_slot')}
           ${Object.keys(info.layout.variables)
             .filter((key: string) => {
               return isStorageInfo(info.layout.variables[key]);
@@ -40,13 +40,13 @@ export function soliditySetStructFunction(
                 if (storage.pointer.slot > prevSlot) {
                   prevSlot = storage.pointer.slot;
                   calls += generateLoadCall(
-                    name,
+                    name + '_storage_slot',
                     prevSlot - info.layout.slotRoot,
                     false
                   );
                 }
                 calls += overwriteInfo(
-                  name,
+                  name + '_storage_slot',
                   key,
                   storage,
                   prevSlot - info.layout.slotRoot

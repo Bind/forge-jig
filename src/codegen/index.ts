@@ -36,6 +36,9 @@ contract ${contractName}Jig {
         uint8 length,
         uint8 offset
     ) public returns (uint256) {
+      if (length == 32){
+        return uint256(0);
+      }
         unchecked {
             return
                 slotData &

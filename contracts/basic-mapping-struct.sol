@@ -8,7 +8,9 @@ struct Entity {
 }
 
 contract BasicMappingStruct {
-    mapping(uint256 => Entity) simple_mapping;
+    mapping(uint256 => Entity) public simple_mapping;
 
-    constructor() {}
+    constructor() {
+        simple_mapping[1] = Entity(1, 2, 3);
+    }
 }
