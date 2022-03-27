@@ -1,6 +1,7 @@
 import { StorageLayout } from '../storage';
 
 import {
+  isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
 } from '../storage/predicate';
@@ -14,6 +15,7 @@ import {
 } from './utils';
 import { generateJigImports } from './imports';
 import { soliditySetStructFunction } from './struct';
+import { soliditySetArrayFunctionFromStorageInfo } from './array';
 
 function template(contractName: string, imports: string, body: string) {
   return `
@@ -72,8 +74,9 @@ export function generateJigBody(layout: StorageLayout) {
         body += soliditySetFunctionFromStorageInfo(key, storageInfo);
         break;
       case 'array':
-        // TODO: Implement
-        body += '';
+        if (isStorageInfoArray(storageInfo)) {
+          body += soliditySetArrayFunctionFromStorageInfo(key, storageInfo);
+        }
         break;
       case 'mapping':
         if (isStorageInfoMapping(storageInfo)) {

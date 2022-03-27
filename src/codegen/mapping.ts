@@ -18,9 +18,7 @@ export function soliditySetMappingFunctionFromStorageInfo(
   info: StorageInfoMapping
 ) {
   const mappingValue = getMappingValue(info);
-  console.log(info);
   const keys = getMappingKeys(info);
-  console.log(keys);
 
   const args = keys.map((k, i) => `${getTypeFunctionSignature(k)} key${i}`);
   let slotEncoding = '';
