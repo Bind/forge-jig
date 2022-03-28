@@ -37,7 +37,7 @@ contract ${contractName}Jig {
         uint256 slotData,
         uint8 length,
         uint8 offset
-    ) public returns (uint256) {
+    ) public pure returns (uint256) {
       if (length == 32){
         return uint256(0);
       }
@@ -54,7 +54,7 @@ contract ${contractName}Jig {
         uint256 slotData,
         uint256 value,
         uint8 offset
-    ) public returns (uint256) {
+    ) public pure returns (uint256) {
         return slotData | (value << (offset * 8));
     }
     ${body}

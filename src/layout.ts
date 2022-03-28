@@ -111,6 +111,12 @@ export function generateArrayLayout(
         },
       },
     };
+  } else if (valueType instanceof ArrayTypeName) {
+    return {
+      variant: 'array',
+      pointer: { slot: rootSlot, offset: 0 },
+      value: generateArrayLayout(ast, valueType, rootSlot),
+    };
   } else {
     console.log(valueType);
     throw new Error(` ${valueTypeString} is not handled for array layouts`);

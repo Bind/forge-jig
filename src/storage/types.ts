@@ -33,7 +33,6 @@ export type StorageInfoArray = {
   value:
     | SOLIDITY_TYPES
     | StorageInfoStruct
-    | StorageInfoMapping
     | StorageInfoArray
     | StorageInfoEnum;
   pointer: StoragePointer;
