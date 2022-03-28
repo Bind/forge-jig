@@ -1,6 +1,5 @@
 import {
   getByteSizeFromType,
-  getDataToStoreCasting,
   getTypeFunctionSignature,
   isSolidityType,
   SOLIDITY_TYPES,
@@ -17,13 +16,21 @@ export function soliditySetArrayFunctionFromStorageInfo(
       info.value
     )} value) public {
         //check array length
-        uint256 arrayLength = uint256(vm.load(target, bytes32(key)));  
-     uint8 byteSize = ${getByteSizeFromType(info.value as SOLIDITY_TYPES)};
-     if (arrayLength < key){
-       vm.store(target, bytes32(${name}_storage_slot), bytes32(key));
-     }
-        uint256 slot = ${slotEncoding};
-        vm.store(target, bytes32(slot), ${getDataToStoreCasting(info.value)});
+        uint8 offset = uint8(key * ${getByteSizeFromType(
+          info.value as SOLIDITY_TYPES
+        )} % 32);
+        uint8 slotOffset = uint8((key * ${getByteSizeFromType(
+          info.value as SOLIDITY_TYPES
+        )} - offset) / 32);
+        uint256 arrayLength = uint256(vm.load(target, bytes32(${name}_storage_slot)));  
+        if (arrayLength < key){
+          vm.store(target, bytes32(${name}_storage_slot), bytes32(key));
+        }
+        uint256 slot = ${slotEncoding} + slotOffset;
+        uint256 raw_slot = uint256(vm.load(target, bytes32(slot)));
+        raw_slot = clear(raw_slot, ${getByteSizeFromType(info.value)}, offset);
+        raw_slot = set(raw_slot, value, offset);
+        vm.store(target, bytes32(slot), bytes32(raw_slot));
     }
     `;
   } else {
