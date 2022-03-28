@@ -4,14 +4,9 @@ import {
   isSolidityType,
   SOLIDITY_TYPES,
 } from '../solidityTypes';
-import {
-  isStorageInfo,
-  isStorageInfoArray,
-  isStorageInfoStruct,
-} from '../storage/predicate';
+import { isStorageInfoArray, isStorageInfoStruct } from '../storage/predicate';
 import { StorageInfoArray, StorageInfoStruct } from '../storage/types';
-import { overwriteInfo } from './struct';
-import { generateLoadCall } from './utils';
+import { writeStructToSlot } from './struct';
 
 export function getArrayKeys(info: StorageInfoArray): SOLIDITY_TYPES[] {
   const value = info.value;
@@ -63,6 +58,7 @@ export function soliditySetArrayFunctionFromStorageInfo(
       slot_encoding = `keccak256(abi.encode(${slot_encoding} + key${i - 1}))`;
     }
   });
+
   let length_slot_encoding = '';
   keys.forEach((_, i) => {
     if (length_slot_encoding === '') {
@@ -105,8 +101,6 @@ export function soliditySetArrayFunctionFromStorageInfo(
     }
     `;
   } else if (isStorageInfoStruct(value)) {
-    // Handle struct in array;
-    console.log(info);
     return arraySetterBodyStruct(name, args, slot_encoding, value);
   } else {
     throw new Error(`${info} not handled in array codegen`);
@@ -116,15 +110,14 @@ export function soliditySetArrayFunctionFromStorageInfo(
 export function arraySetterBodyStruct(
   name: string,
   args: string[],
-  slotEncoding: string,
-  final_value: StorageInfoStruct
+  slot_encoding: string,
+  struct: StorageInfoStruct
 ) {
-  let prevSlot = final_value.layout.slotRoot;
   return `
         function set_${name}(${args.join(', ')},${
-    final_value.layout.name
+    struct.layout.name
   } memory value) public{
-          uint256 struct_size = ${final_value.layout.getLength()};
+          uint256 struct_size = ${struct.layout.getLength()};
           uint256 array_length = uint256(
             vm.load(target, bytes32(simple_array_storage_slot))
         );
@@ -136,36 +129,8 @@ export function arraySetterBodyStruct(
                 bytes32(key${args.length - 1} + 1)
             );
         }
-          uint256 slot = ${slotEncoding} + struct_size * key${args.length - 1};
-          ${generateLoadCall('slot')}
-          ${Object.keys(final_value.layout.variables)
-            .filter((key: string) => {
-              return isStorageInfo(final_value.layout.variables[key]);
-            })
-            .map((key: string) => {
-              const storage = final_value.layout.variables[key];
-              if (isStorageInfo(storage)) {
-                let calls = '';
-                if (storage.pointer.slot > prevSlot) {
-                  prevSlot = storage.pointer.slot;
-                  calls += generateLoadCall(
-                    'slot',
-                    prevSlot - final_value.layout.slotRoot,
-                    false
-                  );
-                }
-                calls += overwriteInfo(
-                  'slot',
-                  key,
-                  storage,
-                  prevSlot - final_value.layout.slotRoot
-                );
-                return calls;
-              } else {
-                return '';
-              }
-            })
-            .join('\n')}
+          uint256 slot = ${slot_encoding} + struct_size * key${args.length - 1};
+          ${writeStructToSlot('slot', 'value', struct)}
         }
         `;
 }

@@ -5,40 +5,33 @@ import {
   SOLIDITY_TYPES,
 } from '../solidityTypes';
 import {
-  isStorageInfo,
   isStorageInfoMapping,
   isStorageInfoStruct,
 } from '../storage/predicate';
 import { StorageInfoMapping, StorageInfoStruct } from '../storage/types';
-import { overwriteInfo } from './struct';
-import { generateLoadCall } from './utils';
+import { writeStructToSlot } from './struct';
 
 export function soliditySetMappingFunctionFromStorageInfo(
   name: string,
-  info: StorageInfoMapping
+  mapping: StorageInfoMapping
 ) {
-  const mappingValue = getMappingValue(info);
-  const keys = getMappingKeys(info);
+  const value = getMappingValue(mapping);
+  const keys = getMappingKeys(mapping);
 
   const args = keys.map((k, i) => `${getTypeFunctionSignature(k)} key${i}`);
-  let slotEncoding = '';
+  let slot_encoding = '';
   keys.forEach((_, i) => {
-    if (slotEncoding === '') {
-      slotEncoding = `keccak256(abi.encode(key${i}, bytes32(${name}_storage_slot)))`;
+    if (slot_encoding === '') {
+      slot_encoding = `keccak256(abi.encode(key${i}, bytes32(${name}_storage_slot)))`;
     } else {
-      slotEncoding = `keccak256(abi.encode(key${i}, ${slotEncoding}))`;
+      slot_encoding = `keccak256(abi.encode(key${i}, ${slot_encoding}))`;
     }
   });
-  slotEncoding = `uint256(${slotEncoding})`;
-  if (isSolidityType(mappingValue)) {
-    return mappingSetterBodySolidityType(
-      name,
-      args,
-      slotEncoding,
-      mappingValue
-    );
+  slot_encoding = `uint256(${slot_encoding})`;
+  if (isSolidityType(value)) {
+    return mappingSetterBodySolidityType(name, args, slot_encoding, value);
   } else {
-    return mappingSetterBodyStruct(name, args, slotEncoding, mappingValue);
+    return mappingSetterBodyStruct(name, args, slot_encoding, value);
   }
 }
 
@@ -73,15 +66,15 @@ export function getMappingValue(
 export function mappingSetterBodySolidityType(
   name: string,
   args: string[],
-  slotEncoding: string,
-  final_value: SOLIDITY_TYPES
+  slot_encoding: string,
+  value: SOLIDITY_TYPES
 ) {
   return `
   function ${name}(${args.join(', ')}, ${getTypeFunctionSignature(
-    final_value
+    value
   )} value) public {
-      uint256 slot = ${slotEncoding};
-      vm.store(target, bytes32(slot), ${getDataToStoreCasting(final_value)});
+      uint256 slot = ${slot_encoding};
+      vm.store(target, bytes32(slot), ${getDataToStoreCasting(value)});
   }
   `;
 }
@@ -89,44 +82,15 @@ export function mappingSetterBodySolidityType(
 export function mappingSetterBodyStruct(
   name: string,
   args: string[],
-  slotEncoding: string,
-  final_value: StorageInfoStruct
+  slot_encoding: string,
+  struct: StorageInfoStruct
 ) {
-  let prevSlot = final_value.layout.slotRoot;
   return `
         function set_${name}(${args.join(', ')},${
-    final_value.layout.name
+    struct.layout.name
   } memory value) public{
-          uint256 slot = ${slotEncoding};
-          ${generateLoadCall('slot')}
-          ${Object.keys(final_value.layout.variables)
-            .filter((key: string) => {
-              return isStorageInfo(final_value.layout.variables[key]);
-            })
-            .map((key: string) => {
-              const storage = final_value.layout.variables[key];
-              if (isStorageInfo(storage)) {
-                let calls = '';
-                if (storage.pointer.slot > prevSlot) {
-                  prevSlot = storage.pointer.slot;
-                  calls += generateLoadCall(
-                    'slot',
-                    prevSlot - final_value.layout.slotRoot,
-                    false
-                  );
-                }
-                calls += overwriteInfo(
-                  'slot',
-                  key,
-                  storage,
-                  prevSlot - final_value.layout.slotRoot
-                );
-                return calls;
-              } else {
-                return '';
-              }
-            })
-            .join('\n')}
+          uint256 slot = ${slot_encoding};
+        ${writeStructToSlot('slot', 'value', struct)}
         }
         `;
 }

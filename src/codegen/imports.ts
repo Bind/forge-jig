@@ -24,7 +24,7 @@ export function generateJigImports(
 ) {
   let importsContent = '';
   const vars = Object.keys(layout.variables);
-  vars.forEach((key) => {
+  vars.forEach(key => {
     const storageInfo = layout.variables[key];
     if (isStorageInfoStruct(storageInfo)) {
       importsContent += solidityImportFromStorage(storageInfo.layout, context);

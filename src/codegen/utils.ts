@@ -42,10 +42,14 @@ export function generateClearCall(info: StorageInfo) {
     info.pointer.offset
   });`;
 }
-export function generateMaskCall(name: string, info: StorageInfo) {
+export function generateMaskCall(
+  name: string,
+  info: StorageInfo,
+  struct_declaration: string = 'value'
+) {
   return `raw_slot = set(raw_slot, uint256(${getDataToStoreCasting(
     info.type,
-    `value.${name}`
+    `${struct_declaration}.${name}`
   )}), ${info.pointer.offset});`;
 }
 
