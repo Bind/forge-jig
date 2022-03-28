@@ -31,4 +31,14 @@ contract BasicArrayArrayJigTest is DSTest {
         assert(b.simple_array(0, 1) == 10);
         assert(b.simple_array(0, 2) == 3);
     }
+
+    // TODO: Need to check for length of each nested array
+    // function testArrayArrayJigOOR() public {
+    //     jig.simple_array(1000, 0, 10);
+    //     assert(b.simple_array(1000, 0) == 10);
+    //     jig.simple_array(1000, 1000, 10);
+    //     assert(b.simple_array(1000, 1000) == 10);
+    //     jig.simple_array(0, 1000, 10);
+    //     assert(b.simple_array(0, 1000) == 10);
+    // }
 }

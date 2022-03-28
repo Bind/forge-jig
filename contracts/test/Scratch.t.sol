@@ -6,7 +6,10 @@ import 'forge-std/Vm.sol';
 import 'ds-test/test.sol';
 
 contract ScratchJigTest is DSTest {
+    using stdStorage for StdStorage;
     address target;
+    StdStorage stdstore;
+
     Vm public constant vm =
         Vm(address(bytes20(uint160(uint256(keccak256('hevm cheat code'))))));
 

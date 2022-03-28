@@ -48,4 +48,15 @@ contract BasicArraySmallJigTest is DSTest {
         jig.simple_array(1, 10);
         assert(b.simple_array(1) == 10);
     }
+
+    function testArraySmallJigOOR() public {
+        uint8 first = b.simple_array(uint8(0));
+        uint8 second = b.simple_array(uint8(1));
+        uint8 last = b.simple_array(uint8(2));
+        assert(first == 3);
+        assert(second == 2);
+        assert(last == 1);
+        jig.simple_array(1000, 10);
+        assert(b.simple_array(1000) == 10);
+    }
 }
