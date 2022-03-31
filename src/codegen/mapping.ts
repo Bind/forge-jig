@@ -1,3 +1,4 @@
+import { STORAGE_SLOT } from '../constants';
 import {
   getDataToStoreCasting,
   getTypeFunctionSignature,
@@ -27,7 +28,7 @@ export function soliditySetMappingFunctionFromStorageInfo(
   let slot_encoding = '';
   keys.forEach((_, i) => {
     if (slot_encoding === '') {
-      slot_encoding = `keccak256(abi.encode(key${i}, bytes32(${name}_storage_slot)))`;
+      slot_encoding = `keccak256(abi.encode(key${i}, bytes32(${name}${STORAGE_SLOT})))`;
     } else {
       slot_encoding = `keccak256(abi.encode(key${i}, ${slot_encoding}))`;
     }
@@ -88,7 +89,7 @@ export function mappingSetterBodySolidityType(
     value
   )} value) public {
       uint256 slot = ${slot_encoding};
-      vm.store(target, bytes32(slot), ${getDataToStoreCasting(value)});
+      VM.store(target, bytes32(slot), ${getDataToStoreCasting(value)});
   }
   `;
 }

@@ -1,5 +1,4 @@
-// import { getTypeFunctionSignature } from '../solidityTypes';
-import { SLOT_CONTENT } from '../constants';
+import { SLOT_CONTENT, STORAGE_SLOT } from '../constants';
 import {
   isStorageInfo,
   isStorageInfoArray,
@@ -34,7 +33,7 @@ export function soliditySetStructFunction(
 ) {
   return `
         function ${name}(${info.layout.name} memory value) public{
-          ${writeStructToSlot(name + '_storage_slot', 'value', info)}
+          ${writeStructToSlot(name + STORAGE_SLOT, 'value', info)}
         }
         `;
 }
@@ -77,7 +76,7 @@ export function writeStructToSlot(
         return calls;
       } else if (isStorageInfoStruct(storage)) {
         //probably need to bump slot here
-        let slot_name = ` ${key}_storage_slot`;
+        let slot_name = ` ${key}${STORAGE_SLOT}`;
         prevSlot = storage.pointer.slot;
         let calls = `uint256 ${slot_name} = ${slot_declaration} + uint256(${
           prevSlot - struct.layout.slotRoot
@@ -92,7 +91,7 @@ export function writeStructToSlot(
 
         return calls;
       } else if (isStorageInfoArray(storage)) {
-        let slot_name = ` ${key}_storage_slot`;
+        let slot_name = ` ${key}${STORAGE_SLOT}`;
         prevSlot = storage.pointer.slot;
         let calls = `uint256 ${slot_name} = ${slot_declaration} + uint256(${
           prevSlot - struct.layout.slotRoot

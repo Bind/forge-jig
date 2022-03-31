@@ -4,13 +4,14 @@ import {
   ASTNodeSelector,
   ElementaryTypeName,
   Mapping,
+  PragmaDirective,
   SourceUnit,
   StructDefinition,
   UserDefinedTypeName,
   VariableDeclaration,
 } from 'solc-typed-ast';
 import * as path from 'path';
-import { getBySelector, getParentSourceUnit } from './ast/find';
+import { getBySelector, getParentSourceUnit, getPragma } from './ast/find';
 import { isEnum, isStruct } from './ast/predicate';
 import { StorageLayout } from './storage';
 import { MappingPointer } from './storage/mapping';
@@ -133,13 +134,23 @@ export function generateArrayLayout(
   }
 }
 
+function toPragmaString(node: PragmaDirective) {
+  return `pragma ${node.vIdentifier} ${node.vValue};`;
+}
+
 export function generateContractLayout(
   ast: SourceUnit[],
   storageName: string,
   declarations: readonly ASTNode[],
   rootSlot: number = 0
 ): StorageLayout {
-  const stor = new StorageLayout(storageName, rootSlot);
+  console.log();
+  const stor = new StorageLayout(
+    storageName,
+    rootSlot,
+    toPragmaString(getPragma(ast[0]))
+  );
+
   for (let idx in declarations) {
     let declaration = declarations[idx];
     if (!(declaration instanceof VariableDeclaration)) {

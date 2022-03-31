@@ -1,4 +1,4 @@
-import { SLOT_CONTENT } from '../constants';
+import { ARRAY_LENGTH, SLOT_CONTENT, STORAGE_SLOT } from '../constants';
 import {
   getByteSizeFromType,
   getDataToStoreCasting,
@@ -44,9 +44,9 @@ export function getArrayValue(
 }
 
 // export function checkArrayLength(name: string, keys: SOLIDITY_TYPES[]) {
-//   return ` uint256 arrayLength = uint256(vm.load(target, bytes32(${name}_storage_slot)));
+//   return ` uint256 arrayLength = uint256(vm.load(target, bytes32(${name}${STORAGE_SLOT})));
 //   if (arrayLength < key){
-//     vm.store(target, bytes32(${name}_storage_slot), bytes32(key));
+//     vm.store(target, bytes32(${name}${STORAGE_SLOT}), bytes32(key));
 //   }`;
 // }
 
@@ -61,7 +61,7 @@ export function soliditySetArrayFunctionFromStorageInfo(
 
   keys.forEach((_, i) => {
     if (slot_encoding === '') {
-      slot_encoding = `(uint256(keccak256(abi.encode(${name}_storage_slot))))`;
+      slot_encoding = `(uint256(keccak256(abi.encode(${name}${STORAGE_SLOT}))))`;
     } else if (i < keys.length) {
       slot_encoding = `keccak256(abi.encode(${slot_encoding} + key${i - 1}))`;
     }
@@ -70,7 +70,7 @@ export function soliditySetArrayFunctionFromStorageInfo(
   let length_slot_encoding = '';
   keys.forEach((_, i) => {
     if (length_slot_encoding === '') {
-      length_slot_encoding = `${name}_storage_slot`;
+      length_slot_encoding = `${name}${STORAGE_SLOT}`;
     } else if (i < keys.length) {
       length_slot_encoding = `uint256(keccak256(abi.encode(${length_slot_encoding}))) + key${
         i - 1
@@ -85,11 +85,11 @@ export function soliditySetArrayFunctionFromStorageInfo(
       value
     )} value) public {
         //check array length
-        uint256 array_length = uint256(
-          vm.load(target, bytes32(${length_slot_encoding}))
+        uint256 ${ARRAY_LENGTH} = uint256(
+          VM.load(target, bytes32(${length_slot_encoding}))
       );
-        if (array_length < key${keys.length - 1}) {
-          vm.store(
+        if (${ARRAY_LENGTH} < key${keys.length - 1}) {
+          VM.store(
               target,
               bytes32(${length_slot_encoding}),
               bytes32(key${keys.length - 1} + 1)
@@ -103,12 +103,12 @@ export function soliditySetArrayFunctionFromStorageInfo(
     )} - offset) / 32);
 
         uint256 slot = ${slot_encoding} + slotOffset;
-        uint256 slot_content = uint256(vm.load(target, bytes32(slot)));
-        slot_content = clear(slot_content, ${getByteSizeFromType(
-          value
-        )}, offset);
-        slot_content = set(slot_content, value, offset);
-        vm.store(target, bytes32(slot), bytes32(slot_content));
+        uint256 ${SLOT_CONTENT} = uint256(VM.load(target, bytes32(slot)));
+        ${SLOT_CONTENT} = clear(${SLOT_CONTENT}, ${getByteSizeFromType(
+      value
+    )}, offset);
+        ${SLOT_CONTENT} = set(${SLOT_CONTENT}, value, offset);
+        VM.store(target, bytes32(slot), bytes32(${SLOT_CONTENT}));
     }
     `;
   } else if (isStorageInfoStruct(value)) {
@@ -129,14 +129,14 @@ export function arraySetterBodyStruct(
     struct.layout.name
   } memory value) public{
           uint256 struct_size = ${struct.layout.getLength()};
-          uint256 array_length = uint256(
-            vm.load(target, bytes32(simple_array_storage_slot))
+          uint256 ${ARRAY_LENGTH} = uint256(
+            VM.load(target, bytes32(${name}${STORAGE_SLOT}))
         );
 
-          if (array_length < key${args.length - 1}) {
-            vm.store(
+          if (${ARRAY_LENGTH} < key${args.length - 1}) {
+            VM.store(
                 target,
-                bytes32(${name}_storage_slot),
+                bytes32(${name}${STORAGE_SLOT}),
                 bytes32(key${args.length - 1} + 1)
             );
         }
@@ -151,11 +151,11 @@ export function checkDynamicLength(
   array_declaration: string
 ) {
   return `
-  uint256 array_length = uint256(
-    vm.load(target, bytes32(${slot_declaration}))
+  uint256 ${ARRAY_LENGTH} = uint256(
+    VM.load(target, bytes32(${slot_declaration}))
 );
-  if (array_length < ${array_declaration}.length) {
-    vm.store(
+  if (${ARRAY_LENGTH} < ${array_declaration}.length) {
+    VM.store(
         target,
         bytes32(${slot_declaration}),
         bytes32(${array_declaration}.length)
@@ -170,9 +170,9 @@ export function declareOffsets(
   output_slot_declaration: string
 ) {
   return `
-      uint8 content_offset = uint8(${index} * ${size} % 32);
-      uint8 slot_offset = uint8((${index} * ${size} - content_offset) / 32);
-      uint256 ${output_slot_declaration} = (uint256(keccak256(abi.encode(${slot_declaration}))) + slot_offset);
+      uint8 contentOffset = uint8(${index} * ${size} % 32);
+      uint8 slotOffset = uint8((${index} * ${size} - content_offset) / 32);
+      uint256 ${output_slot_declaration} = (uint256(keccak256(abi.encode(${slot_declaration}))) + slotOffset);
       `;
 }
 
@@ -188,10 +188,10 @@ export function writeArrayToSlot(
         'i',
         getByteSizeFromType(value),
         slot_declaration,
-        'array_slot'
+        'arraySlot'
       )}
       ${writeSolidityTypeToSlot(
-        'array_slot',
+        'arraySlot',
         SLOT_CONTENT,
         `${array_declaration}[i]`,
         value,
@@ -199,9 +199,9 @@ export function writeArrayToSlot(
       )}
 `
     : `
-    uint256 struct_size = ${value.layout.getLength()};
-    uint256 array_slot = (uint256(keccak256(abi.encode(${slot_declaration}))) + struct_size * i);
-    ${writeStructToSlot('array_slot', `${array_declaration}[i]`, value, false)}
+    uint256 structSize = ${value.layout.getLength()};
+    uint256 arraySlot = (uint256(keccak256(abi.encode(${slot_declaration}))) + structSize * i);
+    ${writeStructToSlot('arraySlot', `${array_declaration}[i]`, value, false)}
     `;
 
   return `

@@ -1,6 +1,7 @@
 import {
   getContractDefinition,
   getContractDefinitions,
+  getParentSourceUnit,
   getVariableDeclarationsForContract,
 } from './find';
 import { generateContractLayout } from '../layout';
@@ -25,8 +26,13 @@ export async function compileContractLayouts(
 ): Promise<StorageLayout[]> {
   const ast = await generateAST(await compile(file));
   const contractDefinitions = getContractDefinitions(ast);
-  return contractDefinitions.map(c => {
-    const dec = getVariableDeclarationsForContract(ast, c);
-    return generateContractLayout(ast, c.name, dec);
-  });
+  return contractDefinitions
+    .filter((c) => {
+      const unit = getParentSourceUnit(c);
+      return unit.absolutePath.includes(file);
+    })
+    .map((c) => {
+      const dec = getVariableDeclarationsForContract(ast, c);
+      return generateContractLayout(ast, c.name, dec);
+    });
 }

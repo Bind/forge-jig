@@ -33,8 +33,8 @@ import "forge-std/Vm.sol";
 ${imports}
 
 contract ${contractName}Jig {
-    address target;
-    Vm public constant vm =
+    address internal target;
+    Vm public constant VM =
         Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
     constructor(address _contractAddress){
       target = _contractAddress;
@@ -119,6 +119,7 @@ export function generateJig(
 ) {
   return template(
     contractName,
+    layout.pragma,
     generateJigImports(layout, context),
     generateJigBody(layout)
   );
