@@ -3,6 +3,7 @@ import {
   ASTNodeSelector,
   ContractDefinition,
   InheritanceSpecifier,
+  PragmaDirective,
   SourceUnit,
   VariableDeclaration,
 } from 'solc-typed-ast';
@@ -12,9 +13,7 @@ export function getBySelector(
   selector: ASTNodeSelector
 ): ASTNode {
   const unit = ast.find((s) => s.getChildrenBySelector(selector).length > 0);
-  console.log('source unit found', unit);
   if (!unit) throw new Error('Unable to find node with selector');
-  console.log(unit.getChildrenBySelector(selector));
   return unit.getChildrenBySelector(selector)[0];
 }
 
@@ -94,7 +93,10 @@ export function getVariableDeclarationsForContract(
 }
 
 export function getParentSourceUnit(node: ASTNode): SourceUnit {
+  if (node instanceof SourceUnit) return node;
   if (!node.parent) throw new Error('no parent for node');
+  if (node.parent instanceof SourceUnit) return node.parent;
+
   let parent = node.parent;
   while (parent.parent !== undefined) {
     parent = parent.parent;
@@ -103,4 +105,9 @@ export function getParentSourceUnit(node: ASTNode): SourceUnit {
     }
   }
   throw new Error("couldn't find source unit");
+}
+
+export function getPragma(node: ASTNode): PragmaDirective {
+  const root = getParentSourceUnit(node);
+  return root.getChildrenByType(PragmaDirective)[0];
 }

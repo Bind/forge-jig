@@ -18,11 +18,16 @@ import { generateJigImports } from './imports';
 import { soliditySetStructFunction } from './struct';
 import { soliditySetArrayFunctionFromStorageInfo } from './array';
 
-function template(contractName: string, imports: string, body: string) {
+function template(
+  contractName: string,
+  pragma: string,
+  imports: string,
+  body: string
+) {
   return `
 // THIS FILE WAS GENERATED
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.4.22 <0.9.0;
+// SPDX-License-Identifier: MIT
+${pragma}
 import "forge-std/stdlib.sol";
 import "forge-std/Vm.sol";
 ${imports}
