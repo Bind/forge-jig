@@ -5,6 +5,7 @@ import {
   SOLIDITY_TYPES,
 } from '../solidityTypes';
 import {
+  isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
 } from '../storage/predicate';
@@ -30,8 +31,15 @@ export function soliditySetMappingFunctionFromStorageInfo(
   slot_encoding = `uint256(${slot_encoding})`;
   if (isSolidityType(value)) {
     return mappingSetterBodySolidityType(name, args, slot_encoding, value);
-  } else {
+  } else if (isStorageInfoStruct(value)) {
     return mappingSetterBodyStruct(name, args, slot_encoding, value);
+  } else if (isStorageInfoArray(value)) {
+    console.log('Storage info array not handled for mapping!');
+
+    return '';
+  } else {
+    console.log('value not handled for mapping!');
+    return '';
   }
 }
 

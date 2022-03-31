@@ -1,5 +1,4 @@
-import { isSolidityType, SOLIDITY_TYPES } from '../solidityTypes';
-import { ArrayPointer } from './array';
+import { isSolidityType } from '../solidityTypes';
 import { MappingPointer } from './mapping';
 import {
   StorageInfo,
@@ -23,7 +22,7 @@ export function isStorageInfo(value: StorageInfos): value is StorageInfo {
 }
 
 export function isMappingPointer(
-  value: SOLIDITY_TYPES | MappingPointer | StorageInfoStruct | ArrayPointer
+  value: MappingPointer['value']
 ): value is MappingPointer {
   return (value as MappingPointer).slot !== undefined;
 }

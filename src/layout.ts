@@ -24,7 +24,7 @@ export function getStructLayout(
 ): StorageLayout {
   const selector: ASTNodeSelector = (node) =>
     node.id === structDeclaration.referencedDeclaration;
-  const structDefinition = getBySelector(ast, selector) as StructDefinition;
+  const structDefinition = getBySelector(ast, selector);
   if (!(structDefinition instanceof StructDefinition))
     throw new Error('not StructDefinition');
   const source = getParentSourceUnit(structDeclaration);
@@ -75,6 +75,16 @@ export function getMappingLayout(
           slot: rootSlot,
           offset: 0,
         },
+      },
+    };
+  } else if (valueType instanceof ArrayTypeName) {
+    return {
+      slot: rootSlot,
+      key: keyTypeString as SOLIDITY_TYPES,
+      value: {
+        variant: 'array',
+        pointer: { slot: rootSlot, offset: 0 },
+        value: generateArrayLayout(ast, valueType, rootSlot),
       },
     };
   } else {
@@ -143,16 +153,17 @@ export function generateContractLayout(
     ) {
       stor.appendSolidityType(declaration.name, declaration.typeString);
     } else if (declaration.vType instanceof UserDefinedTypeName) {
-      console.log(declaration.vType);
       if (isEnum(ast, declaration.vType)) {
         stor.appendEnum(declaration.name);
-      } else {
+      } else if (isStruct(ast, declaration.vType)) {
         const structLayout = getStructLayout(
           ast,
           declaration.vType,
           stor.getLength()
         );
         stor.appendStruct(declaration.name, structLayout);
+      } else {
+        console.log(declaration.vType);
       }
     } else if (declaration.vType instanceof Mapping) {
       stor.appendMapping(
