@@ -6,7 +6,6 @@ import {
 import { StorageInfo, StorageInfos } from '../storage/types';
 
 export function solidityConstSlotOffset(name: string, info: StorageInfos) {
-  console.log(`uint8 ${name}_slot_offset = uint8(${info.pointer.offset});\n`);
   return `uint8 ${name}_slot_offset = uint8(${info.pointer.offset});\n`;
 }
 

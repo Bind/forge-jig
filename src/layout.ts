@@ -22,7 +22,7 @@ export function getStructLayout(
   structDeclaration: UserDefinedTypeName,
   rootSlot: number
 ): StorageLayout {
-  const selector: ASTNodeSelector = node =>
+  const selector: ASTNodeSelector = (node) =>
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector) as StructDefinition;
   if (!(structDefinition instanceof StructDefinition))
@@ -143,6 +143,7 @@ export function generateContractLayout(
     ) {
       stor.appendSolidityType(declaration.name, declaration.typeString);
     } else if (declaration.vType instanceof UserDefinedTypeName) {
+      console.log(declaration.vType);
       if (isEnum(ast, declaration.vType)) {
         stor.appendEnum(declaration.name);
       } else {
@@ -159,8 +160,6 @@ export function generateContractLayout(
         getMappingLayout(ast, declaration.vType, stor.getLength())
       );
     } else if (declaration.vType instanceof ArrayTypeName) {
-      console.log(declaration);
-
       stor.appendArray(
         declaration.name,
         generateArrayLayout(ast, declaration.vType, stor.getLength())
