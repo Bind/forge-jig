@@ -1,6 +1,7 @@
 import { StorageLayout } from '../storage';
 
 import {
+  hasMapping,
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
@@ -64,10 +65,10 @@ contract ${contractName}Jig {
 export function generateJigBody(layout: StorageLayout) {
   let body = '';
   const vars = Object.keys(layout.variables);
-  vars.forEach(key => {
+  vars.forEach((key) => {
     body += solidityConstFromStorageInfo(key, layout.variables[key]);
   });
-  vars.forEach(key => {
+  vars.forEach((key) => {
     const storageInfo = layout.variables[key];
     switch (storageInfo.variant) {
       case 'simple':
@@ -89,7 +90,11 @@ export function generateJigBody(layout: StorageLayout) {
         break;
       case 'struct':
         if (isStorageInfoStruct(storageInfo)) {
-          body += soliditySetStructFunction(key, storageInfo);
+          if (hasMapping(storageInfo)) {
+            body += generateJigBody(storageInfo.layout);
+          } else {
+            body += soliditySetStructFunction(key, storageInfo);
+          }
         }
         break;
       case 'enum':

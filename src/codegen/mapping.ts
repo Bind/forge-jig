@@ -9,7 +9,11 @@ import {
   isStorageInfoMapping,
   isStorageInfoStruct,
 } from '../storage/predicate';
-import { StorageInfoMapping, StorageInfoStruct } from '../storage/types';
+import {
+  StorageInfoArray,
+  StorageInfoMapping,
+  StorageInfoStruct,
+} from '../storage/types';
 import { writeStructToSlot } from './struct';
 
 export function soliditySetMappingFunctionFromStorageInfo(
@@ -56,7 +60,7 @@ export function getMappingKeys(info: StorageInfoMapping): SOLIDITY_TYPES[] {
 }
 export function getMappingValue(
   info: StorageInfoMapping
-): SOLIDITY_TYPES | StorageInfoStruct {
+): SOLIDITY_TYPES | StorageInfoStruct | StorageInfoArray {
   const value = info.value;
 
   if (isSolidityType(value)) {
@@ -64,6 +68,8 @@ export function getMappingValue(
   } else if (isStorageInfoMapping(value)) {
     return getMappingValue(value);
   } else if (isStorageInfoStruct(value)) {
+    return value;
+  } else if (isStorageInfoArray(value)) {
     return value;
   } else {
     throw new Error(

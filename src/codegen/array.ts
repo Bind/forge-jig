@@ -169,7 +169,7 @@ export function declareOffsets(
   slot_declaration: string,
   output_slot_declaration: string
 ) {
-  `
+  return `
       uint8 content_offset = uint8(${index} * ${size} % 32);
       uint8 slot_offset = uint8((${index} * ${size} - content_offset) / 32);
       uint256 ${output_slot_declaration} = (uint256(keccak256(abi.encode(${slot_declaration}))) + slot_offset);

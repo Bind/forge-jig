@@ -26,3 +26,19 @@ export function isMappingPointer(
 ): value is MappingPointer {
   return (value as MappingPointer).slot !== undefined;
 }
+
+export function hasMapping(storage: StorageInfoStruct): boolean {
+  return !!Object.keys(storage.layout.variables).find((v) => {
+    //@ts-ignore
+    let variable = storage.layout.variables[v!];
+    if (isSolidityType(variable)) {
+      return false;
+    } else if (isStorageInfoStruct(variable)) {
+      return hasMapping(variable);
+    } else if (isStorageInfoMapping(variable)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+}
