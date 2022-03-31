@@ -25,7 +25,7 @@ contract BasicStruct2JigTest is DSTest {
         assert(ack.yo == 33);
         assert(ack.wassup == 44);
         ack.yo = 66;
-        jig.set_ack(ack);
+        jig.ack(ack);
         (yo, wassup) = b.ack();
         assert(ack.yo == 66);
         assert(ack.wassup == 44);
@@ -45,7 +45,7 @@ contract BasicStruct2JigTest is DSTest {
         assert(hola == 44);
         assert(salutations == 1);
         Hello memory momentOfTruth = Hello(1, 2, 3, 4, 5);
-        jig.set_greetings(momentOfTruth);
+        jig.greetings(momentOfTruth);
         (hello, howdy, hi, hola, salutations) = b.greetings();
         assert(hello == 1);
         assert(howdy == 2);

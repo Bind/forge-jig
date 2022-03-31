@@ -33,7 +33,7 @@ export function soliditySetStructFunction(
   info: StorageInfoStruct
 ) {
   return `
-        function set_${name}(${info.layout.name} memory value) public{
+        function ${name}(${info.layout.name} memory value) public{
           ${writeStructToSlot(name + '_storage_slot', 'value', info)}
         }
         `;

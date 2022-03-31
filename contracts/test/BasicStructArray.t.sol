@@ -39,7 +39,7 @@ contract BasicStructStructJigTest is DSTest {
         yos[1] = Yo(146, 147);
         Hello memory momentOfTruth = Hello(1, 2, 3, 4, 5, yos, 66);
 
-        jig.set_greetings(momentOfTruth);
+        jig.greetings(momentOfTruth);
         Yo[] memory fetched_yos = b.get_yos();
         (hello, howdy, hi, hola, salutations, test) = b.greetings();
         assert(hello == 1);

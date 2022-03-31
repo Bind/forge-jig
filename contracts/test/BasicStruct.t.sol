@@ -77,7 +77,7 @@ contract BasicJigTest is DSTest {
         assert(initialized);
         assert(owner == address(uint160(type(uint256).max)));
         Initialized memory f = Initialized(false, address(0));
-        jig.set_init(f);
+        jig.init(f);
         (initialized, owner) = b.init();
         assert(!initialized);
         assert(owner == address(0));

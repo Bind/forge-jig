@@ -38,7 +38,7 @@ contract BasicStructStructJigTest is DSTest {
         assert(yo.yo == 100);
         assert(yo.wassup == 101);
         Hello memory momentOfTruth = Hello(1, 2, 3, 4, 5, Yo(200, 201), 66);
-        jig.set_greetings(momentOfTruth);
+        jig.greetings(momentOfTruth);
         (hello, howdy, hi, hola, salutations, yo, test) = b.greetings();
         assert(hello == 1);
         assert(howdy == 2);

@@ -86,7 +86,7 @@ export function mappingSetterBodyStruct(
   struct: StorageInfoStruct
 ) {
   return `
-        function set_${name}(${args.join(', ')},${
+        function ${name}(${args.join(', ')},${
     struct.layout.name
   } memory value) public{
           uint256 slot = ${slot_encoding};

@@ -46,7 +46,7 @@ contract BasicStructMappingJigTest is DSTest {
         assert(second == 2);
         assert(last == 3);
 
-        jig.set_simple_mapping(1, Entity(f, s, l));
+        jig.simple_mapping(1, Entity(f, s, l));
         (first, second, last) = b.simple_mapping(1);
         assert(first == f);
         assert(second == s);

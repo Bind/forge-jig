@@ -125,7 +125,7 @@ export function arraySetterBodyStruct(
   struct: StorageInfoStruct
 ) {
   return `
-        function set_${name}(${args.join(', ')},${
+        function ${name}(${args.join(', ')},${
     struct.layout.name
   } memory value) public{
           uint256 struct_size = ${struct.layout.getLength()};

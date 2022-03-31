@@ -27,7 +27,7 @@ contract BasicArrayStructJigTest is DSTest {
         assert(second == 2);
         assert(third == 3);
         assert(last == 4);
-        jig.set_simple_array(100, Entity(10, 20, 30, 40));
+        jig.simple_array(100, Entity(10, 20, 30, 40));
         (first, second, third, last) = b.simple_array(100);
         vm.load(address(b), 0);
         assert(first == 10);
