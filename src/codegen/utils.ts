@@ -1,3 +1,4 @@
+import { SLOT_CONTENT } from '../constants';
 import {
   getByteSizeFromType,
   getDataToStoreCasting,
@@ -27,33 +28,56 @@ export function soliditySetFunctionFromStorageInfo(
       `;
 }
 export function generateLoadCall(
-  name: string,
+  slot_declaration: string,
+  slot_content_declaration: string,
   offset: number = 0,
   allocate: boolean = true
 ) {
   return `${
     allocate ? 'uint256 ' : ''
-  }raw_slot = uint256(vm.load(target, bytes32(${name} + uint256(${offset}))));`;
+  }${slot_content_declaration} = uint256(vm.load(target, bytes32(${slot_declaration} + uint256(${offset}))));`;
 }
 
-export function generateClearCall(info: StorageInfo) {
-  return `raw_slot = clear(raw_slot, ${getByteSizeFromType(info.type)}, ${
+export function generateClearCallStruct(info: StorageInfo) {
+  return generateClearCall(
+    SLOT_CONTENT,
+    getByteSizeFromType(info.type),
     info.pointer.offset
-  });`;
+  );
 }
-export function generateMaskCall(
+
+export function generateClearCall(
+  slot_content_declaration: string,
+  size: number,
+  offset: number | string
+) {
+  return `${slot_content_declaration} = clear(${slot_content_declaration}, ${size}, ${offset});`;
+}
+
+export function generateMaskCallStruct(
   name: string,
   info: StorageInfo,
   struct_declaration: string = 'value'
 ) {
-  return `raw_slot = set(raw_slot, uint256(${getDataToStoreCasting(
+  return `slot_content = set(slot_content, uint256(${getDataToStoreCasting(
     info.type,
     `${struct_declaration}.${name}`
   )}), ${info.pointer.offset});`;
 }
+export function generateMaskCall(
+  slot_content_declaration: string,
+  value_declaration: string,
+  offset: string | number
+) {
+  return `${slot_content_declaration} = set(${slot_content_declaration}, uint256(${value_declaration}), ${offset});`;
+}
 
-export function generateStoreCall(name: string, offset: number = 0) {
-  return `vm.store(target, bytes32(${name} + uint256(${offset})), bytes32(raw_slot));`;
+export function generateStoreCall(
+  slot_content_declaration: string,
+  slot_declaration: string,
+  offset: number | string = 0
+) {
+  return `vm.store(target, bytes32(${slot_declaration} + uint256(${offset})), bytes32(${slot_content_declaration}));`;
 }
 
 export function soliditySetFunctionFromStorageInfoWithOffset(
@@ -62,10 +86,10 @@ export function soliditySetFunctionFromStorageInfoWithOffset(
 ) {
   return `
       function ${name}(${getTypeFunctionSignature(info.type)} value) public {
-          ${generateLoadCall(name + '_storage_slot')}
-          ${generateClearCall(info)}
-          ${generateMaskCall(name, info)}
-          ${generateStoreCall(name + '_storage_slot')}
+          ${generateLoadCall(name + '_storage_slot', SLOT_CONTENT)}
+          ${generateClearCallStruct(info)}
+          ${generateMaskCallStruct(name, info)}
+          ${generateStoreCall(SLOT_CONTENT, name + '_storage_slot')}
 
       }
       `;

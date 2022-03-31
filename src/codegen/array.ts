@@ -1,5 +1,7 @@
+import { SLOT_CONTENT } from '../constants';
 import {
   getByteSizeFromType,
+  getDataToStoreCasting,
   getTypeFunctionSignature,
   isSolidityType,
   SOLIDITY_TYPES,
@@ -7,6 +9,12 @@ import {
 import { isStorageInfoArray, isStorageInfoStruct } from '../storage/predicate';
 import { StorageInfoArray, StorageInfoStruct } from '../storage/types';
 import { writeStructToSlot } from './struct';
+import {
+  generateClearCall,
+  generateLoadCall,
+  generateMaskCall,
+  generateStoreCall,
+} from './utils';
 
 export function getArrayKeys(info: StorageInfoArray): SOLIDITY_TYPES[] {
   const value = info.value;
@@ -93,11 +101,14 @@ export function soliditySetArrayFunctionFromStorageInfo(
         uint8 slotOffset = uint8((key${keys.length - 1} * ${getByteSizeFromType(
       value
     )} - offset) / 32);
+
         uint256 slot = ${slot_encoding} + slotOffset;
-        uint256 raw_slot = uint256(vm.load(target, bytes32(slot)));
-        raw_slot = clear(raw_slot, ${getByteSizeFromType(value)}, offset);
-        raw_slot = set(raw_slot, value, offset);
-        vm.store(target, bytes32(slot), bytes32(raw_slot));
+        uint256 slot_content = uint256(vm.load(target, bytes32(slot)));
+        slot_content = clear(slot_content, ${getByteSizeFromType(
+          value
+        )}, offset);
+        slot_content = set(slot_content, value, offset);
+        vm.store(target, bytes32(slot), bytes32(slot_content));
     }
     `;
   } else if (isStorageInfoStruct(value)) {
@@ -133,4 +144,95 @@ export function arraySetterBodyStruct(
           ${writeStructToSlot('slot', 'value', struct)}
         }
         `;
+}
+
+export function checkDynamicLength(
+  slot_declaration: string,
+  array_declaration: string
+) {
+  return `
+  uint256 array_length = uint256(
+    vm.load(target, bytes32(${slot_declaration}))
+);
+  if (array_length < ${array_declaration}.length) {
+    vm.store(
+        target,
+        bytes32(${slot_declaration}),
+        bytes32(${array_declaration}.length)
+    );
+}`;
+}
+
+export function declareOffsets(
+  index: string,
+  size: number,
+  slot_declaration: string,
+  output_slot_declaration: string
+) {
+  `
+      uint8 content_offset = uint8(${index} * ${size} % 32);
+      uint8 slot_offset = uint8((${index} * ${size} - content_offset) / 32);
+      uint256 ${output_slot_declaration} = (uint256(keccak256(abi.encode(${slot_declaration}))) + slot_offset);
+      `;
+}
+
+export function writeArrayToSlot(
+  slot_declaration: string,
+  array_declaration: string,
+  array: StorageInfoArray
+) {
+  const value = getArrayValue(array);
+
+  const innerLoop = isSolidityType(value)
+    ? `${declareOffsets(
+        'i',
+        getByteSizeFromType(value),
+        slot_declaration,
+        'array_slot'
+      )}
+      ${writeSolidityTypeToSlot(
+        'array_slot',
+        SLOT_CONTENT,
+        `${array_declaration}[i]`,
+        value,
+        'content_offset'
+      )}
+`
+    : `
+    uint256 struct_size = ${value.layout.getLength()};
+    uint256 array_slot = (uint256(keccak256(abi.encode(${slot_declaration}))) + struct_size * i);
+    ${writeStructToSlot('array_slot', `${array_declaration}[i]`, value, false)}
+    `;
+
+  return `
+  ${checkDynamicLength(slot_declaration, array_declaration)}
+  ${generateLoadCall(slot_declaration, SLOT_CONTENT, 0, false)}
+  for (uint256 i = 0; i < ${array_declaration}.length; i++){
+   ${innerLoop}
+  }
+  `;
+}
+
+export function writeSolidityTypeToSlot(
+  slot_declaration: string,
+  content_name: string,
+  variable_declaration: string,
+  variable_type: SOLIDITY_TYPES,
+  content_offset: string | number
+) {
+  return `
+  ${generateLoadCall(slot_declaration, content_name)}
+  ${generateClearCall(
+    content_name,
+    getByteSizeFromType(variable_type),
+    content_offset
+  )}
+  ${generateMaskCall(
+    content_name,
+    getDataToStoreCasting(variable_type, variable_declaration),
+    content_offset
+  )}
+  ${generateStoreCall(content_name, slot_declaration, content_offset)}
+
+`;
 }

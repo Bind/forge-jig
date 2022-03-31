@@ -1,28 +1,30 @@
 // import { getTypeFunctionSignature } from '../solidityTypes';
+import { SLOT_CONTENT } from '../constants';
 import {
   isStorageInfo,
   isStorageInfoArray,
   isStorageInfoStruct,
 } from '../storage/predicate';
 import { StorageInfo, StorageInfoStruct } from '../storage/types';
+import { writeArrayToSlot } from './array';
 import {
-  generateClearCall,
+  generateClearCallStruct,
   generateLoadCall,
-  generateMaskCall,
+  generateMaskCallStruct,
   generateStoreCall,
 } from './utils';
 
 export function overwriteInfo(
-  slot_name: string,
+  slot_declaration: string,
   struct_declaration: string,
   property_name: string,
   info: StorageInfo,
-  offset: number
+  slot_offset: number
 ) {
   return `
-          ${generateClearCall(info)}
-          ${generateMaskCall(property_name, info, struct_declaration)}
-          ${generateStoreCall(slot_name, offset)}
+          ${generateClearCallStruct(info)}
+          ${generateMaskCallStruct(property_name, info, struct_declaration)}
+          ${generateStoreCall(SLOT_CONTENT, slot_declaration, slot_offset)}
   `;
 }
 
@@ -50,7 +52,7 @@ export function writeStructToSlot(
 ): string {
   let prevSlot = struct.layout.slotRoot;
   return `
-  ${generateLoadCall(slot_declaration, 0, allocate_slot_pointer)}
+  ${generateLoadCall(slot_declaration, SLOT_CONTENT, 0, allocate_slot_pointer)}
   ${Object.keys(struct.layout.variables)
     .map((key: string) => {
       const storage = struct.layout.variables[key];
@@ -60,6 +62,7 @@ export function writeStructToSlot(
           prevSlot = storage.pointer.slot;
           calls += generateLoadCall(
             slot_declaration,
+            SLOT_CONTENT,
             prevSlot - struct.layout.slotRoot,
             false
           );
@@ -89,7 +92,17 @@ export function writeStructToSlot(
 
         return calls;
       } else if (isStorageInfoArray(storage)) {
-        return '//Struct { array} not implemented';
+        let slot_name = ` ${key}_storage_slot`;
+        prevSlot = storage.pointer.slot;
+        let calls = `uint256 ${slot_name} = ${slot_declaration} + uint256(${
+          prevSlot - struct.layout.slotRoot
+        });`;
+        calls += writeArrayToSlot(
+          slot_name,
+          `${struct_declaration}.${key}`,
+          storage
+        );
+        return calls;
       } else {
         return '';
       }
