@@ -37,12 +37,16 @@ export const handler = async (argv: Arguments<Options>): Promise<void> => {
       console.log(
         `writing to ${foundryConfig.default.src + `/jig/${layout.name}Jig.sol`}`
       );
+      fs.mkdirSync(projectRoot + '/' + foundryConfig.default.src + `/jig/`, {
+        recursive: true,
+      });
       fs.writeFileSync(
         projectRoot +
           '/' +
           foundryConfig.default.src +
           `/jig/${layout.name}Jig.sol`,
-        jig
+        jig,
+        {}
       );
     });
   }
