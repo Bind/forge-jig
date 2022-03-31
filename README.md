@@ -9,25 +9,47 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
 
 # TODO
 
-- [x] parse out top level contract storage
-- [x] parse out struct declarations
-- [x] automate testing of slot parsing
-- [ ] map contract storage vars to slots
+- [x] generate storage layout from contract source
 
-  - [x] Mappings
-  - [x] Arrays
-  - [ ] Custom structs
-    - [ ] Packed Struct
-    - [ ] Multi Slot Struct
+  - [x] parse out top level contract storage
+  - [x] parse out struct declarations
+  - [x] map contract storage vars to slots
 
-- [x] generate HelperContract
-  - [x] helper methods per variable for better DX
-  - [x] nested mapping helpers
-  - [ ] store custom struct into packed slot
-  - [ ] nested mapping custom struct into packed slot
-  - [ ] generate contract imports for helper functions to consume
-- [ ] improve DX with storage slot shenanigans
-  - [ ] Make sure to increase the length an array when adding an element
+    - [x] Mappings
+    - [x] Arrays
+    - [x] Custom structs
+      - [x] packed
+      - [x] multi-slot
+      - [x] nested
+
+- [x] generate JigContract
+
+  - [x] generate struct imports for helper contract to consume
+  - [x] codegen slot storage helper per storage variable
+
+    - [x] builtin solidity type
+    - [x] mapping
+      - [x] nested mapping
+      - [x] struct
+      - [x] solidity type
+      - [ ] array
+    - [x] array
+      - [x] manage array length
+      - [x] nested array
+      - [x] struct
+      - [x] solidity type
+    - [x] struct
+      - [x] packed
+      - [x] multi-slot
+      - [x] nested
+      - [x] array
+      - [x] solidity type
+
+- [] migrate to mono repo
+  - [] split out storage layout processing into own package
+  - [] split out built-in type processing into own package
+- [] refactor codegen to be more recursion focused
+  - [] move magic strings into constants file
 
 ## About
 
