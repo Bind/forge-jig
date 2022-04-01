@@ -135,15 +135,15 @@ export function arraySetterBodySolidityType(
         VM.store(
             target,
             bytes32(${name}Array),
-            bytes32(uint256(key${args.length - 1} + 1))
+            bytes32(uint256(key${args.length - 1}) + 1)
         );
     }
       uint8 offset = uint8(key${args.length - 1} * ${getByteSizeFromType(
     value
   )} % 32);
-      uint8 slotOffset = uint8((key${args.length - 1} * ${getByteSizeFromType(
+      uint256 slotOffset = (key${args.length - 1} * ${getByteSizeFromType(
     value
-  )} - offset) / 32);
+  )} - offset) / 32;
 
       uint256 slot = uint256(keccak256(abi.encode((${name}Array)))) + slotOffset;
       uint256 ${SLOT_CONTENT} = uint256(VM.load(target, bytes32(slot)));
@@ -176,7 +176,7 @@ export function arraySetterBodyStruct(
             VM.store(
                 target,
                 bytes32(${name}${STORAGE_SLOT}),
-                bytes32(key${args.length - 1} + 1)
+                bytes32(uint256(key${args.length - 1}) + 1)
             );
         }
           uint256 slot = uint256(keccak256(abi.encode((${name}Array)))) + struct_size * key${

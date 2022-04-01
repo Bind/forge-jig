@@ -190,7 +190,7 @@ export function getDataToStoreCasting(
   } else if (isInt(t)) {
     return `bytes32(int256(${varName}))`;
   } else if (isAddress(t)) {
-    return `bytes32(uint256(uint160(${varName})) << 96)`;
+    return `bytes32(uint256(uint160(${varName})))`;
   } else if (isBool(t)) {
     return `bytes32(uint256(${varName} ? 1: 0))`;
   } else {
