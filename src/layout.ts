@@ -82,11 +82,7 @@ export function getMappingLayout(
     return {
       slot: rootSlot,
       key: keyTypeString as SOLIDITY_TYPES,
-      value: {
-        variant: 'array',
-        pointer: { slot: rootSlot, offset: 0 },
-        value: generateArrayLayout(ast, valueType, rootSlot),
-      },
+      value: generateArrayLayout(ast, valueType, rootSlot),
     };
   } else {
     console.log(valueType);

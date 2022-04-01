@@ -15,7 +15,13 @@ import {
   StorageInfoMapping,
   StorageInfoStruct,
 } from '../storage/types';
-import { getArrayKeys } from './array';
+import {
+  arraySetterBodySolidityType,
+  arraySetterBodyStruct,
+  getArrayKeys,
+  getArrayValue,
+  getEncodingFuncArrayLength,
+} from './array';
 import { writeStructToSlot } from './struct';
 
 export function soliditySetMappingFunctionFromStorageInfo(
@@ -33,14 +39,18 @@ export function soliditySetMappingFunctionFromStorageInfo(
     0,
     mapping
   );
+
   if (isSolidityType(value)) {
     return mappingSetterBodySolidityType(name, args, slot_encoding, value);
   } else if (isStorageInfoStruct(value)) {
     return mappingSetterBodyStruct(name, args, slot_encoding, value);
   } else if (isStorageInfoArray(value)) {
-    console.log('Storage info array not handled for mapping!');
-
-    return '';
+    const arrayValue = getArrayValue(value);
+    if (isSolidityType(arrayValue)) {
+      return arraySetterBodySolidityType(name, args, slot_encoding, arrayValue);
+    } else {
+      return arraySetterBodyStruct(name, args, slot_encoding, arrayValue);
+    }
   } else {
     console.log('value not handled for mapping!');
     return '';
@@ -96,48 +106,14 @@ export function getEncodingFuncMapping(
   } else if (isStorageInfoStruct(value)) {
     return `uint256(keccak256(abi.encode(${key_declaration}${iterator}, bytes32(${storage_slot_declaration}))))`;
   } else if (isStorageInfoArray(value)) {
-    return getEncodingFuncArray(
-      storage_slot_declaration,
+    const slot = `uint256(keccak256(abi.encode(${key_declaration}${iterator}, bytes32(${storage_slot_declaration}))))`;
+    return getEncodingFuncArrayLength(
+      slot,
       key_declaration,
       iterator + 1,
-      value
+      value,
+      true
     );
-  } else {
-    throw new Error(
-      'unhandled type in soliditySetMappingFunctionFromStorageInfo'
-    );
-  }
-}
-
-// need more tests here
-export function getEncodingFuncArray(
-  storage_slot_declaration: string,
-  key_declaration: string,
-  iterator: number,
-  info: StorageInfoArray
-): string {
-  const value = info.value;
-  if (isSolidityType(value)) {
-    if (iterator == 0) {
-      return `uint256(keccak256(abi.encode(${storage_slot_declaration})))`;
-    } else {
-      return `uint256(keccak256(abi.encode(${storage_slot_declaration} + ${key_declaration}${
-        iterator - 1
-      })))`;
-    }
-  } else if (isStorageInfoMapping(value)) {
-    throw new Error('Should not get nested mapping');
-  } else if (isStorageInfoStruct(value)) {
-    if (iterator == 0) {
-      return `uint256(keccak256(abi.encode(${storage_slot_declaration})))`;
-    } else {
-      return `uint256(keccak256(abi.encode(${storage_slot_declaration} + ${key_declaration}${
-        iterator - 1
-      })))`;
-    }
-  } else if (isStorageInfoArray(value)) {
-    const slot = `uint256(keccak256(abi.encode(${storage_slot_declaration})))`;
-    return getEncodingFuncArray(slot, key_declaration, iterator + 1, value);
   } else {
     throw new Error(
       'unhandled type in soliditySetMappingFunctionFromStorageInfo'

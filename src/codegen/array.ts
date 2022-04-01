@@ -6,7 +6,11 @@ import {
   isSolidityType,
   SOLIDITY_TYPES,
 } from '../solidityTypes';
-import { isStorageInfoArray, isStorageInfoStruct } from '../storage/predicate';
+import {
+  isStorageInfoArray,
+  isStorageInfoMapping,
+  isStorageInfoStruct,
+} from '../storage/predicate';
 import { StorageInfoArray, StorageInfoStruct } from '../storage/types';
 import { writeStructToSlot } from './struct';
 import {
@@ -20,11 +24,11 @@ export function getArrayKeys(info: StorageInfoArray): SOLIDITY_TYPES[] {
   const value = info.value;
 
   if (isSolidityType(value)) {
-    return ['uint256'];
+    return ['uint128'];
   } else if (isStorageInfoArray(value)) {
-    return ['uint256', ...getArrayKeys(value)];
+    return ['uint128', ...getArrayKeys(value)];
   } else {
-    return ['uint256'];
+    return ['uint128'];
   }
 }
 export function getArrayValue(
@@ -42,7 +46,46 @@ export function getArrayValue(
     throw new Error('unhandled type in getArrayValue');
   }
 }
-
+// need more tests here
+export function getEncodingFuncArrayLength(
+  storage_slot_declaration: string,
+  key_declaration: string,
+  iterator: number,
+  info: StorageInfoArray,
+  skip: boolean = false
+): string {
+  console.log('info variant?', info.variant);
+  console.log('is skip true?', skip);
+  console.log('info value?', info.value);
+  const value = info.value;
+  if (isSolidityType(value)) {
+    if (iterator == 0 || skip) {
+      return `${storage_slot_declaration}`;
+    } else {
+      return `${storage_slot_declaration} + ${key_declaration}${iterator - 1}`;
+    }
+  } else if (isStorageInfoMapping(value)) {
+    throw new Error('Should not get nested mapping');
+  } else if (isStorageInfoStruct(value)) {
+    if (iterator == 0 || skip) {
+      return `${storage_slot_declaration}`;
+    } else {
+      return `${storage_slot_declaration} + ${key_declaration}${iterator - 1}`;
+    }
+  } else if (isStorageInfoArray(value)) {
+    const slot = `uint256(keccak256(abi.encode(${storage_slot_declaration})))`;
+    return getEncodingFuncArrayLength(
+      slot,
+      key_declaration,
+      iterator + 1,
+      value
+    );
+  } else {
+    throw new Error(
+      'unhandled type in soliditySetMappingFunctionFromStorageInfo'
+    );
+  }
+}
 // export function checkArrayLength(name: string, keys: SOLIDITY_TYPES[]) {
 //   return ` uint256 arrayLength = uint256(vm.load(target, bytes32(${name}${STORAGE_SLOT})));
 //   if (arrayLength < key){
@@ -57,90 +100,88 @@ export function soliditySetArrayFunctionFromStorageInfo(
   const value = getArrayValue(info);
   const keys = getArrayKeys(info);
 
-  let slot_encoding = '';
-
-  keys.forEach((_, i) => {
-    if (slot_encoding === '') {
-      slot_encoding = `(uint256(keccak256(abi.encode(${name}${STORAGE_SLOT}))))`;
-    } else if (i < keys.length) {
-      slot_encoding = `keccak256(abi.encode(${slot_encoding} + key${i - 1}))`;
-    }
-  });
-
-  let length_slot_encoding = '';
-  keys.forEach((_, i) => {
-    if (length_slot_encoding === '') {
-      length_slot_encoding = `${name}${STORAGE_SLOT}`;
-    } else if (i < keys.length) {
-      length_slot_encoding = `uint256(keccak256(abi.encode(${length_slot_encoding}))) + key${
-        i - 1
-      }`;
-    }
-  });
+  let length_slot_encoding = getEncodingFuncArrayLength(
+    `${name}${STORAGE_SLOT}`,
+    'key',
+    0,
+    info
+  );
 
   const args = keys.map((k, i) => `${getTypeFunctionSignature(k)} key${i}`);
-  slot_encoding = `uint256(${slot_encoding})`;
   if (isSolidityType(value)) {
-    return `  function ${name}( ${args.join(', ')}, ${getTypeFunctionSignature(
-      value
-    )} value) public {
-        //check array length
-        uint256 ${ARRAY_LENGTH} = uint256(
-          VM.load(target, bytes32(${length_slot_encoding}))
-      );
-        if (${ARRAY_LENGTH} < key${keys.length - 1}) {
-          VM.store(
-              target,
-              bytes32(${length_slot_encoding}),
-              bytes32(key${keys.length - 1} + 1)
-          );
-      }
-        uint8 offset = uint8(key${keys.length - 1} * ${getByteSizeFromType(
-      value
-    )} % 32);
-        uint8 slotOffset = uint8((key${keys.length - 1} * ${getByteSizeFromType(
-      value
-    )} - offset) / 32);
-
-        uint256 slot = ${slot_encoding} + slotOffset;
-        uint256 ${SLOT_CONTENT} = uint256(VM.load(target, bytes32(slot)));
-        ${SLOT_CONTENT} = clear(${SLOT_CONTENT}, ${getByteSizeFromType(
-      value
-    )}, offset);
-        ${SLOT_CONTENT} = set(${SLOT_CONTENT}, value, offset);
-        VM.store(target, bytes32(slot), bytes32(${SLOT_CONTENT}));
-    }
-    `;
+    return arraySetterBodySolidityType(name, args, length_slot_encoding, value);
   } else if (isStorageInfoStruct(value)) {
-    return arraySetterBodyStruct(name, args, slot_encoding, value);
+    return arraySetterBodyStruct(name, args, length_slot_encoding, value);
   } else {
     throw new Error(`${info} not handled in array codegen`);
   }
 }
 
+export function arraySetterBodySolidityType(
+  name: string,
+  args: string[],
+  length_slot_encoding: string,
+  value: SOLIDITY_TYPES
+) {
+  return `  function ${name}( ${args.join(', ')}, ${getTypeFunctionSignature(
+    value
+  )} value) public {
+
+    uint256 ${name}Array = ${length_slot_encoding};
+    uint256 ${ARRAY_LENGTH} = uint256(
+        VM.load(target, bytes32(${name}Array))
+    );
+      if (${ARRAY_LENGTH} <= key${args.length - 1}) {
+        VM.store(
+            target,
+            bytes32(${name}Array),
+            bytes32(uint256(key${args.length - 1} + 1))
+        );
+    }
+      uint8 offset = uint8(key${args.length - 1} * ${getByteSizeFromType(
+    value
+  )} % 32);
+      uint8 slotOffset = uint8((key${args.length - 1} * ${getByteSizeFromType(
+    value
+  )} - offset) / 32);
+
+      uint256 slot = uint256(keccak256(abi.encode((${name}Array)))) + slotOffset;
+      uint256 ${SLOT_CONTENT} = uint256(VM.load(target, bytes32(slot)));
+      ${SLOT_CONTENT} = clear(${SLOT_CONTENT}, ${getByteSizeFromType(
+    value
+  )}, offset);
+      ${SLOT_CONTENT} = set(${SLOT_CONTENT}, value, offset);
+      VM.store(target, bytes32(slot), bytes32(${SLOT_CONTENT}));
+  }
+  `;
+}
+
 export function arraySetterBodyStruct(
   name: string,
   args: string[],
-  slot_encoding: string,
+  length_slot_encoding: string,
   struct: StorageInfoStruct
 ) {
   return `
         function ${name}(${args.join(', ')},${
     struct.layout.name
   } memory value) public{
+         uint256 ${name}Array = ${length_slot_encoding};
           uint256 struct_size = ${struct.layout.getLength()};
           uint256 ${ARRAY_LENGTH} = uint256(
             VM.load(target, bytes32(${name}${STORAGE_SLOT}))
         );
 
-          if (${ARRAY_LENGTH} < key${args.length - 1}) {
+          if (${ARRAY_LENGTH} <= key${args.length - 1}) {
             VM.store(
                 target,
                 bytes32(${name}${STORAGE_SLOT}),
                 bytes32(key${args.length - 1} + 1)
             );
         }
-          uint256 slot = ${slot_encoding} + struct_size * key${args.length - 1};
+          uint256 slot = uint256(keccak256(abi.encode((${name}Array)))) + struct_size * key${
+    args.length - 1
+  };
           ${writeStructToSlot('slot', 'value', struct)}
         }
         `;
