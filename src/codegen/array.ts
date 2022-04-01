@@ -195,7 +195,7 @@ export function writeArrayToSlot(
         SLOT_CONTENT,
         `${array_declaration}[i]`,
         value,
-        'content_offset'
+        'contentOffset'
       )}
 `
     : `
