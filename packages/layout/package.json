@@ -1,0 +1,15 @@
+{
+  "name": "layout",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "index.ts",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "ast": "workspace:*",
+    "layout": "workspace:*",
+    "solc-typed-ast": "^9.1.2"
+  }
+}

@@ -45,8 +45,10 @@ jig aims to ingest a solidity AST and determine the storage layout. With that la
       - [x] array
       - [x] solidity type
 
-- [] deep merge foundry.toml default values with local config
+- [x] deep merge foundry.toml default values with local config
 - [x] flatten structs to better handle AppStorage pattern
+- [ ] rename test contracts
+- [ ] build test cases around solmate
 
 - [] migrate to mono repo
   - [] split out storage layout processing into own package

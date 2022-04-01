@@ -27,6 +27,7 @@ jobs:
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
             - args: [--global, gulp, prettier, typescript]
+
       - name: Lint
         run: pnpm lint
 

@@ -1,0 +1,13 @@
+{
+  "name": "codegen",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "index.ts",
+  "devDependencies": {
+    "typescript": "^4.6.2",
+    "layout": "workspace:*",
+    "types": "workspace:*",
+    "utils": "workspace:*"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ast",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "index.ts",
+  "devDependencies": {
+    "typescript": "^4.6.2",
+    "solc-typed-ast": "^9.0.0",
+    "layout": "workspace:*",
+    "utils": "workspace:*"
+  }
+}
