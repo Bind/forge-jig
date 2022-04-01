@@ -4,7 +4,20 @@
   "private": true,
   "license": "MIT",
   "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  },
   "devDependencies": {
+    "@types/mocha": "^9.1.0",
+    "config": "workspace:*",
+    "jest": "^27.5.1",
+    "tsconfig": "workspace:*",
     "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "@types/jest": "^27.4.1"
+  },
+  "jest": {
+    "preset": "config/jest/node"
   }
 }

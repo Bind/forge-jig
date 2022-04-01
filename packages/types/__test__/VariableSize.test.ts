@@ -4,7 +4,7 @@ import {
   INT_TYPES,
   SOLIDITY_TYPES,
   UINT_TYPES,
-} from '../src/solidityTypes';
+} from "../index";
 
 type Assertions = {
   [key in SOLIDITY_TYPES]: {
@@ -115,7 +115,7 @@ const assertions: Assertions = {
   string: { size: 32 },
 };
 
-describe('validates number of bytes used for different solidity data types', () => {
+describe("validates number of bytes used for different solidity data types", () => {
   for (let idx in UINT_TYPES) {
     const t = UINT_TYPES[idx];
     it(`${t} is ${assertions[t].size} bytes`, () => {
