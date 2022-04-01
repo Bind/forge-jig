@@ -3,7 +3,7 @@ Jig: a tool used to expedite some repetitive task and ensure that the results do
 # Why
 
 `vm.store(address, slot, data)` is still fairly hard to reason about.
-Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and generate a HelperContract to be consumed in your tests write to specific storage slots.
+jig aims to ingest a solidity AST and determine the storage layout. With that layout, jig generates a helper contract that allows you to write to storage variables using the structs defined in your source code.
 
 [forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, but doesn't quite handle writing data to packed slots.
 
@@ -32,7 +32,7 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
       - [x] nested mapping
       - [x] struct
       - [x] solidity type
-      - [ ] array
+      - [x] array
     - [x] array
       - [x] manage array length
       - [x] nested array
@@ -44,6 +44,9 @@ Forge-fixtures aims to ingest an solidity AST, determine the storage layout, and
       - [x] nested
       - [x] array
       - [x] solidity type
+
+- [] deep merge foundry.toml default values with local config
+- [x] flatten structs to better handle AppStorage pattern
 
 - [] migrate to mono repo
   - [] split out storage layout processing into own package
@@ -60,5 +63,5 @@ Storage Slot Tricks
 
 - multiple structs will not be packed into 1 slot
 - structs will always start in a new storage slot
-- in order to add an element to an arraym you must also increment the length
+- in order to add an element to an array you must also increment the length
 -
