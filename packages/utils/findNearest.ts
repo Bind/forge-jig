@@ -1,12 +1,12 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import * as path from "path";
+import * as fs from "fs";
 
 export function findNearest(
   filename: string,
   start: string | undefined
 ): string {
   let pathSegments: string[] = [];
-  if (typeof start === 'string') {
+  if (typeof start === "string") {
     if (start[start.length - 1] !== path.sep) {
       start += path.sep;
     }
@@ -16,7 +16,7 @@ export function findNearest(
     pathSegments = require.main?.path.split(path.sep);
   }
   if (!pathSegments.length) {
-    throw new Error(filename + ' not found in path');
+    throw new Error(filename + " not found in path");
   }
   // remove trailing '' element
   pathSegments.pop();

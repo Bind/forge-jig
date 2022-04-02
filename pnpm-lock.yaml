@@ -178,9 +178,30 @@ importers:
 
   packages/utils:
     specifiers:
+      '@types/jest': ^27.4.1
+      '@types/mocha': ^9.1.0
+      ast: workspace:*
+      config: workspace:*
+      dotenv: ^16.0.0
+      jest: ^27.5.1
+      layout: workspace:*
+      tsconfig: workspace:*
+      types: workspace:*
       typescript: ^4.6.2
+      utils: workspace:*
+    dependencies:
+      dotenv: 16.0.0
     devDependencies:
+      '@types/jest': 27.4.1
+      '@types/mocha': 9.1.0
+      ast: link:../ast
+      config: link:../config
+      jest: 27.5.1
+      layout: link:../layout
+      tsconfig: link:../tsconfig
+      types: link:../types
       typescript: 4.6.2
+      utils: 'link:'
 
 packages:
 
