@@ -84,12 +84,6 @@ export function getEncodingFuncArrayLength(
     );
   }
 }
-// export function checkArrayLength(name: string, keys: SOLIDITY_TYPES[]) {
-//   return ` uint256 arrayLength = uint256(vm.load(target, bytes32(${name}${STORAGE_SLOT})));
-//   if (arrayLength < key){
-//     vm.store(target, bytes32(${name}${STORAGE_SLOT}), bytes32(key));
-//   }`;
-// }
 
 export function soliditySetArrayFunctionFromStorageInfo(
   name: string,
@@ -187,10 +181,11 @@ export function arraySetterBodyStruct(
 
 export function checkDynamicLength(
   slot_declaration: string,
-  array_declaration: string
+  array_declaration: string,
+  initialize: boolean = true
 ) {
   return `
-  uint256 ${ARRAY_LENGTH} = uint256(
+  ${initialize ? "uint256 " : ""}${ARRAY_LENGTH} = uint256(
     VM.load(target, bytes32(${slot_declaration}))
 );
   if (${ARRAY_LENGTH} < ${array_declaration}.length) {
@@ -210,7 +205,7 @@ export function declareOffsets(
 ) {
   return `
       uint8 contentOffset = uint8(${index} * ${size} % 32);
-      uint8 slotOffset = uint8((${index} * ${size} - content_offset) / 32);
+      uint8 slotOffset = uint8((${index} * ${size} - contentOffset) / 32);
       uint256 ${output_slot_declaration} = (uint256(keccak256(abi.encode(${slot_declaration}))) + slotOffset);
       `;
 }
@@ -218,7 +213,8 @@ export function declareOffsets(
 export function writeArrayToSlot(
   slot_declaration: string,
   array_declaration: string,
-  array: StorageInfoArray
+  array: StorageInfoArray,
+  initialize_array_length_declaration: boolean = true
 ) {
   const value = getArrayValue(array);
 
@@ -240,11 +236,21 @@ export function writeArrayToSlot(
     : `
     uint256 structSize = ${value.layout.getLength()};
     uint256 arraySlot = (uint256(keccak256(abi.encode(${slot_declaration}))) + structSize * i);
-    ${writeStructToSlot("arraySlot", `${array_declaration}[i]`, value, false)}
+    ${writeStructToSlot(
+      "arraySlot",
+      `${array_declaration}[i]`,
+      value,
+      false,
+      false
+    )}
     `;
 
   return `
-  ${checkDynamicLength(slot_declaration, array_declaration)}
+  ${checkDynamicLength(
+    slot_declaration,
+    array_declaration,
+    initialize_array_length_declaration
+  )}
   ${generateLoadCall(slot_declaration, SLOT_CONTENT, 0, false)}
   for (uint256 i = 0; i < ${array_declaration}.length; i++){
    ${innerLoop}

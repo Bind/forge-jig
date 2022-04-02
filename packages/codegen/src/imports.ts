@@ -3,6 +3,7 @@ import {
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
+  hasMapping,
 } from "layout";
 import { FoundryContext } from "foundry";
 import { getArrayValue } from "./array";
@@ -15,7 +16,7 @@ export function solidityImportFromStorage(
   return `import {${layout.name}} from"${layout.sourceUnitPath.replace(
     context.rootPath + "/",
     ""
-  )}";`;
+  )}";\n`;
 }
 
 export function generateJigImports(
@@ -28,6 +29,14 @@ export function generateJigImports(
     const storageInfo = layout.variables[key];
     if (isStorageInfoStruct(storageInfo)) {
       importsContent += solidityImportFromStorage(storageInfo.layout, context);
+      if (hasMapping(storageInfo)) {
+        importsContent += generateJigImports(storageInfo.layout, context);
+      } else {
+        importsContent += solidityImportFromStorage(
+          storageInfo.layout,
+          context
+        );
+      }
     } else if (isStorageInfoMapping(storageInfo)) {
       const value = getMappingValue(storageInfo);
       if (isStorageInfoStruct(value)) {

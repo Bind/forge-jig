@@ -1,8 +1,8 @@
 {
   "extends": "tsconfig/node14.json",
-  "include": ["./index.ts", "./src"],
-  "exclude": ["dist", "dist2", "build", "node_modules"],
+  "include": ["src"],
+  "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
-    "outDir": "dist2"
+    "outDir": "dist"
   }
 }

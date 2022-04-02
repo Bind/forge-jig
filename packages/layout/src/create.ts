@@ -18,7 +18,7 @@ import {
   getParentSourceUnit,
   getPragma,
 } from "ast";
-import { StorageLayout } from ".";
+import { StorageLayout } from "./StorageLayout";
 import { MappingPointer } from "./mapping";
 import { isSolidityType, SOLIDITY_TYPES } from "types";
 import { StorageInfoArray } from "./types";
@@ -33,6 +33,8 @@ export function getStructLayout(
   if (!(structDefinition instanceof StructDefinition))
     throw new Error("not StructDefinition");
   const source = getParentSourceUnit(structDeclaration);
+  console.log(structDefinition);
+  console.log(structDefinition);
 
   const storage = generateContractLayout(
     ast,

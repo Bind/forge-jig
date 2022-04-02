@@ -17,7 +17,7 @@ import {
   generateContractLayout,
   isStorageInfoStruct,
   compileContractLayout,
-} from "../..";
+} from "../index.js";
 
 const CONTRACT_DIR = process.env.CONTRACT_DIR || "../../contracts/";
 

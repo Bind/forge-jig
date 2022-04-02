@@ -48,9 +48,11 @@ export function writeStructToSlot(
   slot_declaration: string,
   struct_declaration: string,
   struct: StorageInfoStruct,
-  allocate_slot_pointer: boolean = true
+  allocate_slot_pointer: boolean = true,
+  initialize_array_length: boolean = true
 ): string {
   let prevSlot = struct.layout.slotRoot;
+  let track_array_length_initialization = initialize_array_length;
   return `
   ${generateLoadCall(slot_declaration, SLOT_CONTENT, 0, allocate_slot_pointer)}
   ${Object.keys(struct.layout.variables)
@@ -87,7 +89,8 @@ export function writeStructToSlot(
           slot_name,
           `${struct_declaration}.${key}`,
           storage,
-          false
+          false,
+          initialize_array_length
         );
 
         return calls;
@@ -100,8 +103,10 @@ export function writeStructToSlot(
         calls += writeArrayToSlot(
           slot_name,
           `${struct_declaration}.${key}`,
-          storage
+          storage,
+          track_array_length_initialization
         );
+        track_array_length_initialization = false;
         return calls;
       } else {
         return "";

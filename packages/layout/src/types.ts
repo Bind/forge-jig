@@ -1,4 +1,4 @@
-import { StorageLayout } from ".";
+import { StorageLayout } from "./StorageLayout";
 import { SOLIDITY_TYPES } from "types";
 export type StoragePointer = {
   slot: number; // Storage Slot Number
