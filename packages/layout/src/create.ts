@@ -144,7 +144,6 @@ export function generateContractLayout(
   declarations: readonly ASTNode[],
   rootSlot: number = 0
 ): StorageLayout {
-  console.log();
   const stor = new StorageLayout(
     storageName,
     rootSlot,

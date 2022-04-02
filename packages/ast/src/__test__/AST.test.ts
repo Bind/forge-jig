@@ -1,22 +1,22 @@
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
+import * as dotenv from "dotenv";
+import * as fs from "fs";
+dotenv.config();
+
 import {
   ArrayTypeName,
   ElementaryTypeName,
   Mapping,
   UserDefinedTypeName,
-} from 'solc-typed-ast';
+} from "solc-typed-ast";
 import {
   getContractDefinition,
   getVariableDeclarationsForContract,
-} from '../src/ast/find';
-import { generateContractLayout } from '../src/layout';
-import { generateAST, compile } from '../src/solc';
-import { compileContractLayout } from '../src/ast';
-import { isStorageInfoStruct } from '../src/storage/predicate';
-dotenv.config();
+} from "../find";
+import { generateContractLayout, isStorageInfoStruct } from "layout";
+import { generateAST, compile } from "../solc";
+import { compileContractLayout } from "..";
 
-const CONTRACT_DIR = process.env.CONTRACT_DIR || './contracts/';
+const CONTRACT_DIR = process.env.CONTRACT_DIR || "../../contracts/";
 
 const files = fs.readdirSync(CONTRACT_DIR);
 
@@ -38,35 +38,35 @@ type Assertions = {
 };
 
 export const assertions: Assertions = {
-  'basic.sol': {
-    name: 'Basic',
+  "basic.sol": {
+    name: "Basic",
     storage: true,
     expectedSlots: 1,
-    variables: ['uint256'],
+    variables: ["uint256"],
     explicitSlotChecks: [
       {
-        name: 'simple',
+        name: "simple",
         slot: 0,
         offset: 0,
       },
     ],
   },
-  'basic-struct.sol': {
-    name: 'BasicStruct',
+  "basic-struct.sol": {
+    name: "BasicStruct",
     storage: true,
     expectedSlots: 1,
-    variables: ['struct Initialized'],
+    variables: ["struct Initialized"],
     explicitSlotChecks: [
       {
-        name: 'init',
+        name: "init",
         children: [
           {
-            name: 'initialized',
+            name: "initialized",
             slot: 0,
             offset: 0,
           },
           {
-            name: 'owner',
+            name: "owner",
             slot: 0,
             offset: 1,
           },
@@ -74,71 +74,71 @@ export const assertions: Assertions = {
       },
     ],
   },
-  'basic-struct2.sol': {
-    name: 'BasicStruct2',
+  "basic-struct2.sol": {
+    name: "BasicStruct2",
     storage: true,
     expectedSlots: 3,
-    variables: ['struct Hello', 'struct Yo'],
+    variables: ["struct Hello", "struct Yo"],
     explicitSlotChecks: [
       {
-        name: 'greetings',
+        name: "greetings",
         children: [
-          { name: 'hello', offset: 0, slot: 0 },
-          { name: 'howdy', offset: 8, slot: 0 },
-          { name: 'hi', offset: 16, slot: 0 },
-          { name: 'hola', offset: 24, slot: 0 },
-          { name: 'salutations', offset: 0, slot: 1 },
+          { name: "hello", offset: 0, slot: 0 },
+          { name: "howdy", offset: 8, slot: 0 },
+          { name: "hi", offset: 16, slot: 0 },
+          { name: "hola", offset: 24, slot: 0 },
+          { name: "salutations", offset: 0, slot: 1 },
         ],
       },
       {
-        name: 'ack',
+        name: "ack",
         children: [
-          { name: 'yo', offset: 0, slot: 2 },
-          { name: 'wassup', offset: 1, slot: 2 },
+          { name: "yo", offset: 0, slot: 2 },
+          { name: "wassup", offset: 1, slot: 2 },
         ],
       },
     ],
   },
-  'basic-empty.sol': {
-    name: 'BasicEmpty',
+  "basic-empty.sol": {
+    name: "BasicEmpty",
     storage: false,
     expectedSlots: 0,
     variables: [],
     explicitSlotChecks: [],
   },
-  'basic-mapping.sol': {
-    name: 'BasicMapping',
+  "basic-mapping.sol": {
+    name: "BasicMapping",
     storage: true,
     expectedSlots: 1,
-    variables: ['mapping(uint256 => uint256)'],
+    variables: ["mapping(uint256 => uint256)"],
     explicitSlotChecks: [],
   },
-  'basic-array.sol': {
-    name: 'BasicArray',
+  "basic-array.sol": {
+    name: "BasicArray",
     storage: true,
     expectedSlots: 1,
-    variables: ['uint256[]'],
+    variables: ["uint256[]"],
     explicitSlotChecks: [],
   },
-  'basic-enum.sol': {
-    name: 'BasicEnum',
+  "basic-enum.sol": {
+    name: "BasicEnum",
     storage: true,
     expectedSlots: 1,
-    variables: ['enum AliveEnum'],
+    variables: ["enum AliveEnum"],
     explicitSlotChecks: [],
   },
-  'basic-erc20.sol': {
-    name: 'BasicERC20',
+  "basic-erc20.sol": {
+    name: "BasicERC20",
     storage: true,
     expectedSlots: 7,
     variables: [
-      'string',
-      'string',
-      'uint256',
-      'mapping(address => uint256)',
-      'mapping(address => mapping(address => uint256))',
-      'mapping(address => uint256)',
-      'uint8',
+      "string",
+      "string",
+      "uint256",
+      "mapping(address => uint256)",
+      "mapping(address => mapping(address => uint256))",
+      "mapping(address => uint256)",
+      "uint8",
     ],
     explicitSlotChecks: [],
   },
@@ -148,9 +148,9 @@ const isolate: string[] = [];
 for (let idx in files) {
   let file = files[idx] as keyof typeof assertions;
   if (isolate.length > 0 && !isolate.includes(file as string)) continue;
-  if (typeof assertions?.[file] == 'undefined') continue;
-  describe('\ngenerate and parse Solidity AST for ' + file, () => {
-    it('parsed AST', async () => {
+  if (typeof assertions?.[file] == "undefined") continue;
+  describe("\ngenerate and parse Solidity AST for " + file, () => {
+    it("parsed AST", async () => {
       const ast = await generateAST(await compile(CONTRACT_DIR + file));
       const contractDefinition = getContractDefinition(
         ast,
@@ -191,16 +191,16 @@ for (let idx in files) {
         );
       }
     });
-    it('generated layout', async () => {
+    it("generated layout", async () => {
       const storage = await compileContractLayout(
         CONTRACT_DIR + file,
         assertions[file].name
       );
       if (assertions[file].explicitSlotChecks) {
-        assertions[file].explicitSlotChecks.forEach(v => {
+        assertions[file].explicitSlotChecks.forEach((v) => {
           const storageInfo = storage.get(v.name);
           if (isStorageInfoStruct(storageInfo)) {
-            v.children!.forEach(child => {
+            v.children!.forEach((child) => {
               const childLayout = storageInfo.layout.get(child.name);
               expect(child.slot).toBe(childLayout.pointer.slot);
               expect(child.offset).toBe(childLayout.pointer.offset);

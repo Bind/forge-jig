@@ -4,12 +4,24 @@
   "private": true,
   "license": "MIT",
   "main": "index.ts",
-  "devDependencies": {
-    "typescript": "^4.6.2"
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
   },
   "dependencies": {
     "ast": "workspace:*",
     "layout": "workspace:*",
     "solc-typed-ast": "^9.1.2"
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.1.0",
+    "jest": "^27.5.1",
+    "@types/jest": "^27.4.1",
+    "config": "workspace:*",
+    "tsconfig": "workspace:*",
+    "typescript": "^4.6.2"
+  },
+  "jest": {
+    "preset": "config/jest/node"
   }
 }
