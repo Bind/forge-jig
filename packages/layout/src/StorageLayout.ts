@@ -9,14 +9,21 @@ import { getByteSizeFromType, SOLIDITY_TYPES } from "types";
 
 export class StorageLayout {
   name: string;
+  importName: string;
   variables: { [key: string]: StorageInfos } = {};
   pragma: string;
   sourceUnitPath: string = "";
   slotRoot: number = 0;
   endOfStorage: StoragePointer = { slot: 0, offset: 0 };
-  constructor(name: string, rootSlot: number, pragma: string = "") {
+  constructor(
+    name: string,
+    rootSlot: number,
+    pragma: string = "",
+    importName: string = ""
+  ) {
     this.pragma = pragma;
     this.name = name;
+    this.importName = importName;
     this.endOfStorage.slot = rootSlot;
     this.slotRoot = rootSlot;
   }

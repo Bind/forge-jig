@@ -2,6 +2,7 @@ import {
   ArrayTypeName,
   ASTNode,
   ASTNodeSelector,
+  ContractDefinition,
   ElementaryTypeName,
   Mapping,
   PragmaDirective,
@@ -22,6 +23,17 @@ import { StorageLayout } from "./StorageLayout";
 import { MappingPointer } from "./mapping";
 import { isSolidityType, SOLIDITY_TYPES } from "types";
 import { StorageInfoArray } from "./types";
+
+export function getImportNameFromStruct(node: StructDefinition) {
+  if (node.parent instanceof SourceUnit) {
+    return node.name;
+  } else if (node.parent instanceof ContractDefinition) {
+    return node.parent.name;
+  } else {
+    throw new Error("unexpected case for generate an import name");
+  }
+}
+
 export function getStructLayout(
   ast: SourceUnit[],
   structDeclaration: UserDefinedTypeName,
@@ -33,14 +45,18 @@ export function getStructLayout(
   if (!(structDefinition instanceof StructDefinition))
     throw new Error("not StructDefinition");
   const source = getParentSourceUnit(structDeclaration);
-  console.log(structDefinition);
-  console.log(structDefinition);
-
+  const importName = getImportNameFromStruct(structDefinition);
+  console.log(
+    structDefinition.id,
+    importName,
+    structDefinition.raw.canonicalName
+  );
   const storage = generateContractLayout(
     ast,
-    structDefinition.name,
+    structDefinition.raw.canonicalName,
     structDefinition.children,
-    rootSlot
+    rootSlot,
+    importName
   );
   storage.setSource(path.resolve(source.sourceEntryKey));
   return storage;
@@ -144,12 +160,15 @@ export function generateContractLayout(
   ast: SourceUnit[],
   storageName: string,
   declarations: readonly ASTNode[],
-  rootSlot: number = 0
+  rootSlot: number = 0,
+  importName: string = ""
 ): StorageLayout {
+  console.log(storageName, importName);
   const stor = new StorageLayout(
     storageName,
     rootSlot,
-    toPragmaString(getPragma(ast[0]))
+    toPragmaString(getPragma(ast[0])),
+    importName
   );
 
   for (let idx in declarations) {
