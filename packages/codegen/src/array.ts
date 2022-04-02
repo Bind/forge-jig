@@ -54,9 +54,6 @@ export function getEncodingFuncArrayLength(
   info: StorageInfoArray,
   skip: boolean = false
 ): string {
-  console.log("info variant?", info.variant);
-  console.log("is skip true?", skip);
-  console.log("info value?", info.value);
   const value = info.value;
   if (isSolidityType(value)) {
     if (iterator == 0 || skip) {

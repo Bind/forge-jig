@@ -4,20 +4,26 @@
   "private": true,
   "license": "MIT",
   "main": "index.ts",
+  "files": [
+    "index.ts",
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
-    "build": "tsc",
     "dev": "tsc --watch",
     "lint": "TIMING=1 eslint ./*.ts --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
   "devDependencies": {
-    "typescript": "^4.6.2",
-    "jest": "^27.5.1",
     "config": "workspace:*",
-    "tsconfig": "workspace:*"
+    "jest": "^27.5.1",
+    "tsconfig": "workspace:*",
+    "typescript": "^4.6.2"
   },
   "jest": {
     "preset": "config/jest/node"
+  },
+  "dependencies": {
+    "toml": "^3.0.0"
   }
 }

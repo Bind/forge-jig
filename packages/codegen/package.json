@@ -4,6 +4,10 @@
   "private": true,
   "license": "MIT",
   "main": "index.ts",
+  "files": [
+    "index.ts",
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "build": "tsc",

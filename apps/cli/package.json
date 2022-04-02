@@ -4,12 +4,17 @@
   "private": true,
   "license": "MIT",
   "main": "index.ts",
+  "bin": {
+    "jig": "./jig.js"
+  },
   "scripts": {
     "setup": "echo 0",
     "build": "tsc",
     "test": "exit 0",
     "lint": "TIMING=1 eslint src --fix",
-    "prepare": "tsc"
+    "prepare": "tsc",
+    "bundle": "esbuild --format=cjs src/index.ts --outfile=jig.js",
+    "package": "pnpm run bundle"
   },
   "dependencies": {
     "ast": "workspace:*",

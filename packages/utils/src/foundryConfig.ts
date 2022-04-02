@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { findNearest } from "./findNearest";
-var toml = require("toml");
+import * as toml from "toml";
 
 const foundryConfigDefaults = {
   default: {

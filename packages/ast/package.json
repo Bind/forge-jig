@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "main": "src/*",
   "files": [
-    "src/*"
+    "src/*",
+    "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "TIMING=1 eslint ./index.ts --fix",
@@ -21,7 +21,6 @@
     "@types/mocha": "^9.1.0",
     "@types/jest": "^27.4.1",
     "eslint": "^7.32.0",
-    "layout": "workspace:*",
     "utils": "workspace:*",
     "config": "workspace:*",
     "tsconfig": "workspace:*"

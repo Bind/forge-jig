@@ -6,9 +6,6 @@
   "private": true,
   "main": "dist/cli.js",
   "typings": "dist/index.d.ts",
-  "bin": {
-    "jig": "./dist/cli.js"
-  },
   "files": [
     "dist",
     "src"
@@ -22,7 +19,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "package": "turbo run package",
+    "e2e": "ts-node apps/cli/src/index.ts make './contracts/*.sol'; forge test --force"
   },
   "husky": {
     "hooks": {

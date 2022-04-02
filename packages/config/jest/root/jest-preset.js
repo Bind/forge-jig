@@ -17,4 +17,5 @@ module.exports = {
     ".json$": "identity-obj-proxy",
   },
   moduleDirectories: ["node_modules"],
+  testTimeout: 10000,
 };

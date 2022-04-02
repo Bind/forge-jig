@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 
 import * as fs from "fs";
-import { compileContractLayout } from "ast";
+import { compileContractLayout } from "layout";
 import { generateJig } from "../../index";
 
 import { getFoundryConfig, getProjectRoot, FoundryContext } from "utils";

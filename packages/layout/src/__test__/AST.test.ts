@@ -11,10 +11,13 @@ import {
 import {
   getContractDefinition,
   getVariableDeclarationsForContract,
-} from "../find";
-import { generateContractLayout, isStorageInfoStruct } from "layout";
-import { generateAST, compile } from "../solc";
-import { compileContractLayout } from "..";
+} from "ast/src/find";
+import { generateAST, compile } from "ast/src/solc";
+import {
+  generateContractLayout,
+  isStorageInfoStruct,
+  compileContractLayout,
+} from "../..";
 
 const CONTRACT_DIR = process.env.CONTRACT_DIR || "../../contracts/";
 
