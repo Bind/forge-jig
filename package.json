@@ -13,8 +13,11 @@
     "lint": "turbo run lint",
     "test": "turbo run test --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean": "turbo run clean;",
-    "e2e": "pnpm run bundle;apps/cli/lib/jig.js make './contracts/*.sol'; forge test --force",
+    "jig": "apps/cli/lib/jig.js",
+    "jig:clean": "rm -rf ./contracts/jig",
+    "clean": "turbo run clean",
+    "e2e": "pnpm run bundle && pnpm jig make './contracts/*.sol' && forge test --force",
+    "e2e-all": "pnpm run jig:clean && pnpm run e2e",
     "bundle": "turbo run bundle",
     "local": "turbo run local"
   },
