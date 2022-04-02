@@ -10,8 +10,9 @@ import {
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
-} from "layout/src/predicate";
-import { StorageInfoArray, StorageInfoStruct } from "layout";
+  StorageInfoArray,
+  StorageInfoStruct,
+} from "layout";
 import { writeStructToSlot } from "./struct";
 import {
   generateClearCall,

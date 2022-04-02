@@ -20,7 +20,7 @@ import {
 } from "ast";
 import { StorageLayout } from ".";
 import { MappingPointer } from "./mapping";
-import { isSolidityType, SOLIDITY_TYPES } from "../../types";
+import { isSolidityType, SOLIDITY_TYPES } from "types";
 import { StorageInfoArray } from "./types";
 export function getStructLayout(
   ast: SourceUnit[],

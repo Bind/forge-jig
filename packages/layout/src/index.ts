@@ -5,7 +5,7 @@ import {
   StorageInfos,
   StoragePointer,
 } from "./types";
-import { getByteSizeFromType, SOLIDITY_TYPES } from "../../types";
+import { getByteSizeFromType, SOLIDITY_TYPES } from "types";
 
 export class StorageLayout {
   name: string;

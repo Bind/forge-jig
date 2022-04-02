@@ -3,8 +3,8 @@
 node_modules
 dist
 .env
-out
-cache
+contracts-out
+contracts-cache
 jig
 contract/jig
 .turbo

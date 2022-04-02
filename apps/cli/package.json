@@ -3,24 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "main": "index.ts",
+  "main": "./lib/jig.js",
   "bin": {
-    "jig": "./jig.js"
+    "jig": "./lib/jig.js"
   },
   "scripts": {
     "setup": "echo 0",
     "build": "tsc",
     "test": "exit 0",
     "lint": "TIMING=1 eslint src --fix",
-    "prepare": "tsc",
-    "bundle": "esbuild --format=cjs src/index.ts --outfile=jig.js",
-    "package": "pnpm run bundle"
+    "bundle": "esbuild dist/index.js --outfile=./lib/jig.js --platform=node --target=node10.4; ./lib/jig.js",
+    "local": "pnpm link -g ",
+    "prepare": "tsc"
   },
   "dependencies": {
     "ast": "workspace:*",
     "codegen": "workspace:*",
     "config": "workspace:*",
     "dotenv": "^16.0.0",
+    "esbuild": "^0.14.30",
     "ethers": "^5.6.0",
     "glob": "^7.2.0",
     "is-glob": "^4.0.3",

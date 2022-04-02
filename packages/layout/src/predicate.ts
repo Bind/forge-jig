@@ -1,4 +1,4 @@
-import { isSolidityType } from "../../types";
+import { isSolidityType } from "types";
 import { MappingPointer } from "./mapping";
 import {
   StorageInfo,

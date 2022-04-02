@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "files": [
-    "index.ts",
-    "dist"
+    "dist/*"
   ],
   "scripts": {
     "test": "jest",
@@ -18,15 +17,15 @@
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@types/mocha": "^9.1.0",
-    "jest": "^27.5.1",
     "ast": "workspace:*",
-    "layout": "workspace:*",
-    "types": "workspace:*",
-    "typescript": "^4.6.2",
-    "utils": "workspace:*",
-    "tsconfig": "workspace:*",
     "config": "workspace:*",
-    "eslint": "^7.32.0"
+    "eslint": "^7.32.0",
+    "jest": "^27.5.1",
+    "layout": "workspace:*",
+    "tsconfig": "workspace:*",
+    "types": "workspace:*",
+    "typescript": "^4.6.3",
+    "utils": "workspace:*"
   },
   "dependencies": {
     "dotenv": "^16.0.0"

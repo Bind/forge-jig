@@ -1,13 +1,12 @@
-import { StorageLayout } from "../layout/src";
-
 import {
+  StorageLayout,
   hasMapping,
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
-} from "layout/src/predicate";
+} from "layout";
 
-import { FoundryContext } from "utils/src/types";
+import { FoundryContext } from "utils";
 import { soliditySetMappingFunctionFromStorageInfo } from "./src/mapping";
 import {
   solidityConstFromStorageInfo,

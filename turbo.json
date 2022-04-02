@@ -1,7 +1,10 @@
 {
   "pipeline": {
-    "package": {
-      "dependsOn": ["build"]
+    "local": {
+      "dependsOn": ["bundle"]
+    },
+    "bundle": {
+      "dependsOn": ["build", "^bundle"]
     },
     "build": {
       "dependsOn": ["^build"],

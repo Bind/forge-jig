@@ -4,12 +4,6 @@
   "version": "0.1.0",
   "license": "MIT",
   "private": true,
-  "main": "dist/cli.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
   "engines": {
     "node": ">=14"
   },
@@ -19,9 +13,10 @@
     "lint": "turbo run lint",
     "test": "turbo run test --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean": "turbo run clean",
-    "package": "turbo run package",
-    "e2e": "ts-node apps/cli/src/index.ts make './contracts/*.sol'; forge test --force"
+    "clean": "turbo run clean;",
+    "e2e": "pnpm run bundle;apps/cli/lib/jig.js make './contracts/*.sol'; forge test --force",
+    "bundle": "turbo run bundle",
+    "local": "turbo run local"
   },
   "husky": {
     "hooks": {
@@ -29,9 +24,9 @@
     }
   },
   "devDependencies": {
-    "husky": "^7.0.4",
     "eslint": "7.32.0",
-    "prettier": "^2.5.1",
+    "husky": "^7.0.4",
+    "prettier": "^2.6.1",
     "turbo": "latest"
   }
 }
