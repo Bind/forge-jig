@@ -28,6 +28,7 @@ importers:
       esbuild: ^0.14.30
       eslint: ^7.32.0
       ethers: ^5.6.0
+      foundry: workspace:*
       glob: ^7.2.0
       is-glob: ^4.0.3
       jest: ^27.5.1
@@ -37,7 +38,6 @@ importers:
       ts-toolbelt: ^9.6.0
       tsconfig: workspace:*
       typescript: ^4.6.2
-      utils: workspace:*
       yargs: ^17.3.1
     dependencies:
       ast: link:../../packages/ast
@@ -46,13 +46,13 @@ importers:
       dotenv: 16.0.0
       esbuild: 0.14.30
       ethers: 5.6.2
+      foundry: link:../../packages/foundry
       glob: 7.2.0
       is-glob: 4.0.3
       jest: 27.5.1
       layout: link:../../packages/layout
       toml: 3.0.0
       tsconfig: link:../../packages/tsconfig
-      utils: link:../../packages/utils
       yargs: 17.4.0
     devDependencies:
       '@types/dotenv': 8.2.0
@@ -72,11 +72,11 @@ importers:
       config: workspace:*
       dotenv: ^16.0.0
       eslint: ^7.32.0
+      foundry: workspace:*
       jest: ^27.5.1
       solc-typed-ast: ^9.1.2
       tsconfig: workspace:*
       typescript: ^4.6.3
-      utils: workspace:*
     dependencies:
       dotenv: 16.0.0
     devDependencies:
@@ -84,11 +84,11 @@ importers:
       '@types/mocha': 9.1.0
       config: link:../config
       eslint: 7.32.0
+      foundry: link:../foundry
       jest: 27.5.1
       solc-typed-ast: 9.1.2
       tsconfig: link:../tsconfig
       typescript: 4.6.3
-      utils: link:../utils
 
   packages/codegen:
     specifiers:
@@ -98,12 +98,12 @@ importers:
       config: workspace:*
       dotenv: ^16.0.0
       eslint: ^7.32.0
+      foundry: workspace:*
       jest: ^27.5.1
       layout: workspace:*
       tsconfig: workspace:*
       types: workspace:*
       typescript: ^4.6.3
-      utils: workspace:*
     dependencies:
       dotenv: 16.0.0
     devDependencies:
@@ -112,12 +112,12 @@ importers:
       ast: link:../ast
       config: link:../config
       eslint: 7.32.0
+      foundry: link:../foundry
       jest: 27.5.1
       layout: link:../layout
       tsconfig: link:../tsconfig
       types: link:../types
       typescript: 4.6.3
-      utils: link:../utils
 
   packages/config:
     specifiers:
@@ -136,6 +136,21 @@ importers:
       eslint-plugin-import: 2.25.4_eslint@7.32.0
       eslint-plugin-jest: 23.13.1_eslint@7.32.0+typescript@4.6.3
     devDependencies:
+      typescript: 4.6.3
+
+  packages/foundry:
+    specifiers:
+      config: workspace:*
+      jest: ^27.5.1
+      toml: ^3.0.0
+      tsconfig: workspace:*
+      typescript: ^4.6.3
+    dependencies:
+      toml: 3.0.0
+    devDependencies:
+      config: link:../config
+      jest: 27.5.1
+      tsconfig: link:../tsconfig
       typescript: 4.6.3
 
   packages/layout:
@@ -182,21 +197,6 @@ importers:
       '@types/mocha': 9.1.0
       config: link:../config
       eslint: 7.32.0
-      jest: 27.5.1
-      tsconfig: link:../tsconfig
-      typescript: 4.6.3
-
-  packages/utils:
-    specifiers:
-      config: workspace:*
-      jest: ^27.5.1
-      toml: ^3.0.0
-      tsconfig: workspace:*
-      typescript: ^4.6.3
-    dependencies:
-      toml: 3.0.0
-    devDependencies:
-      config: link:../config
       jest: 27.5.1
       tsconfig: link:../tsconfig
       typescript: 4.6.3

@@ -6,7 +6,7 @@ import {
   isStorageInfoStruct,
 } from "layout";
 
-import { FoundryContext } from "utils";
+import { FoundryContext } from "foundry";
 import { soliditySetMappingFunctionFromStorageInfo } from "./src/mapping";
 import {
   solidityConstFromStorageInfo,

@@ -3,7 +3,7 @@ import { compileContractLayouts } from "layout";
 import { generateJig } from "codegen";
 import * as glob from "glob";
 import * as fs from "fs";
-import { getFoundryConfig, FoundryContext, getProjectRoot } from "utils";
+import { getFoundryConfig, FoundryContext, getProjectRoot } from "foundry";
 type Options = {
   pattern: string;
 };

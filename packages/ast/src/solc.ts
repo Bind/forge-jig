@@ -1,5 +1,5 @@
 import { ASTReader, compileSol } from "solc-typed-ast";
-import { getRemappings } from "utils";
+import { getRemappings } from "foundry";
 
 export async function compile(path: string) {
   const { data } = await compileSol(path, "auto", getRemappings());

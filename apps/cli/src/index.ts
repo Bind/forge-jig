@@ -4,7 +4,7 @@ import { generateJig } from "codegen";
 import * as glob from "glob";
 import * as fs from "fs";
 import { compileContractLayouts } from "layout";
-import { FoundryContext, getFoundryConfig, getProjectRoot } from "utils";
+import { FoundryContext, getFoundryConfig, getProjectRoot } from "foundry";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 yargs(hideBin(process.argv))

@@ -4,7 +4,7 @@ import {
   isStorageInfoMapping,
   isStorageInfoStruct,
 } from "layout";
-import { FoundryContext } from "utils";
+import { FoundryContext } from "foundry";
 import { getArrayValue } from "./array";
 import { getMappingValue } from "./mapping";
 

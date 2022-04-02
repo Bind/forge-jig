@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { compileContractLayout } from "layout";
 import { generateJig } from "../../index";
 
-import { getFoundryConfig, getProjectRoot, FoundryContext } from "utils";
+import { getFoundryConfig, getProjectRoot, FoundryContext } from "foundry";
 dotenv.config();
 
 export const assertions = {

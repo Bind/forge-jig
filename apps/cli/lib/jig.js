@@ -40,7 +40,7 @@ const codegen_1 = require("codegen");
 const glob = __importStar(require("glob"));
 const fs = __importStar(require("fs"));
 const layout_1 = require("layout");
-const utils_1 = require("utils");
+const foundry_1 = require("foundry");
 const yargs_1 = __importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
 (0, yargs_1.default)((0, helpers_1.hideBin)(process.argv)).command("make <pattern> [options]", "generate a jig for solidity contract", () => {
@@ -50,8 +50,8 @@ const helpers_1 = require("yargs/helpers");
   });
 }, async (argv) => {
   const { pattern } = argv;
-  const foundryConfig = (0, utils_1.getFoundryConfig)();
-  const projectRoot = (0, utils_1.getProjectRoot)();
+  const foundryConfig = (0, foundry_1.getFoundryConfig)();
+  const projectRoot = (0, foundry_1.getProjectRoot)();
   const context = {
     config: foundryConfig,
     rootPath: projectRoot,

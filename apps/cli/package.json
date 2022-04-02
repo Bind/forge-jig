@@ -29,7 +29,7 @@
     "layout": "workspace:*",
     "toml": "^3.0.0",
     "tsconfig": "workspace:*",
-    "utils": "workspace:*",
+    "foundry": "workspace:*",
     "yargs": "^17.3.1"
   },
   "devDependencies": {

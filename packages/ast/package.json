@@ -23,7 +23,7 @@
     "solc-typed-ast": "^9.1.2",
     "tsconfig": "workspace:*",
     "typescript": "^4.6.3",
-    "utils": "workspace:*"
+    "foundry": "workspace:*"
   },
   "dependencies": {
     "dotenv": "^16.0.0"
