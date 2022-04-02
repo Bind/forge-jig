@@ -27,14 +27,17 @@ function template(
 // THIS FILE WAS GENERATED
 // SPDX-License-Identifier: MIT
 ${pragma}
-import "forge-std/stdlib.sol";
-import "forge-std/Vm.sol";
 ${imports}
+
+interface CheatCodes {
+  function store(address,bytes32,bytes32) external;
+  function load(address,bytes32) external returns (bytes32);
+}
 
 contract ${contractName}Jig {
     address internal target;
-    Vm public constant VM =
-        Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
+    CheatCodes public constant VM =
+    CheatCodes(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
     constructor(address _contractAddress){
       target = _contractAddress;
     }
