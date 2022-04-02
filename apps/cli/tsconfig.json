@@ -1,6 +1,6 @@
 {
   "extends": "tsconfig/node14.json",
-  "include": ["src"],
+  "include": ["index.ts", "src"],
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"

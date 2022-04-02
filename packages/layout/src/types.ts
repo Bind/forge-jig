@@ -1,15 +1,15 @@
-import { StorageLayout } from '.';
-import { SOLIDITY_TYPES } from '../../types';
+import { StorageLayout } from ".";
+import { SOLIDITY_TYPES } from "../../types";
 export type StoragePointer = {
   slot: number; // Storage Slot Number
   offset: number; // Storage Slot Offset Bytes
 };
 export type StorageInfoVariants =
-  | 'simple'
-  | 'struct'
-  | 'mapping'
-  | 'array'
-  | 'enum';
+  | "simple"
+  | "struct"
+  | "mapping"
+  | "array"
+  | "enum";
 
 export type StorageInfo = {
   variant: StorageInfoVariants;
@@ -18,18 +18,18 @@ export type StorageInfo = {
   pointer: StoragePointer;
 };
 export type StorageInfoEnum = {
-  variant: 'enum';
+  variant: "enum";
   size: number; // Number of bytes long
   pointer: StoragePointer;
 };
 export type StorageInfoMapping = {
-  variant: 'mapping';
+  variant: "mapping";
   key: SOLIDITY_TYPES;
   value: SOLIDITY_TYPES | StorageInfoStruct | StorageInfoMapping;
   pointer: StoragePointer;
 };
 export type StorageInfoArray = {
-  variant: 'array';
+  variant: "array";
   value:
     | SOLIDITY_TYPES
     | StorageInfoStruct
@@ -38,7 +38,7 @@ export type StorageInfoArray = {
   pointer: StoragePointer;
 };
 export type StorageInfoStruct = {
-  variant: 'struct';
+  variant: "struct";
   layout: StorageLayout;
   pointer: StoragePointer; // Slot Number
 };

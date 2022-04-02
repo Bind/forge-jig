@@ -1,5 +1,5 @@
-import { findNearest } from "../findNearest";
-import { getRemappings, parseRemappings } from "../remappings";
+import { findNearest } from "../src/findNearest";
+import { getRemappings, parseRemappings } from "../src/remappings";
 const assertions = [
   "ds-test/=/Users/douglasbinder/workspace/forge-fixture/lib/ds-test/src/",
   "forge-std/=/Users/douglasbinder/workspace/forge-fixture/lib/forge-std/src/",

@@ -1,17 +1,18 @@
-import { SLOT_CONTENT, STORAGE_SLOT } from '../../../src/constants';
+import { SLOT_CONTENT, STORAGE_SLOT } from "./constants";
 import {
+  StorageInfo,
+  StorageInfoStruct,
   isStorageInfo,
   isStorageInfoArray,
   isStorageInfoStruct,
-} from '../../layout/src/predicate';
-import { StorageInfo, StorageInfoStruct } from '../../layout/src/types';
-import { writeArrayToSlot } from './array';
+} from "layout";
+import { writeArrayToSlot } from "./array";
 import {
   generateClearCallStruct,
   generateLoadCall,
   generateMaskCallStruct,
   generateStoreCall,
-} from './utils';
+} from "./utils";
 
 export function overwriteInfo(
   slot_declaration: string,
@@ -33,7 +34,7 @@ export function soliditySetStructFunction(
 ) {
   return `
         function ${name}(${info.layout.name} memory value) public{
-          ${writeStructToSlot(name + STORAGE_SLOT, 'value', info)}
+          ${writeStructToSlot(name + STORAGE_SLOT, "value", info)}
         }
         `;
 }
@@ -56,7 +57,7 @@ export function writeStructToSlot(
     .map((key: string) => {
       const storage = struct.layout.variables[key];
       if (isStorageInfo(storage)) {
-        let calls = '';
+        let calls = "";
         if (storage.pointer.slot > prevSlot) {
           prevSlot = storage.pointer.slot;
           calls += generateLoadCall(
@@ -103,9 +104,9 @@ export function writeStructToSlot(
         );
         return calls;
       } else {
-        return '';
+        return "";
       }
     })
-    .join('\n')}
+    .join("\n")}
 `;
 }

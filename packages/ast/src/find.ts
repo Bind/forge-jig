@@ -6,14 +6,14 @@ import {
   PragmaDirective,
   SourceUnit,
   VariableDeclaration,
-} from 'solc-typed-ast';
+} from "solc-typed-ast";
 
 export function getBySelector(
   ast: SourceUnit[],
   selector: ASTNodeSelector
 ): ASTNode {
   const unit = ast.find((s) => s.getChildrenBySelector(selector).length > 0);
-  if (!unit) throw new Error('Unable to find node with selector');
+  if (!unit) throw new Error("Unable to find node with selector");
   return unit.getChildrenBySelector(selector)[0];
 }
 
@@ -32,7 +32,7 @@ export function getContractDefinition(
     n instanceof ContractDefinition && n.raw.name === contractName;
   const unit = ast.find((s) => s.getChildrenBySelector(selector));
   if (!unit)
-    throw new Error('Unable to find contract with name ' + contractName);
+    throw new Error("Unable to find contract with name " + contractName);
   return unit.getChildrenBySelector(selector)[0] as ContractDefinition;
 }
 export function getContractDefinitionFromInheritanceSpecifier(
@@ -48,12 +48,12 @@ export function getContractDefinitionFromInheritanceSpecifier(
       s.getChildrenBySelector(selector).length > 0
     );
   });
-  if (!unit) throw new Error('Unable to find contract for inheritance');
+  if (!unit) throw new Error("Unable to find contract for inheritance");
   const contract = unit.getChildrenBySelector(selector)[0];
   if (contract instanceof ContractDefinition) {
     return contract;
   } else {
-    throw Error('no contract for ' + node.vBaseType.referencedDeclaration);
+    throw Error("no contract for " + node.vBaseType.referencedDeclaration);
   }
 }
 
@@ -88,13 +88,13 @@ export function getVariableDeclarationsForContract(
     selector
   ) as VariableDeclaration[];
   return [...inheritedSlots, ...implSlots].filter(
-    (n) => n.mutability !== 'immutable'
+    (n) => n.mutability !== "immutable"
   );
 }
 
 export function getParentSourceUnit(node: ASTNode): SourceUnit {
   if (node instanceof SourceUnit) return node;
-  if (!node.parent) throw new Error('no parent for node');
+  if (!node.parent) throw new Error("no parent for node");
   if (node.parent instanceof SourceUnit) return node.parent;
 
   let parent = node.parent;

@@ -1,11 +1,11 @@
-import { SOLIDITY_TYPES } from '../../types';
-import { ArrayPointer } from './array';
-import { isMappingPointer } from './predicate';
+import { SOLIDITY_TYPES } from "../../types";
+import { ArrayPointer } from "./array";
+import { isMappingPointer } from "./predicate";
 import {
   StorageInfoArray,
   StorageInfoMapping,
   StorageInfoStruct,
-} from './types';
+} from "./types";
 
 export interface MappingPointer {
   slot: number;
@@ -23,7 +23,7 @@ export function mappingPointerToStorage(
 ): StorageInfoMapping {
   const value = mapping.value;
   return {
-    variant: 'mapping',
+    variant: "mapping",
     key: mapping.key,
     value: isMappingPointer(value)
       ? mappingPointerToStorage(value)

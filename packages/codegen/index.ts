@@ -1,22 +1,22 @@
-import { StorageLayout } from '../layout/src';
+import { StorageLayout } from "../layout/src";
 
 import {
   hasMapping,
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
-} from 'layout/src/predicate';
+} from "layout/src/predicate";
 
-import { FoundryContext } from '../utils/types';
-import { soliditySetMappingFunctionFromStorageInfo } from './src/mapping';
+import { FoundryContext } from "utils/src/types";
+import { soliditySetMappingFunctionFromStorageInfo } from "./src/mapping";
 import {
   solidityConstFromStorageInfo,
   soliditySetEnumFunctionFromStorageInfo,
   soliditySetFunctionFromStorageInfo,
-} from './src/utils';
-import { generateJigImports } from './src/imports';
-import { soliditySetStructFunction } from './src/struct';
-import { soliditySetArrayFunctionFromStorageInfo } from './src/array';
+} from "./src/utils";
+import { generateJigImports } from "./src/imports";
+import { soliditySetStructFunction } from "./src/struct";
+import { soliditySetArrayFunctionFromStorageInfo } from "./src/array";
 
 function template(
   contractName: string,
@@ -68,7 +68,7 @@ contract ${contractName}Jig {
 }
 
 export function generateJigBody(layout: StorageLayout) {
-  let body = '';
+  let body = "";
   const vars = Object.keys(layout.variables);
   vars.forEach((key) => {
     body += solidityConstFromStorageInfo(key, layout.variables[key]);
@@ -76,24 +76,24 @@ export function generateJigBody(layout: StorageLayout) {
   vars.forEach((key) => {
     const storageInfo = layout.variables[key];
     switch (storageInfo.variant) {
-      case 'simple':
+      case "simple":
         body += soliditySetFunctionFromStorageInfo(key, storageInfo);
         break;
-      case 'array':
+      case "array":
         if (isStorageInfoArray(storageInfo)) {
           body += soliditySetArrayFunctionFromStorageInfo(key, storageInfo);
         }
         break;
-      case 'mapping':
+      case "mapping":
         if (isStorageInfoMapping(storageInfo)) {
           body += soliditySetMappingFunctionFromStorageInfo(key, storageInfo);
         } else {
           throw new Error(
-            'storageInfo.variant=mapping must be of type StorageInfoMapping'
+            "storageInfo.variant=mapping must be of type StorageInfoMapping"
           );
         }
         break;
-      case 'struct':
+      case "struct":
         if (isStorageInfoStruct(storageInfo)) {
           if (hasMapping(storageInfo)) {
             body += generateJigBody(storageInfo.layout);
@@ -102,7 +102,7 @@ export function generateJigBody(layout: StorageLayout) {
           }
         }
         break;
-      case 'enum':
+      case "enum":
         body += soliditySetEnumFunctionFromStorageInfo(key, storageInfo);
         break;
       default:

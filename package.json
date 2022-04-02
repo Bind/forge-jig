@@ -20,7 +20,9 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
-    "test": "turbo run test --parallel"
+    "test": "turbo run test --parallel",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean": "turbo run clean"
   },
   "husky": {
     "hooks": {

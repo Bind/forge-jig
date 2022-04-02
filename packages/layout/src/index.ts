@@ -1,20 +1,20 @@
-import { MappingPointer, mappingPointerToStorage } from './mapping';
+import { MappingPointer, mappingPointerToStorage } from "./mapping";
 import {
   StorageInfo,
   StorageInfoArray,
   StorageInfos,
   StoragePointer,
-} from './types';
-import { getByteSizeFromType, SOLIDITY_TYPES } from '../../types';
+} from "./types";
+import { getByteSizeFromType, SOLIDITY_TYPES } from "../../types";
 
 export class StorageLayout {
   name: string;
   variables: { [key: string]: StorageInfos } = {};
   pragma: string;
-  sourceUnitPath: string = '';
+  sourceUnitPath: string = "";
   slotRoot: number = 0;
   endOfStorage: StoragePointer = { slot: 0, offset: 0 };
-  constructor(name: string, rootSlot: number, pragma: string = '') {
+  constructor(name: string, rootSlot: number, pragma: string = "") {
     this.pragma = pragma;
     this.name = name;
     this.endOfStorage.slot = rootSlot;
@@ -59,7 +59,7 @@ export class StorageLayout {
       };
 
       this.variables[name] = {
-        variant: 'simple',
+        variant: "simple",
         size: byteSize,
         pointer,
         type: typeString,
@@ -71,7 +71,7 @@ export class StorageLayout {
       };
 
       this.variables[name] = {
-        variant: 'simple',
+        variant: "simple",
         size: byteSize,
         pointer,
         type: typeString,
@@ -93,7 +93,7 @@ export class StorageLayout {
       size: 0,
     };
     this.variables[name] = {
-      variant: 'struct',
+      variant: "struct",
       layout,
       pointer,
     };
@@ -110,7 +110,7 @@ export class StorageLayout {
       slot: this.endOfStorage.slot,
     };
     this.variables[name] = {
-      variant: 'enum',
+      variant: "enum",
       size: 1,
       pointer,
     } as StorageInfo;
