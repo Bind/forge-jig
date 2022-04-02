@@ -4,6 +4,8 @@ import {
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
+  isStorageInfo,
+  isStorageInfoEnum,
 } from "layout";
 
 import { FoundryContext } from "foundry";
@@ -75,42 +77,30 @@ export function generateJigBody(layout: StorageLayout) {
   vars.forEach((key) => {
     body += solidityConstFromStorageInfo(key, layout.variables[key]);
   });
+
   vars.forEach((key) => {
     const storageInfo = layout.variables[key];
-    switch (storageInfo.variant) {
-      case "simple":
-        body += soliditySetFunctionFromStorageInfo(key, storageInfo);
-        break;
-      case "array":
-        if (isStorageInfoArray(storageInfo)) {
-          body += soliditySetArrayFunctionFromStorageInfo(key, storageInfo);
-        }
-        break;
-      case "mapping":
-        if (isStorageInfoMapping(storageInfo)) {
-          body += soliditySetMappingFunctionFromStorageInfo(key, storageInfo);
-        } else {
-          throw new Error(
-            "storageInfo.variant=mapping must be of type StorageInfoMapping"
-          );
-        }
-        break;
-      case "struct":
-        if (isStorageInfoStruct(storageInfo)) {
-          if (hasMapping(storageInfo)) {
-            body += generateJigBody(storageInfo.layout);
-          } else {
-            body += soliditySetStructFunction(key, storageInfo);
-          }
-        }
-        break;
-      case "enum":
-        body += soliditySetEnumFunctionFromStorageInfo(key, storageInfo);
-        break;
-      default:
-        throw new Error(`${layout.variables[key].variant} is not handled`);
+    if (isStorageInfo(storageInfo)) {
+      body += soliditySetFunctionFromStorageInfo(key, storageInfo);
+    } else if (isStorageInfoArray(storageInfo)) {
+      body += soliditySetArrayFunctionFromStorageInfo(key, storageInfo);
+    } else if (isStorageInfoMapping(storageInfo)) {
+      body += soliditySetMappingFunctionFromStorageInfo(key, storageInfo);
+    } else if (isStorageInfoStruct(storageInfo)) {
+      if (hasMapping(storageInfo)) {
+        body += generateJigBody(storageInfo.layout);
+      } else {
+        body += soliditySetStructFunction(key, storageInfo);
+      }
+    } else if (isStorageInfoEnum(storageInfo)) {
+      body += soliditySetEnumFunctionFromStorageInfo(key, storageInfo);
+    } else {
+      throw new Error(
+        "Issue generate code for \n" + JSON.stringify(storageInfo)
+      );
     }
   });
+
   return body;
 }
 

@@ -120,10 +120,10 @@ export function arraySetterBodySolidityType(
   )} value) public {
 
     uint256 ${name}Array = ${length_slot_encoding};
-    uint256 ${ARRAY_LENGTH} = uint256(
+    uint256 ${name}${ARRAY_LENGTH} = uint256(
         VM.load(target, bytes32(${name}Array))
     );
-      if (${ARRAY_LENGTH} <= key${args.length - 1}) {
+      if (${name}${ARRAY_LENGTH} <= key${args.length - 1}) {
         VM.store(
             target,
             bytes32(${name}Array),
@@ -160,11 +160,11 @@ export function arraySetterBodyStruct(
   } memory value) public{
          uint256 ${name}Array = ${length_slot_encoding};
           uint256 struct_size = ${struct.layout.getLength()};
-          uint256 ${ARRAY_LENGTH} = uint256(
+          uint256 ${name}${ARRAY_LENGTH} = uint256(
             VM.load(target, bytes32(${name}${STORAGE_SLOT}))
         );
 
-          if (${ARRAY_LENGTH} <= key${args.length - 1}) {
+          if (${name}${ARRAY_LENGTH} <= key${args.length - 1}) {
             VM.store(
                 target,
                 bytes32(${name}${STORAGE_SLOT}),
@@ -182,13 +182,14 @@ export function arraySetterBodyStruct(
 export function checkDynamicLength(
   slot_declaration: string,
   array_declaration: string,
+  array_length_declaration: string,
   initialize: boolean = true
 ) {
   return `
-  ${initialize ? "uint256 " : ""}${ARRAY_LENGTH} = uint256(
+  ${initialize ? "uint256 " : ""}${array_length_declaration} = uint256(
     VM.load(target, bytes32(${slot_declaration}))
 );
-  if (${ARRAY_LENGTH} < ${array_declaration}.length) {
+  if (${array_length_declaration} < ${array_declaration}.length) {
     VM.store(
         target,
         bytes32(${slot_declaration}),
@@ -249,6 +250,7 @@ export function writeArrayToSlot(
   ${checkDynamicLength(
     slot_declaration,
     array_declaration,
+    ARRAY_LENGTH,
     initialize_array_length_declaration
   )}
   ${generateLoadCall(slot_declaration, SLOT_CONTENT, 0, false)}

@@ -12,7 +12,7 @@ export type StorageInfoVariants =
   | "enum";
 
 export type StorageInfo = {
-  variant: StorageInfoVariants;
+  variant: "simple";
   type: SOLIDITY_TYPES;
   size: number; // Number of bytes long
   pointer: StoragePointer;
@@ -46,4 +46,5 @@ export type StorageInfos =
   | StorageInfo
   | StorageInfoMapping
   | StorageInfoStruct
-  | StorageInfoArray;
+  | StorageInfoArray
+  | StorageInfoEnum;

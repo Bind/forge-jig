@@ -3,6 +3,7 @@ import { MappingPointer } from "./mapping";
 import {
   StorageInfo,
   StorageInfoArray,
+  StorageInfoEnum,
   StorageInfoMapping,
   StorageInfos,
   StorageInfoStruct,
@@ -19,6 +20,11 @@ export function isStorageInfoArray(value: any): value is StorageInfoArray {
 }
 export function isStorageInfo(value: StorageInfos): value is StorageInfo {
   return isSolidityType((value as StorageInfo).type);
+}
+export function isStorageInfoEnum(
+  value: StorageInfos
+): value is StorageInfoEnum {
+  return (value as StorageInfoEnum).variant == "enum";
 }
 
 export function isMappingPointer(

@@ -2,6 +2,7 @@ import { MappingPointer, mappingPointerToStorage } from "./mapping";
 import {
   StorageInfo,
   StorageInfoArray,
+  StorageInfoEnum,
   StorageInfos,
   StoragePointer,
 } from "./types";
@@ -120,7 +121,7 @@ export class StorageLayout {
       variant: "enum",
       size: 1,
       pointer,
-    } as StorageInfo;
+    } as StorageInfoEnum;
     this.insertBytes(1);
   }
 

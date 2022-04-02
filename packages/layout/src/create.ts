@@ -15,6 +15,7 @@ import * as path from "path";
 import {
   isEnum,
   isStruct,
+  isContract,
   getBySelector,
   getParentSourceUnit,
   getPragma,
@@ -46,11 +47,6 @@ export function getStructLayout(
     throw new Error("not StructDefinition");
   const source = getParentSourceUnit(structDeclaration);
   const importName = getImportNameFromStruct(structDefinition);
-  console.log(
-    structDefinition.id,
-    importName,
-    structDefinition.raw.canonicalName
-  );
   const storage = generateContractLayout(
     ast,
     structDefinition.raw.canonicalName,
@@ -107,7 +103,7 @@ export function getMappingLayout(
       value: generateArrayLayout(ast, valueType, rootSlot),
     };
   } else {
-    console.log(valueType);
+    console.log(valueType, "is not handled");
     throw new Error(`${keyTypeString} or ${valueTypeString} is not handled `);
   }
 }
@@ -147,7 +143,7 @@ export function generateArrayLayout(
       value: generateArrayLayout(ast, valueType, rootSlot),
     };
   } else {
-    console.log(valueType);
+    console.log(valueType, "is not handled");
     throw new Error(` ${valueTypeString} is not handled for array layouts`);
   }
 }
@@ -163,7 +159,6 @@ export function generateContractLayout(
   rootSlot: number = 0,
   importName: string = ""
 ): StorageLayout {
-  console.log(storageName, importName);
   const stor = new StorageLayout(
     storageName,
     rootSlot,
@@ -193,8 +188,10 @@ export function generateContractLayout(
           stor.getLength()
         );
         stor.appendStruct(declaration.name, structLayout);
+      } else if (isContract(ast, declaration.vType)) {
+        console.log("contract: ", declaration.vType, "is not handled");
       } else {
-        console.log(declaration.vType);
+        console.log(declaration.vType, "is not handled");
       }
     } else if (declaration.vType instanceof Mapping) {
       stor.appendMapping(

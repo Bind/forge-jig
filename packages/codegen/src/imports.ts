@@ -3,11 +3,44 @@ import {
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
-  hasMapping,
+  StorageInfoStruct,
+  StorageInfos,
+  isStorageInfo,
+  isStorageInfoEnum,
 } from "layout";
 import { FoundryContext } from "foundry";
-import { getArrayValue } from "./array";
-import { getMappingValue } from "./mapping";
+import { isSolidityType } from "types";
+
+export function flattenStructLayouts(info: StorageInfos): StorageInfoStruct[] {
+  if (isStorageInfoStruct(info)) {
+    const structs: StorageInfoStruct[] = Object.keys(info.layout.variables)
+      .map((k) => flattenStructLayouts(info.layout.variables[k]))
+      .flat();
+    return [info, ...structs];
+  } else if (isStorageInfo(info)) {
+    return [];
+  } else if (isStorageInfoEnum(info)) {
+    return [];
+  } else {
+    let value = info.value;
+    console.log(info, value);
+
+    if (isSolidityType(value)) {
+      return [];
+    } else if (isStorageInfoMapping(value)) {
+      return flattenStructLayouts(value);
+    } else if (isStorageInfoArray(value)) {
+      return flattenStructLayouts(value);
+    } else if (isStorageInfoStruct(value)) {
+      return flattenStructLayouts(value);
+    } else {
+      console.log(info);
+      throw new Error(
+        "unhandled type in soliditySetMappingFunctionFromStorageInfo"
+      );
+    }
+  }
+}
 
 function getImportStoragePath(
   layout: StorageLayout,
@@ -57,43 +90,18 @@ export function parseImportDict(
 ): ImportDict {
   let imports = {};
 
-  const vars = Object.keys(layout.variables);
-  vars.forEach((key) => {
-    const storageInfo = layout.variables[key];
+  const storageInfoStructs = Object.keys(layout.variables)
+    .map((k) => {
+      return flattenStructLayouts(layout.variables[k]);
+    })
+    .flat();
 
-    if (isStorageInfoStruct(storageInfo)) {
-      console.log(storageInfo);
-      if (hasMapping(storageInfo)) {
-        imports = mergeImportDicts(
-          imports,
-          parseImportDict(storageInfo.layout, context)
-        );
-      } else {
-        imports = addImport(
-          imports,
-          storageInfo.layout.importName,
-          getImportStoragePath(storageInfo.layout, context)
-        );
-      }
-    } else if (isStorageInfoMapping(storageInfo)) {
-      const value = getMappingValue(storageInfo);
-      if (isStorageInfoStruct(value)) {
-        imports = addImport(
-          imports,
-          value.layout.importName,
-          getImportStoragePath(value.layout, context)
-        );
-      }
-    } else if (isStorageInfoArray(storageInfo)) {
-      const value = getArrayValue(storageInfo);
-      if (isStorageInfoStruct(value)) {
-        imports = addImport(
-          imports,
-          value.layout.importName,
-          getImportStoragePath(value.layout, context)
-        );
-      }
-    }
+  storageInfoStructs.forEach((storageInfo) => {
+    imports = addImport(
+      imports,
+      storageInfo.layout.importName,
+      getImportStoragePath(storageInfo.layout, context)
+    );
   });
   return imports;
 }
@@ -102,8 +110,8 @@ export const generateJigImports = (
   layout: StorageLayout,
   context: FoundryContext
 ) => {
+  console.log(layout);
   const imports = parseImportDict(layout, context);
-  console.log(imports);
   return Object.keys(imports)
     .map((k) => {
       return solidityImport([...imports[k].values()], k);

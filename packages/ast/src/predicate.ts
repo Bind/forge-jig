@@ -1,6 +1,8 @@
 import {
   ASTNodeSelector,
+  ContractDefinition,
   EnumDefinition,
+  IdentifierPath,
   SourceUnit,
   StructDefinition,
   UserDefinedTypeName,
@@ -25,4 +27,13 @@ export function isStruct(
     node.id === structDeclaration.referencedDeclaration;
   const structDefinition = getBySelector(ast, selector);
   return structDefinition instanceof StructDefinition;
+}
+export function isContract(
+  ast: SourceUnit[],
+  contractDeclaration: UserDefinedTypeName
+): boolean {
+  const selector: ASTNodeSelector = (node) =>
+    node.id === contractDeclaration.referencedDeclaration;
+  const contractDefinition = getBySelector(ast, selector);
+  return contractDefinition instanceof ContractDefinition;
 }

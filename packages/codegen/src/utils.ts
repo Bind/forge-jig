@@ -4,7 +4,7 @@ import {
   getDataToStoreCasting,
   getTypeFunctionSignature,
 } from "types";
-import { StorageInfo, StorageInfos } from "layout";
+import { StorageInfo, StorageInfos, StorageInfoEnum } from "layout";
 
 export function solidityConstSlotOffset(name: string, info: StorageInfos) {
   return `uint8 public  ${name}SlotOffset = uint8(${info.pointer.offset});\n`;
@@ -94,12 +94,26 @@ export function soliditySetFunctionFromStorageInfoWithOffset(
       }
       `;
 }
+export function soliditySetFunctionFromStorageInfoEnumWithOffset(
+  name: string,
+  info: StorageInfoEnum
+) {
+  return `
+      function ${name}(${getTypeFunctionSignature(name)} value) public {
+          ${generateLoadCall(name + STORAGE_SLOT, SLOT_CONTENT)}
+          ${generateClearCall(SLOT_CONTENT, 1, info.pointer.offset)}
+          ${generateMaskCall(SLOT_CONTENT, "value", info.pointer.offset)}
+          ${generateStoreCall(SLOT_CONTENT, name + STORAGE_SLOT)}
+
+      }
+      `;
+}
 export function soliditySetEnumFunctionFromStorageInfo(
   name: string,
-  info: StorageInfo
+  info: StorageInfoEnum
 ) {
   if (info.pointer.offset > 0) {
-    return soliditySetFunctionFromStorageInfoWithOffset(name, info);
+    return soliditySetFunctionFromStorageInfoEnumWithOffset(name, info);
   } else {
     return `
       function ${name}(uint8 value) public {
