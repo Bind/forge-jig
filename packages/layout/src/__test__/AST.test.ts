@@ -17,7 +17,7 @@ import {
   generateContractLayout,
   isStorageInfoStruct,
   compileContractLayout,
-} from "../index.js";
+} from "..";
 
 const CONTRACT_DIR = process.env.CONTRACT_DIR || "../../contracts/";
 
@@ -41,8 +41,8 @@ type Assertions = {
 };
 
 export const assertions: Assertions = {
-  "basic.sol": {
-    name: "Basic",
+  "01-baby.sol": {
+    name: "Baby",
     storage: true,
     expectedSlots: 1,
     variables: ["uint256"],
@@ -54,8 +54,8 @@ export const assertions: Assertions = {
       },
     ],
   },
-  "basic-struct.sol": {
-    name: "BasicStruct",
+  "05-slime.sol": {
+    name: "Slime",
     storage: true,
     expectedSlots: 1,
     variables: ["struct Initialized"],
@@ -77,8 +77,8 @@ export const assertions: Assertions = {
       },
     ],
   },
-  "basic-struct2.sol": {
-    name: "BasicStruct2",
+  "06-goblin.sol": {
+    name: "Goblin",
     storage: true,
     expectedSlots: 3,
     variables: ["struct Hello", "struct Yo"],
@@ -102,36 +102,36 @@ export const assertions: Assertions = {
       },
     ],
   },
-  "basic-empty.sol": {
-    name: "BasicEmpty",
+  "03-empty.sol": {
+    name: "Empty",
     storage: false,
     expectedSlots: 0,
     variables: [],
     explicitSlotChecks: [],
   },
-  "basic-mapping.sol": {
-    name: "BasicMapping",
+  "13-salamander.sol": {
+    name: "Salamander",
     storage: true,
     expectedSlots: 1,
     variables: ["mapping(uint256 => uint256)"],
     explicitSlotChecks: [],
   },
-  "basic-array.sol": {
-    name: "BasicArray",
+  "02-catepillar.sol": {
+    name: "Catepillar",
     storage: true,
     expectedSlots: 1,
     variables: ["uint256[]"],
     explicitSlotChecks: [],
   },
-  "basic-enum.sol": {
-    name: "BasicEnum",
+  "04-roshambo.sol": {
+    name: "RoShamBo",
     storage: true,
     expectedSlots: 1,
-    variables: ["enum AliveEnum"],
+    variables: ["enum Moves"],
     explicitSlotChecks: [],
   },
-  "basic-erc20.sol": {
-    name: "BasicERC20",
+  "07-gold.sol": {
+    name: "Gold",
     storage: true,
     expectedSlots: 7,
     variables: [
