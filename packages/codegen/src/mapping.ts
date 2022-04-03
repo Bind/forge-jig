@@ -47,8 +47,6 @@ export function soliditySetMappingFunctionFromStorageInfo(
     if (isSolidityType(arrayValue)) {
       return arraySetterBodySolidityType(name, args, slot_encoding, arrayValue);
     } else {
-      console.log(name, value);
-      console.log(slot_encoding);
       return arraySetterBodyStruct(name, args, slot_encoding, arrayValue);
     }
   } else {
