@@ -94,6 +94,11 @@ Jig is built on top the [solc-type-ast](https://github.com/ConsenSys/solc-typed-
 
 [forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, we would not have been able to build up enough intuition 
 
+
+# Notes
+
+Currently Jig only outputs a helper contract but could be reconfigured to output a json structure representing storage slots as well. 
+
 # TODO
 
 - [x] generate storage layout from contract source
