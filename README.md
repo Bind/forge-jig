@@ -15,9 +15,9 @@ jig aims to ingest a solidity AST and determine the storage layout. With that la
   - [x] parse out struct declarations
   - [x] map contract storage vars to slots
 
-    - [x] Mappings
-    - [x] Arrays
-    - [x] Custom structs
+    - [x] mappings
+    - [x] arrays
+    - [x] custom structs
       - [x] packed
       - [x] multi-slot
       - [x] nested
@@ -27,7 +27,7 @@ jig aims to ingest a solidity AST and determine the storage layout. With that la
   - [x] generate struct imports for helper contract to consume
   - [x] codegen slot storage helper per storage variable
 
-    - [x] builtin solidity type
+    - [x] builtin solidity types
     - [x] mapping
       - [x] nested mapping
       - [x] struct
@@ -47,12 +47,12 @@ jig aims to ingest a solidity AST and determine the storage layout. With that la
 
 - [x] deep merge foundry.toml default values with local config
 - [x] flatten structs to better handle AppStorage pattern
-- [ ] rename test contracts
+- [x] rename test contracts
 - [ ] build test cases around solmate
 
-- [] migrate to mono repo
-  - [] split out storage layout processing into own package
-  - [] split out built-in type processing into own package
+- [x] migrate to mono repo
+  - [x] split out storage layout processing into own package
+  - [x] split out built-in type processing into own package
 - [] refactor codegen to be more recursion focused
   - [] move magic strings into constants file
 
@@ -66,4 +66,4 @@ Storage Slot Tricks
 - multiple structs will not be packed into 1 slot
 - structs will always start in a new storage slot
 - in order to add an element to an array you must also increment the length
--
+
