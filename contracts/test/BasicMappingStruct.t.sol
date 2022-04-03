@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >0.8.0;
 
-import 'ds-test/test.sol';
-import 'contracts/jig/BasicMappingStructJig.sol';
-import 'contracts/basic-mapping-struct.sol';
-import 'forge-std/stdlib.sol';
-import 'forge-std/Vm.sol';
-import './utils/console.sol';
+import "ds-test/test.sol";
+import "contracts/jig/BasicMappingStructJig.sol";
+import "contracts/basic-mapping-struct.sol";
+import "forge-std/stdlib.sol";
+import "forge-std/Vm.sol";
+import "./utils/console.sol";
 
 contract BasicStructMappingJigTest is DSTest {
     BasicMappingStruct b;
     BasicMappingStructJig jig;
     Vm public constant vm =
-        Vm(address(bytes20(uint160(uint256(keccak256('hevm cheat code'))))));
+        Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
 
     function setUp() public {
         b = new BasicMappingStruct();

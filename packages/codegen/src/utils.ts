@@ -6,14 +6,14 @@ import {
 } from "types";
 import { StorageInfo, StorageInfos, StorageInfoEnum } from "layout";
 
-export function solidityConstSlotOffset(name: string, info: StorageInfos) {
-  return `uint8 public  ${name}SlotOffset = uint8(${info.pointer.offset});\n`;
+export function solidityConstslotOffset(name: string, info: StorageInfos) {
+  return `uint8 public  ${name}slotOffset = uint8(${info.pointer.offset});\n`;
 }
 
 export function solidityConstFromStorageInfo(name: string, info: StorageInfos) {
   return `uint256 public ${name}${STORAGE_SLOT} = uint256(${
     info.pointer.slot
-  });\n${info.pointer.offset > 0 ? solidityConstSlotOffset(name, info) : ""}`;
+  });\n${info.pointer.offset > 0 ? solidityConstslotOffset(name, info) : ""}`;
 }
 export function soliditySetFunctionFromStorageInfo(
   name: string,

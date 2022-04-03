@@ -138,12 +138,12 @@ export function arraySetterBodySolidityType(
   )} - offset) / 32;
 
       uint256 slot = uint256(keccak256(abi.encode((${name}Array)))) + slotOffset;
-      uint256 ${SLOT_CONTENT} = uint256(VM.load(target, bytes32(slot)));
-      ${SLOT_CONTENT} = clear(${SLOT_CONTENT}, ${getByteSizeFromType(
+      uint256 ${name}${SLOT_CONTENT} = uint256(VM.load(target, bytes32(slot)));
+      ${name}${SLOT_CONTENT} = clear(${name}${SLOT_CONTENT}, ${getByteSizeFromType(
     value
   )}, offset);
-      ${SLOT_CONTENT} = set(${SLOT_CONTENT}, value, offset);
-      VM.store(target, bytes32(slot), bytes32(${SLOT_CONTENT}));
+  ${name}${SLOT_CONTENT} = set(${name}${SLOT_CONTENT}, value, offset);
+      VM.store(target, bytes32(slot), bytes32(${name}${SLOT_CONTENT}));
   }
   `;
 }
@@ -171,10 +171,12 @@ export function arraySetterBodyStruct(
                 bytes32(uint256(key${args.length - 1}) + 1)
             );
         }
-          uint256 slot = uint256(keccak256(abi.encode((${name}Array)))) + struct_size * key${
+          uint256 slot${
+            struct.layout.name
+          } = uint256(keccak256(abi.encode((${name}Array)))) + struct_size * key${
     args.length - 1
   };
-          ${writeStructToSlot("slot", "value", struct)}
+          ${writeStructToSlot("slot" + struct.layout.name, "value", struct)}
         }
         `;
 }
@@ -206,8 +208,12 @@ export function declareOffsets(
 ) {
   return `
       uint8 contentOffset = uint8(${index} * ${size} % 32);
-      uint8 slotOffset = uint8((${index} * ${size} - contentOffset) / 32);
+      uint8 slotOffset = 
+      uint8((((${index} * ${size}) - contentOffset) / 32));
       uint256 ${output_slot_declaration} = (uint256(keccak256(abi.encode(${slot_declaration}))) + slotOffset);
+
+
+
       `;
 }
 
@@ -279,7 +285,7 @@ export function writeSolidityTypeToSlot(
     getDataToStoreCasting(variable_type, variable_declaration),
     content_offset
   )}
-  ${generateStoreCall(content_name, slot_declaration, content_offset)}
+  ${generateStoreCall(content_name, slot_declaration)}
 
 `;
 }
