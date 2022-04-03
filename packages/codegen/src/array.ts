@@ -161,13 +161,13 @@ export function arraySetterBodyStruct(
          uint256 ${name}Array = ${length_slot_encoding};
           uint256 struct_size = ${struct.layout.getLength()};
           uint256 ${name}${ARRAY_LENGTH} = uint256(
-            VM.load(target, bytes32(${name}${STORAGE_SLOT}))
+            VM.load(target, bytes32(${name}Array))
         );
 
           if (${name}${ARRAY_LENGTH} <= key${args.length - 1}) {
             VM.store(
                 target,
-                bytes32(${name}${STORAGE_SLOT}),
+                bytes32(${name}Array),
                 bytes32(uint256(key${args.length - 1}) + 1)
             );
         }

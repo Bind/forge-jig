@@ -11,7 +11,7 @@ struct GameEntity {
     bool dead;
 }
 
-contract InsaneExample {
+contract Hydra {
     mapping(address => mapping(uint256 => GameEntity[])) public entities;
 
     constructor() {}

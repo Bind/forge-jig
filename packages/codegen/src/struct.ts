@@ -100,6 +100,7 @@ export function writeStructToSlot(
         let calls = `uint256 ${slot_name} = ${slot_declaration} + uint256(${
           prevSlot - struct.layout.slotRoot
         });`;
+        //mark
         calls += writeArrayToSlot(
           slot_name,
           `${struct_declaration}.${key}`,

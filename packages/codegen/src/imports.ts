@@ -23,7 +23,6 @@ export function flattenStructLayouts(info: StorageInfos): StorageInfoStruct[] {
     return [];
   } else {
     let value = info.value;
-    console.log(info, value);
 
     if (isSolidityType(value)) {
       return [];
@@ -110,7 +109,6 @@ export const generateJigImports = (
   layout: StorageLayout,
   context: FoundryContext
 ) => {
-  console.log(layout);
   const imports = parseImportDict(layout, context);
   return Object.keys(imports)
     .map((k) => {
