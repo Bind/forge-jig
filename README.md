@@ -139,8 +139,8 @@ Jig is built on top the [solc-type-ast](https://github.com/ConsenSys/solc-typed-
 - [x] migrate to mono repo
   - [x] split out storage layout processing into own package
   - [x] split out built-in type processing into own package
-- [] refactor codegen to be more recursion focused
-  - [] move magic strings into constants file
+- [ ] refactor codegen to be more recursion focused
+  - [ ] move magic strings into constants file
 
 ## About
 
