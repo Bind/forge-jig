@@ -84,6 +84,7 @@ This will generate the helper contract at `src/jig/ContractJig.sol`
 - Haven't tested with Node version <16
 - You need to have a foundry.toml at the root of your repo so that jig can infer remappings correctly.
 - Jig currently doesn't handle Contracts as storage variables but will soooon. 
+- Jig currently doesn't output prettier'ed code but will sooooooon.
 
 # How
 Jig is built on top the [solc-type-ast](https://github.com/ConsenSys/solc-typed-ast) library built by Consensys. By traversing the AST of your contract source, Jig as able to parse out the storage declarations, apply some math, and spit out this helper contract. In addition, if your storage variables are a struct, Jig will import the struct declaration into its contract file and use that struct as part of the function signature. This gets booooonkers, but allows users to quickly push complicated state into a contract. 
