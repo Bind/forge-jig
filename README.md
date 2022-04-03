@@ -87,12 +87,12 @@ This will generate the helper contract at `src/jig/ContractJig.sol`
 - Jig currently doesn't output prettier'ed code but will sooooooon.
 
 # How
-Jig is built on top the [solc-type-ast](https://github.com/ConsenSys/solc-typed-ast) library built by Consensys. By traversing the AST of your contract source, Jig as able to parse out the storage declarations, apply some math, and spit out this helper contract. In addition, if your storage variables are a struct, Jig will import the struct declaration into its contract file and use that struct as part of the function signature. This gets booooonkers, but allows users to quickly push complicated state into a contract. 
+Jig is built on top of the [solc-type-ast](https://github.com/ConsenSys/solc-typed-ast) library built by Consensys. By traversing the AST of your contract source, Jig is able to parse out the storage declarations, apply some math, and spit out this helper contract. In addition, if your storage variables are a struct, Jig will import the struct declaration into its contract file and use that struct as part of the function signature. This gets booooonkers, but allows users to quickly push complicated state into a contract. 
 
 
 # Inspiration
 
-[forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, we would not have been able to build up enough intuition 
+[forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, we would not have been able to build up enough intuition for the edge cases in storage layouts without it. 
 
 
 # Notes
