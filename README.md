@@ -66,7 +66,7 @@ contract BabyTest is DSTest {
 }
 ```
 
-Check out the [sample contracts](https://github.com/Bind/forge-fixtures/tree/main/contracts) to see how fair Jig can push this pattern.  
+Check out the [sample contracts](https://github.com/Bind/forge-fixtures/tree/main/contracts) to see how far Jig can push this pattern.  
 
 
 # How
