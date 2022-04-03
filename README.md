@@ -1,11 +1,81 @@
 Jig: a tool used to expedite some repetitive task and ensure that the results do not vary from project to project.
 
-# Why
+Jig generates a helper contract that abstracts away all storage slot math.
 
-`vm.store(address, slot, data)` is still fairly hard to reason about.
-jig aims to ingest a solidity AST and determine the storage layout. With that layout, jig generates a helper contract that allows you to write to storage variables using the structs defined in your source code.
+For example:
 
-[forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, but doesn't quite handle writing data to packed slots.
+```
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.4.22 <0.9.0;
+
+contract Baby {
+    uint256 public simple;
+    
+}
+```
+
+Turns into...
+
+```
+// THIS FILE WAS GENERATED
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.4.22 <0.9.0;
+
+interface CheatCodes {
+...
+}
+
+contract BabyJig {
+    address internal target;
+    CheatCodes public constant VM =
+        CheatCodes(
+            address(bytes20(uint160(uint256(keccak256("hevm cheat code")))))
+        );
+
+    constructor(address _contractAddress) {
+        target = _contractAddress;
+    }
+
+    ...
+    
+    uint256 public simpleStorageSlot = uint256(0);
+
+    function simple(uint256 value) public {
+        VM.store(target, bytes32(simpleStorageSlot), bytes32(uint256(value)));
+    }
+}
+```
+
+
+which allows you to do things like...
+
+```
+contract BabyTest is DSTest {
+    Baby baby;
+    BabyJig jig;
+
+    function setUp() public {
+        baby = new Baby();
+        jig = new BabyJig(address(b));
+    }
+
+    function testJig(uint256 rand) public {
+        jig.simple(rand);
+        assert(b.simple() == rand);
+    }
+}
+```
+
+Check out the [sample contracts](https://github.com/Bind/forge-fixtures/tree/main/contracts) to see how fair Jig can push this pattern.  
+
+
+# How
+Jig is built on top the [solc-type-ast](https://github.com/ConsenSys/solc-typed-ast) library built by Consensys. By traversing the AST of your contract source, Jig as able to parse out the storage declarations, apply some math, and spit out this helper contract. In addition, if your storage variables are a struct, Jig will import the struct declaration into its contract file and use that struct as part of the function signature. This gets booooonkers, but allows users to quickly push complicated state into a contract. 
+
+
+# Inspiration
+
+[forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, we would not have been able to build up enough intuition 
 
 # TODO
 
