@@ -142,14 +142,4 @@ Jig is built on top the [solc-type-ast](https://github.com/ConsenSys/solc-typed-
 - [ ] refactor codegen to be more recursion focused
   - [ ] move magic strings into constants file
 
-## About
-
-- uses [pnpm](https://pnpm.io/)
-- uses [tsdx](https://tsdx.io/)
-
-Storage Slot Tricks
-
-- multiple structs will not be packed into 1 slot
-- structs will always start in a new storage slot
-- in order to add an element to an array you must also increment the length
 
