@@ -1,8 +1,10 @@
 # <h1 align="center">Forge Jig</h1>
 
-**Jig allows you to easily set the state of a contract**
+**Jig allows you to easily set the state of a contract.**
 
-Jig inspects a target contract's source code and will generate a contract to easily overwrite the target's state. This is inspired by the DappTools 'User Contract' pattern, highlighted by [blacksmith](https://github.com/pbshgthm/blacksmith). Jig is especially powerful for contracts that follow the AppStorage pattern and use complex structs to define their internal state. 
+Jig inspects a target contract's source code and generates a contract that helps easily overwrite the target's state. This is inspired by the DappTools 'User Contract' pattern, highlighted by [blacksmith](https://github.com/pbshgthm/blacksmith). Jig is especially powerful for contracts that follow the AppStorage pattern and use complex structs to define their internal state. 
+
+Jig hopes to dramatically decrease the effort required to setup complex fixtures and to encourage more experiments focused on improving the Solidity developer experience. 
 
 
 ### Quick Start
@@ -15,7 +17,7 @@ This will generate a jig contract at `src/jig/ContractJig.sol`
 
 ### Examples
 
-**simple**
+**simple example**
 
 ```
 // SPDX-License-Identifier: UNLICENSED
@@ -79,7 +81,7 @@ contract BabyTest is DSTest {
 ```
 
 
-**deranged**
+**deranged example**
 
 ```
 pragma solidity >=0.4.22 <0.9.0;
