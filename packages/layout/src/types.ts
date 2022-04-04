@@ -1,5 +1,5 @@
 import { StorageLayout } from "./StorageLayout";
-import { SOLIDITY_TYPES } from "types";
+import { SOLIDITY_TYPES } from "@forge-jig/types";
 export type StoragePointer = {
   slot: number; // Storage Slot Number
   offset: number; // Storage Slot Offset Bytes

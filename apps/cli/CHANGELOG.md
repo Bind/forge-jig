@@ -1,5 +1,18 @@
 # forge-fixtures-jig
 
+## 0.1.3
+
+### Patch Changes
+
+- move packages under scoped name
+- Updated dependencies
+  - @forge-jig/ast@0.1.3
+  - @forge-jig/codegen@0.1.3
+  - @forge-jig/config@1.0.3
+  - @forge-jig/foundry@0.1.3
+  - @forge-jig/layout@0.1.3
+  - @forge-jig/tsconfig@0.0.3
+
 ## 0.1.2
 
 ### Patch Changes

@@ -11,8 +11,8 @@ import {
 import {
   getContractDefinition,
   getVariableDeclarationsForContract,
-} from "ast/src/find";
-import { generateAST, compile } from "ast/src/solc";
+} from "@forge-jig/ast/src/find";
+import { generateAST, compile } from "@forge-jig/ast/src/solc";
 import {
   generateContractLayout,
   isStorageInfoStruct,

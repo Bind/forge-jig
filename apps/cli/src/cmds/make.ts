@@ -1,9 +1,13 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { compileContractLayouts } from "layout";
-import { generateJig } from "codegen";
+import { compileContractLayouts } from "@forge-jig/layout";
+import { generateJig } from "@forge-jig/codegen";
 import * as glob from "glob";
 import * as fs from "fs";
-import { getFoundryConfig, FoundryContext, getProjectRoot } from "foundry";
+import {
+  getFoundryConfig,
+  FoundryContext,
+  getProjectRoot,
+} from "@forge-jig/foundry";
 type Options = {
   pattern: string;
 };

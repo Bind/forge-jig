@@ -1,5 +1,11 @@
 # tsconfig
 
+## 0.0.3
+
+### Patch Changes
+
+- move packages under scoped name
+
 ## 0.0.2
 
 ### Patch Changes

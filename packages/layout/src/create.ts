@@ -19,10 +19,10 @@ import {
   getBySelector,
   getParentSourceUnit,
   getPragma,
-} from "ast";
+} from "@forge-jig/ast";
 import { StorageLayout } from "./StorageLayout";
 import { MappingPointer } from "./mapping";
-import { isSolidityType, SOLIDITY_TYPES } from "types";
+import { isSolidityType, SOLIDITY_TYPES } from "@forge-jig/types";
 import { StorageInfoArray } from "./types";
 
 export function getImportNameFromStruct(node: StructDefinition) {

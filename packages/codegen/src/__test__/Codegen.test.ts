@@ -1,10 +1,14 @@
 import * as dotenv from "dotenv";
 
 import * as fs from "fs";
-import { compileContractLayout } from "layout";
+import { compileContractLayout } from "@forge-jig/layout";
 import { generateJig } from "../../index";
 
-import { getFoundryConfig, getProjectRoot, FoundryContext } from "foundry";
+import {
+  getFoundryConfig,
+  getProjectRoot,
+  FoundryContext,
+} from "@forge-jig/foundry";
 dotenv.config();
 
 export const assertions = {

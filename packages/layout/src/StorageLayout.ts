@@ -6,7 +6,7 @@ import {
   StorageInfos,
   StoragePointer,
 } from "./types";
-import { getByteSizeFromType, SOLIDITY_TYPES } from "types";
+import { getByteSizeFromType, SOLIDITY_TYPES } from "@forge-jig/types";
 
 export class StorageLayout {
   name: string;

@@ -5,7 +5,7 @@ import {
   isStorageInfo,
   isStorageInfoArray,
   isStorageInfoStruct,
-} from "layout";
+} from "@forge-jig/layout";
 import { writeArrayToSlot } from "./array";
 import {
   generateClearCallStruct,

@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /* eslint @typescript-eslint/no-unused-expressions:0 */
-import { generateJig } from "codegen";
+import { generateJig } from "@forge-jig/codegen";
 import * as glob from "glob";
 import * as fs from "fs";
-import { compileContractLayouts } from "layout";
-import { FoundryContext, getFoundryConfig, getProjectRoot } from "foundry";
+import { compileContractLayouts } from "@forge-jig/layout";
+import {
+  FoundryContext,
+  getFoundryConfig,
+  getProjectRoot,
+} from "@forge-jig/foundry";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 yargs(hideBin(process.argv))

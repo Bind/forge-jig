@@ -1,7 +1,7 @@
 {
-  "name": "ast",
-  "version": "0.1.2",
-  "private": true,
+  "name": "@forge-jig/ast",
+  "version": "0.1.3",
+  "private": false,
   "license": "MIT",
   "main": "dist/index.js",
   "files": [
@@ -17,13 +17,13 @@
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@types/mocha": "^9.1.0",
-    "config": "workspace:*",
+    "@forge-jig/config": "workspace:*",
     "eslint": "^7.32.0",
     "jest": "^27.5.1",
     "solc-typed-ast": "^9.1.2",
-    "tsconfig": "workspace:*",
+    "@forge-jig/tsconfig": "workspace:*",
     "typescript": "^4.6.3",
-    "foundry": "workspace:*"
+    "@forge-jig/foundry": "workspace:*"
   },
   "dependencies": {
     "dotenv": "^16.0.0"

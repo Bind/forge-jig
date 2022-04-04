@@ -36,11 +36,11 @@ var __importDefault = this && this.__importDefault || function(mod) {
   return mod && mod.__esModule ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const codegen_1 = require("codegen");
+const codegen_1 = require("@forge-jig/codegen");
 const glob = __importStar(require("glob"));
 const fs = __importStar(require("fs"));
-const layout_1 = require("layout");
-const foundry_1 = require("foundry");
+const layout_1 = require("@forge-jig/layout");
+const foundry_1 = require("@forge-jig/foundry");
 const yargs_1 = __importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
 (0, yargs_1.default)((0, helpers_1.hideBin)(process.argv)).command("make <pattern> [options]", "generate a jig for solidity contract", () => {

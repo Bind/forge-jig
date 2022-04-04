@@ -18,43 +18,43 @@ importers:
 
   apps/cli:
     specifiers:
+      '@forge-jig/ast': workspace:*
+      '@forge-jig/codegen': workspace:*
+      '@forge-jig/config': workspace:*
+      '@forge-jig/foundry': workspace:*
+      '@forge-jig/layout': workspace:*
+      '@forge-jig/tsconfig': workspace:*
       '@types/dotenv': ^8.2.0
       '@types/glob': ^7.2.0
       '@types/is-glob': ^4.0.2
       '@types/node': ^17.0.21
       '@types/yargs': ^17.0.9
-      ast: workspace:*
-      codegen: workspace:*
-      config: workspace:*
       dotenv: ^16.0.0
       esbuild: ^0.14.30
       eslint: ^7.32.0
       ethers: ^5.6.0
-      foundry: workspace:*
       glob: ^7.2.0
       is-glob: ^4.0.3
       jest: ^27.5.1
-      layout: workspace:*
       pkg: ^5.5.2
       toml: ^3.0.0
       ts-toolbelt: ^9.6.0
-      tsconfig: workspace:*
       typescript: ^4.6.2
       yargs: ^17.3.1
     dependencies:
-      ast: link:../../packages/ast
-      codegen: link:../../packages/codegen
-      config: link:../../packages/config
+      '@forge-jig/ast': link:../../packages/ast
+      '@forge-jig/codegen': link:../../packages/codegen
+      '@forge-jig/config': link:../../packages/config
+      '@forge-jig/foundry': link:../../packages/foundry
+      '@forge-jig/layout': link:../../packages/layout
+      '@forge-jig/tsconfig': link:../../packages/tsconfig
       dotenv: 16.0.0
       esbuild: 0.14.30
       ethers: 5.6.2
-      foundry: link:../../packages/foundry
       glob: 7.2.0
       is-glob: 4.0.3
       jest: 27.5.1
-      layout: link:../../packages/layout
       toml: 3.0.0
-      tsconfig: link:../../packages/tsconfig
       yargs: 17.4.0
     devDependencies:
       '@types/dotenv': 8.2.0
@@ -69,56 +69,56 @@ importers:
 
   packages/ast:
     specifiers:
+      '@forge-jig/config': workspace:*
+      '@forge-jig/foundry': workspace:*
+      '@forge-jig/tsconfig': workspace:*
       '@types/jest': ^27.4.1
       '@types/mocha': ^9.1.0
-      config: workspace:*
       dotenv: ^16.0.0
       eslint: ^7.32.0
-      foundry: workspace:*
       jest: ^27.5.1
       solc-typed-ast: ^9.1.2
-      tsconfig: workspace:*
       typescript: ^4.6.3
     dependencies:
       dotenv: 16.0.0
     devDependencies:
+      '@forge-jig/config': link:../config
+      '@forge-jig/foundry': link:../foundry
+      '@forge-jig/tsconfig': link:../tsconfig
       '@types/jest': 27.4.1
       '@types/mocha': 9.1.0
-      config: link:../config
       eslint: 7.32.0
-      foundry: link:../foundry
       jest: 27.5.1
       solc-typed-ast: 9.1.2
-      tsconfig: link:../tsconfig
       typescript: 4.6.3
 
   packages/codegen:
     specifiers:
+      '@forge-jig/ast': workspace:*
+      '@forge-jig/config': workspace:*
+      '@forge-jig/foundry': workspace:*
+      '@forge-jig/layout': workspace:*
+      '@forge-jig/tsconfig': workspace:*
+      '@forge-jig/types': workspace:*
       '@types/jest': ^27.4.1
       '@types/mocha': ^9.1.0
-      ast: workspace:*
-      config: workspace:*
       dotenv: ^16.0.0
       eslint: ^7.32.0
-      foundry: workspace:*
       jest: ^27.5.1
-      layout: workspace:*
-      tsconfig: workspace:*
-      types: workspace:*
       typescript: ^4.6.3
     dependencies:
       dotenv: 16.0.0
     devDependencies:
+      '@forge-jig/ast': link:../ast
+      '@forge-jig/config': link:../config
+      '@forge-jig/foundry': link:../foundry
+      '@forge-jig/layout': link:../layout
+      '@forge-jig/tsconfig': link:../tsconfig
+      '@forge-jig/types': link:../types
       '@types/jest': 27.4.1
       '@types/mocha': 9.1.0
-      ast: link:../ast
-      config: link:../config
       eslint: 7.32.0
-      foundry: link:../foundry
       jest: 27.5.1
-      layout: link:../layout
-      tsconfig: link:../tsconfig
-      types: link:../types
       typescript: 4.6.3
 
   packages/config:
@@ -142,44 +142,44 @@ importers:
 
   packages/foundry:
     specifiers:
-      config: workspace:*
+      '@forge-jig/config': workspace:*
+      '@forge-jig/tsconfig': workspace:*
       jest: ^27.5.1
       toml: ^3.0.0
-      tsconfig: workspace:*
       typescript: ^4.6.3
     dependencies:
       toml: 3.0.0
     devDependencies:
-      config: link:../config
+      '@forge-jig/config': link:../config
+      '@forge-jig/tsconfig': link:../tsconfig
       jest: 27.5.1
-      tsconfig: link:../tsconfig
       typescript: 4.6.3
 
   packages/layout:
     specifiers:
+      '@forge-jig/ast': workspace:*
+      '@forge-jig/config': workspace:*
+      '@forge-jig/tsconfig': workspace:*
+      '@forge-jig/types': workspace:*
       '@types/jest': ^27.4.1
       '@types/mocha': ^9.1.0
-      ast: workspace:*
-      config: workspace:*
       dotenv: ^16.0.0
       eslint: ^7.32.0
       jest: ^27.5.1
       solc-typed-ast: ^9.1.2
-      tsconfig: workspace:*
-      types: workspace:*
       typescript: ^4.6.3
     dependencies:
-      ast: link:../ast
+      '@forge-jig/ast': link:../ast
       dotenv: 16.0.0
       solc-typed-ast: 9.1.2
     devDependencies:
+      '@forge-jig/config': link:../config
+      '@forge-jig/tsconfig': link:../tsconfig
+      '@forge-jig/types': link:../types
       '@types/jest': 27.4.1
       '@types/mocha': 9.1.0
-      config: link:../config
       eslint: 7.32.0
       jest: 27.5.1
-      tsconfig: link:../tsconfig
-      types: link:../types
       typescript: 4.6.3
 
   packages/tsconfig:
@@ -187,20 +187,20 @@ importers:
 
   packages/types:
     specifiers:
+      '@forge-jig/config': workspace:*
+      '@forge-jig/tsconfig': workspace:*
       '@types/jest': ^27.4.1
       '@types/mocha': ^9.1.0
-      config: workspace:*
       eslint: ^7.32.0
       jest: ^27.5.1
-      tsconfig: workspace:*
       typescript: ^4.6.3
     devDependencies:
+      '@forge-jig/config': link:../config
+      '@forge-jig/tsconfig': link:../tsconfig
       '@types/jest': 27.4.1
       '@types/mocha': 9.1.0
-      config: link:../config
       eslint: 7.32.0
       jest: 27.5.1
-      tsconfig: link:../tsconfig
       typescript: 4.6.3
 
 packages:

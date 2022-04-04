@@ -1,5 +1,5 @@
 {
-  "name": "forge-jig",
+  "name": "@forge-jig/core",
   "author": "Doug Binder",
   "version": "0.1.0",
   "license": "MIT",
@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "build:hard": "turbo run build --force",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test --parallel",

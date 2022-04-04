@@ -7,9 +7,9 @@ import {
   StorageInfos,
   isStorageInfo,
   isStorageInfoEnum,
-} from "layout";
-import { FoundryContext } from "foundry";
-import { isSolidityType } from "types";
+} from "@forge-jig/layout";
+import { FoundryContext } from "@forge-jig/foundry";
+import { isSolidityType } from "@forge-jig/types";
 
 export function flattenStructLayouts(info: StorageInfos): StorageInfoStruct[] {
   if (isStorageInfoStruct(info)) {

@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/node14.json",
+  "extends": "@forge-jig/tsconfig/node14.json",
   "include": ["index.ts", "src"],
   "compilerOptions": {
     "rootDir": "src",

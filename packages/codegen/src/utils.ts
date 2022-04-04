@@ -3,8 +3,8 @@ import {
   getByteSizeFromType,
   getDataToStoreCasting,
   getTypeFunctionSignature,
-} from "types";
-import { StorageInfo, StorageInfos, StorageInfoEnum } from "layout";
+} from "@forge-jig/types";
+import { StorageInfo, StorageInfos, StorageInfoEnum } from "@forge-jig/layout";
 
 export function solidityConstslotOffset(name: string, info: StorageInfos) {
   return `uint8 public  ${name}slotOffset = uint8(${info.pointer.offset});\n`;

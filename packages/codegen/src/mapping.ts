@@ -4,7 +4,7 @@ import {
   getTypeFunctionSignature,
   isSolidityType,
   SOLIDITY_TYPES,
-} from "types";
+} from "@forge-jig/types";
 import {
   isStorageInfoArray,
   isStorageInfoMapping,
@@ -12,7 +12,7 @@ import {
   StorageInfoArray,
   StorageInfoMapping,
   StorageInfoStruct,
-} from "layout";
+} from "@forge-jig/layout";
 import {
   arraySetterBodySolidityType,
   arraySetterBodyStruct,

@@ -6,9 +6,9 @@ import {
   isStorageInfoStruct,
   isStorageInfo,
   isStorageInfoEnum,
-} from "layout";
+} from "@forge-jig/layout";
 
-import { FoundryContext } from "foundry";
+import { FoundryContext } from "@forge-jig/foundry";
 import { soliditySetMappingFunctionFromStorageInfo } from "./src/mapping";
 import {
   solidityConstFromStorageInfo,

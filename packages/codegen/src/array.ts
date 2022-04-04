@@ -5,14 +5,14 @@ import {
   getTypeFunctionSignature,
   isSolidityType,
   SOLIDITY_TYPES,
-} from "types";
+} from "@forge-jig/types";
 import {
   isStorageInfoArray,
   isStorageInfoMapping,
   isStorageInfoStruct,
   StorageInfoArray,
   StorageInfoStruct,
-} from "layout";
+} from "@forge-jig/layout";
 import { writeStructToSlot } from "./struct";
 import {
   generateClearCall,

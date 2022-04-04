@@ -12,7 +12,7 @@ import {
   getVariableDeclarationsForContract,
   generateAST,
   compile,
-} from "ast";
+} from "@forge-jig/ast";
 
 export async function compileContractLayout(
   file: string,
