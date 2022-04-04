@@ -55,12 +55,12 @@ contract BabyTest is DSTest {
 
     function setUp() public {
         baby = new Baby();
-        jig = new BabyJig(address(b));
+        jig = new BabyJig(address(baby));
     }
 
     function testJig(uint256 rand) public {
         jig.simple(rand);
-        assert(b.simple() == rand);
+        assert(baby.simple() == rand);
     }
 }
 ```
