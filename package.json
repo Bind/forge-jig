@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "license": "MIT",
   "private": false,
+  "bin": {
+    "jig": "./apps/cli/lib/jig.js"
+  },
   "engines": {
     "node": ">=14"
   },

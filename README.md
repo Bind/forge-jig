@@ -10,7 +10,7 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract Baby {
     uint256 public simple;
-    
+
 }
 ```
 
@@ -37,7 +37,7 @@ contract BabyJig {
     }
 
     ...
-    
+
     uint256 public simpleStorageSlot = uint256(0);
 
     function simple(uint256 value) public {
@@ -45,7 +45,6 @@ contract BabyJig {
     }
 }
 ```
-
 
 which allows you to do things like...
 
@@ -66,8 +65,7 @@ contract BabyTest is DSTest {
 }
 ```
 
-Check out the [sample contracts](https://github.com/Bind/forge-fixtures/tree/main/contracts) to see how far Jig can push this pattern.  
-
+Check out the [sample contracts](https://github.com/Bind/forge-fixtures/tree/main/contracts) to see how far Jig can push this pattern.
 
 Currently working on getting a working release deployed to NPM, but if you're feeling brave please clone the repository! You should be able to get the jig cli script added to your env by running `npm run local` `yarn local` `pnpm local` yada yada.
 
@@ -77,75 +75,22 @@ Currently working on getting a working release deployed to NPM, but if you're fe
 
 This will generate the helper contract at `src/jig/ContractJig.sol`
 
-
 # Quirks
 
 - Haven't tested on Windows/Linux
 - Haven't tested with Node version <16
 - You need to have a foundry.toml at the root of your repo so that jig can infer remappings correctly.
-- Jig currently doesn't handle Contracts as storage variables but will soooon. 
+- Jig currently doesn't handle Contracts as storage variables but will soooon.
 - Jig currently doesn't output prettier'ed code but will sooooooon.
 
 # How
-Jig is built on top of the [solc-type-ast](https://github.com/ConsenSys/solc-typed-ast) library built by Consensys. By traversing the AST of your contract source, Jig is able to parse out the storage declarations, apply some math, and spit out this helper contract. In addition, if your storage variables are a struct, Jig will import the struct declaration into its contract file and use that struct as part of the function signature. This gets booooonkers, but allows users to quickly push complicated state into a contract. 
 
+Jig is built on top of the [solc-type-ast](https://github.com/ConsenSys/solc-typed-ast) library built by Consensys. By traversing the AST of your contract source, Jig is able to parse out the storage declarations, apply some math, and spit out this helper contract. In addition, if your storage variables are a struct, Jig will import the struct declaration into its contract file and use that struct as part of the function signature. This gets booooonkers, but allows users to quickly push complicated state into a contract.
 
 # Inspiration
 
-[forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, we would not have been able to build up enough intuition for the edge cases in storage layouts without it. 
-
+[forge-std](https://github.com/brockelmore/forge-std) is a major improvement over the native vm.store, we would not have been able to build up enough intuition for the edge cases in storage layouts without it.
 
 # Notes
 
-Currently Jig only outputs a helper contract but could be reconfigured to output a json structure representing storage slots as well. 
-
-# TODO
-
-- [x] generate storage layout from contract source
-
-  - [x] parse out top level contract storage
-  - [x] parse out struct declarations
-  - [x] map contract storage vars to slots
-
-    - [x] mappings
-    - [x] arrays
-    - [x] custom structs
-      - [x] packed
-      - [x] multi-slot
-      - [x] nested
-
-- [x] generate JigContract
-
-  - [x] generate struct imports for helper contract to consume
-  - [x] codegen slot storage helper per storage variable
-
-    - [x] builtin solidity types
-    - [x] mapping
-      - [x] nested mapping
-      - [x] struct
-      - [x] solidity type
-      - [x] array
-    - [x] array
-      - [x] manage array length
-      - [x] nested array
-      - [x] struct
-      - [x] solidity type
-    - [x] struct
-      - [x] packed
-      - [x] multi-slot
-      - [x] nested
-      - [x] array
-      - [x] solidity type
-
-- [x] deep merge foundry.toml default values with local config
-- [x] flatten structs to better handle AppStorage pattern
-- [x] rename test contracts
-- [ ] build test cases around solmate
-
-- [x] migrate to mono repo
-  - [x] split out storage layout processing into own package
-  - [x] split out built-in type processing into own package
-- [ ] refactor codegen to be more recursion focused
-  - [ ] move magic strings into constants file
-
-
+Currently Jig only outputs a helper contract but could be reconfigured to output a json structure representing storage slots as well.
