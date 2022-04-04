@@ -20,6 +20,9 @@ jobs:
         with:
           version: nightly
 
+      - name: Install Foundry Deps
+        uses: snickerbockers/submodules-init@v4
+
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.32.2
