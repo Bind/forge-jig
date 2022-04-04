@@ -1,5 +1,19 @@
 # forge-fixtures-jig
 
+## 0.1.4
+
+### Patch Changes
+
+- 72ca8ff: rewrite imports for scoped packages
+- Updated dependencies
+- Updated dependencies [72ca8ff]
+  - @forge-jig/codegen@0.1.4
+  - @forge-jig/config@1.0.4
+  - @forge-jig/foundry@0.1.4
+  - @forge-jig/layout@0.1.4
+  - @forge-jig/tsconfig@0.0.4
+  - @forge-jig/ast@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes

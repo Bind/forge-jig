@@ -1,6 +1,7 @@
 {
   "name": "@forge-jig/config",
-  "version": "1.0.3",
+  "version": "1.0.4",
+  "private": false,
   "main": "index.js",
   "license": "MIT",
   "files": [

@@ -1,7 +1,7 @@
 {
   "name": "@forge-jig/tsconfig",
-  "version": "0.0.3",
-  "private": true,
+  "version": "0.0.4",
+  "private": false,
   "main": "index.js",
   "files": [
     "node14.json",
