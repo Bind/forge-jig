@@ -6,34 +6,32 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-build:
-  name: Build and Test
-  timeout-minutes: 15
-  runs-on: ubuntu-latest
+jobs:
+  run-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
-  steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
 
-    - name: Install Foundry
-      uses: onbjerg/foundry-toolchain@v1
-      with:
-        version: nightly
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.32.2
 
-    - uses: pnpm/action-setup@v2.0.1
-      with:
-        version: 6.32.2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: pnpm
 
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16
-        cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Install dependencies
-      run: pnpm install
-
-    - name: Test
-      run: pnpm e2e
+      - name: Test
+        run: pnpm e2e
