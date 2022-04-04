@@ -1,5 +1,18 @@
 # forge-fixtures-jig
 
+## 0.1.2
+
+### Patch Changes
+
+- Output bin at root
+- Updated dependencies
+  - ast@0.1.2
+  - codegen@0.1.2
+  - config@1.0.2
+  - foundry@0.1.2
+  - layout@0.1.2
+  - tsconfig@0.0.2
+
 ## 0.1.1
 
 ### Patch Changes

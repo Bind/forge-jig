@@ -1,5 +1,13 @@
 # layout
 
+## 0.1.2
+
+### Patch Changes
+
+- Output bin at root
+- Updated dependencies
+  - ast@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

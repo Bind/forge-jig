@@ -1,5 +1,11 @@
 # config
 
+## 1.0.2
+
+### Patch Changes
+
+- Output bin at root
+
 ## 1.0.1
 
 ### Patch Changes
