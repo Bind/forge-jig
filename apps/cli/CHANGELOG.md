@@ -1,5 +1,18 @@
 # forge-fixtures-jig
 
+## 0.1.5
+
+### Patch Changes
+
+- package hygene
+- Updated dependencies
+  - @forge-jig/ast@0.1.5
+  - @forge-jig/codegen@0.1.5
+  - @forge-jig/config@1.0.5
+  - @forge-jig/foundry@0.1.5
+  - @forge-jig/layout@0.1.5
+  - @forge-jig/tsconfig@0.0.5
+
 ## 0.1.4
 
 ### Patch Changes

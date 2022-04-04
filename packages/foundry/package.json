@@ -1,6 +1,6 @@
 {
   "name": "@forge-jig/foundry",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": false,
   "license": "MIT",
   "main": "dist/index.js",
@@ -16,8 +16,8 @@
   },
   "devDependencies": {
     "@forge-jig/config": "workspace:*",
-    "jest": "^27.5.1",
     "@forge-jig/tsconfig": "workspace:*",
+    "jest": "^27.5.1",
     "typescript": "^4.6.3"
   },
   "jest": {

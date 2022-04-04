@@ -1,6 +1,6 @@
 {
   "name": "@forge-jig/ast",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": false,
   "license": "MIT",
   "main": "dist/index.js",
@@ -15,17 +15,17 @@
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
   "devDependencies": {
+    "@forge-jig/config": "workspace:*",
+    "@forge-jig/tsconfig": "workspace:*",
     "@types/jest": "^27.4.1",
     "@types/mocha": "^9.1.0",
-    "@forge-jig/config": "workspace:*",
     "eslint": "^7.32.0",
     "jest": "^27.5.1",
-    "solc-typed-ast": "^9.1.2",
-    "@forge-jig/tsconfig": "workspace:*",
-    "typescript": "^4.6.3",
-    "@forge-jig/foundry": "workspace:*"
+    "typescript": "^4.6.3"
   },
   "dependencies": {
+    "@forge-jig/foundry": "workspace:*",
+    "solc-typed-ast": "^9.1.2",
     "dotenv": "^16.0.0"
   },
   "jest": {
