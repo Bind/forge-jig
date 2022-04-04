@@ -10,6 +10,7 @@
   "scripts": {
     "test": "jest",
     "dev": "tsc --watch",
+    "build": "tsc",
     "lint": "TIMING=1 eslint index.ts --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
