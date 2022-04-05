@@ -80,7 +80,7 @@ This will generate the helper contract at `src/jig/ContractJig.sol`
 - Haven't tested on Windows/Linux
 - Haven't tested with Node version <16
 - You need to have a foundry.toml at the root of your repo so that jig can infer remappings correctly.
-- Jig currently doesn't handle Contracts as storage variables but will soooon.
+- ~~Jig currently doesn't handle Contracts as storage variables but will soooon.~~
 - Jig currently doesn't output prettier'ed code but will sooooooon.
 
 # How
