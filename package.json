@@ -22,7 +22,7 @@
     "clean": "turbo run clean",
     "e2e": "pnpm run bundle && pnpm jig make './contracts/*.sol' && forge test --force",
     "e2e-all": "pnpm run jig:clean && pnpm run e2e",
-    "bundle": "turbo run bundle",
+    "bundle": "turbo run bundle --force",
     "local": "turbo run local"
   },
   "husky": {
