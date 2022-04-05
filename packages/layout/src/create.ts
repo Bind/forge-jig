@@ -189,7 +189,7 @@ export function generateContractLayout(
         );
         stor.appendStruct(declaration.name, structLayout);
       } else if (isContract(ast, declaration.vType)) {
-        console.log("contract: ", declaration.vType, "is not handled");
+        stor.appendSolidityType(declaration.name, "address");
       } else {
         console.log(declaration.vType, "is not handled");
       }
