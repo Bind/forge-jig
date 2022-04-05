@@ -1,5 +1,11 @@
 # config
 
+## 1.0.6
+
+### Patch Changes
+
+- d5df2f6: Handle Contract Variable Declarations
+
 ## 1.0.5
 
 ### Patch Changes

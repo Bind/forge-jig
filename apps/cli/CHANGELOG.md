@@ -1,5 +1,18 @@
 # forge-fixtures-jig
 
+## 0.1.6
+
+### Patch Changes
+
+- d5df2f6: Handle Contract Variable Declarations
+- Updated dependencies [d5df2f6]
+  - @forge-jig/ast@0.1.6
+  - @forge-jig/codegen@0.1.6
+  - @forge-jig/config@1.0.6
+  - @forge-jig/foundry@0.1.6
+  - @forge-jig/layout@0.1.6
+  - @forge-jig/tsconfig@0.0.6
+
 ## 0.1.5
 
 ### Patch Changes
