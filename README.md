@@ -2,7 +2,7 @@
 
 **Jig allows you to easily set the state of a contract.**
 
-Jig inspects a target contract's source code and generates a contract that helps easily overwrite the target's state. This is inspired by the DappTools 'User Contract' pattern, highlighted by [blacksmith](https://github.com/pbshgthm/blacksmith). Jig is especially powerful for contracts that follow the AppStorage pattern and use complex structs to define their internal state. 
+Jig inspects a target contract's source code and generates a contract that helps easily overwrite the target's state by leveraging [Foundry's cheatcodes](https://book.getfoundry.sh/reference/cheatcodes.html). This is inspired by the DappTools 'User Contract' pattern, highlighted by [blacksmith](https://github.com/pbshgthm/blacksmith). Jig is especially powerful for contracts that follow the AppStorage pattern and use complex structs to define their internal state. 
 
 Jig hopes to dramatically decrease the effort required to setup complex fixtures and to encourage more experiments focused on improving the Solidity developer experience. 
 
