@@ -1,5 +1,11 @@
 # tsconfig
 
+## 0.0.6
+
+### Patch Changes
+
+- d5df2f6: Handle Contract Variable Declarations
+
 ## 0.0.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # foundry
 
+## 0.1.6
+
+### Patch Changes
+
+- d5df2f6: Handle Contract Variable Declarations
+
 ## 0.1.5
 
 ### Patch Changes
