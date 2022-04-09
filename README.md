@@ -377,6 +377,7 @@ Check out the [sample contracts](https://github.com/Bind/forge-fixtures/tree/mai
 - You need to have a foundry.toml at the root of your repo so that jig can infer remappings correctly.
 - ~~Jig currently doesn't handle Contracts as storage variables but will soooon.~~
 - Jig currently doesn't output prettier'ed code but will sooooooon.
+- Jig currently doesn't play nicely with the DiamondStorage pattern but will sooooooon.
 
 ### How
 
