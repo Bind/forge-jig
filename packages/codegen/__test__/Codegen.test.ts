@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 
 import * as fs from "fs";
 import { compileContractLayout } from "@forge-jig/layout";
-import { generateJig } from "../../index";
+import { generateJig } from "../index";
 
 import {
   getFoundryConfig,

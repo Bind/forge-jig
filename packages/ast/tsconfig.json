@@ -1,6 +1,6 @@
 {
   "extends": "@forge-jig/tsconfig/node14.json",
-  "include": ["index.ts", "src"],
+  "include": ["index.ts", "src", "__test__"],
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
     "outDir": "./dist"
