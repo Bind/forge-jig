@@ -30,6 +30,6 @@
     "@types/mocha": "^9.1.0"
   },
   "jest": {
-    "preset": "config/jest/node"
+    "preset": "<rootDir>/../../packages/config/jest/node"
   }
 }

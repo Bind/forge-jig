@@ -3,7 +3,7 @@
   "version": "0.1.6",
   "private": false,
   "license": "MIT",
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
   "files": [
     "dist/*"
   ],
@@ -24,6 +24,6 @@
     "@types/mocha": "^9.1.0"
   },
   "jest": {
-    "preset": "config/jest/node"
+    "preset": "<rootDir>/../../packages/config/jest/node"
   }
 }

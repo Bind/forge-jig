@@ -15,20 +15,20 @@
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
   "devDependencies": {
-    "@forge-jig/config": "workspace:*",
-    "@forge-jig/tsconfig": "workspace:*",
     "@types/jest": "^27.4.1",
     "@types/mocha": "^9.1.0",
     "eslint": "^7.32.0",
     "jest": "^27.5.1",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "@forge-jig/config": "workspace:*",
+    "@forge-jig/tsconfig": "workspace:*",
+    "@forge-jig/foundry": "workspace:*"
   },
   "dependencies": {
-    "@forge-jig/foundry": "workspace:*",
     "solc-typed-ast": "^9.1.2",
     "dotenv": "^16.0.0"
   },
   "jest": {
-    "preset": "config/jest/node"
+    "preset": "<rootDir>/../../packages/config/jest/node"
   }
 }

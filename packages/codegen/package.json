@@ -31,6 +31,6 @@
     "@forge-jig/ast": "workspace:*"
   },
   "jest": {
-    "preset": "config/jest/node"
+    "preset": "<rootDir>/../../packages/config/jest/node"
   }
 }
