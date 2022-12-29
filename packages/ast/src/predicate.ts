@@ -28,6 +28,7 @@ export function isStruct(
   const structDefinition = getBySelector(ast, selector);
   return structDefinition instanceof StructDefinition;
 }
+
 export function isContract(
   ast: SourceUnit[],
   contractDeclaration: UserDefinedTypeName

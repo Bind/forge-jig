@@ -8,6 +8,7 @@ import {
   getFoundryConfig,
   getProjectRoot,
   FoundryContext,
+  FoundryConfig,
 } from "@forge-jig/foundry";
 dotenv.config();
 
@@ -120,8 +121,8 @@ export const assertions = {
 
 const CONTRACT_DIR = process.env.CONTRACT_DIR || "../../contracts/";
 const files = fs.readdirSync(CONTRACT_DIR);
-const foundryConfig = getFoundryConfig();
-const projectRoot = getProjectRoot();
+const foundryConfig = getFoundryConfig()._unsafeUnwrap() as FoundryConfig;
+const projectRoot = getProjectRoot()._unsafeUnwrap();
 const context: FoundryContext = {
   config: foundryConfig,
   rootPath: projectRoot,
@@ -135,10 +136,12 @@ for (let idx in files) {
   if (typeof assertions?.[file] == "undefined") continue;
   describe(file + ": code gen works", () => {
     it("successfully generates jig contract", async () => {
-      const layout = await compileContractLayout(
+      const result = await compileContractLayout(
         CONTRACT_DIR + file,
         assertions[file].name
       );
+      expect(result.isOk()).toBe(true);
+      const layout = result._unsafeUnwrap();
       console.log(generateJig(assertions[file].name, layout, context));
     });
   });

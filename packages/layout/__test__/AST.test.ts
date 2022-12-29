@@ -2,6 +2,12 @@ import * as dotenv from "dotenv";
 import * as fs from "fs";
 dotenv.config();
 
+const remappings = [
+  `ds-test/=../../lib/ds-test/src/`,
+  `forge-std/=../../lib/forge-std/src/`,
+  `solmate/=../../lib/solmate/src/`,
+];
+
 import {
   ArrayTypeName,
   ElementaryTypeName,
@@ -154,7 +160,8 @@ for (let idx in files) {
   if (typeof assertions?.[file] == "undefined") continue;
   describe("\ngenerate and parse Solidity AST for " + file, () => {
     it("parsed AST", async () => {
-      const ast = await generateAST(await compile(CONTRACT_DIR + file));
+      const res = await compile(CONTRACT_DIR + file, remappings);
+      const ast = await generateAST(res._unsafeUnwrap());
       const contractDefinition = getContractDefinition(
         ast,
         assertions[file].name
@@ -167,7 +174,8 @@ for (let idx in files) {
     });
 
     it(`plucked storage`, async () => {
-      const ast = await generateAST(await compile(CONTRACT_DIR + file));
+      const res = await compile(CONTRACT_DIR + file, remappings);
+      const ast = await generateAST(res._unsafeUnwrap());
       const contractDefinition = getContractDefinition(
         ast,
         assertions[file].name
@@ -195,10 +203,10 @@ for (let idx in files) {
       }
     });
     it("generated layout", async () => {
-      const storage = await compileContractLayout(
-        CONTRACT_DIR + file,
-        assertions[file].name
-      );
+      const storage = (
+        await compileContractLayout(CONTRACT_DIR + file, assertions[file].name)
+      )._unsafeUnwrap();
+
       if (assertions[file].explicitSlotChecks) {
         assertions[file].explicitSlotChecks.forEach((v) => {
           const storageInfo = storage.get(v.name);

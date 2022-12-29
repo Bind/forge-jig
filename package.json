@@ -11,6 +11,7 @@
     "node": ">=14"
   },
   "scripts": {
+    "prepare": "forge install",
     "build": "turbo run build",
     "build:hard": "turbo run build --force",
     "dev": "turbo run dev --parallel",

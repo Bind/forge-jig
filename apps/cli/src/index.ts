@@ -24,43 +24,56 @@ yargs(hideBin(process.argv))
     },
     async (argv) => {
       const { pattern } = argv;
-      const foundryConfig = getFoundryConfig();
-      const projectRoot = getProjectRoot();
-      const context: FoundryContext = {
-        config: foundryConfig,
-        rootPath: projectRoot,
-        processPath: process.cwd(),
-      };
-      const files = glob.sync(pattern);
-      for (let i = 0; i < files.length; i++) {
-        let file = files[i];
-        const layouts = await compileContractLayouts(file);
-        layouts.forEach((layout) => {
-          const greeting = `crafting jig for ${file}\n`;
-          process.stdout.write(greeting);
-          const jig = generateJig(`${layout.name}`, layout, context);
-          console.log(
-            `writing to ${
-              foundryConfig.default.src + `/jig/${layout.name}Jig.sol`
-            }`
-          );
-          fs.mkdirSync(
-            projectRoot + "/" + foundryConfig.default.src + `/jig/`,
-            {
-              recursive: true,
-            }
-          );
-          fs.writeFileSync(
-            projectRoot +
-              "/" +
-              foundryConfig.default.src +
-              `/jig/${layout.name}Jig.sol`,
-            jig,
-            {}
-          );
-        });
-      }
+      const foundryConfigResult = getFoundryConfig();
+      const projectRootResult = getProjectRoot();
 
+      if (foundryConfigResult.isOk() && projectRootResult.isOk()) {
+        const foundryConfig = foundryConfigResult.value;
+        const projectRoot = projectRootResult.value;
+
+        const context: FoundryContext = {
+          config: foundryConfig,
+          rootPath: projectRoot,
+          processPath: process.cwd(),
+        };
+        console.log(context);
+        const files = glob.sync(pattern);
+        for (let i = 0; i < files.length; i++) {
+          let file = files[i];
+          const result = await compileContractLayouts(file);
+          if (result.isOk()) {
+            const layouts = result.value;
+            layouts.forEach((layout) => {
+              const greeting = `crafting jig for ${file}\n`;
+              process.stdout.write(greeting);
+              const jig = generateJig(`${layout.name}`, layout, context);
+              console.log(
+                `writing to ${
+                  foundryConfig.default.src + `/jig/${layout.name}Jig.sol`
+                }`
+              );
+              fs.mkdirSync(
+                projectRoot + "/" + foundryConfig.default.src + `/jig/`,
+                {
+                  recursive: true,
+                }
+              );
+              fs.writeFileSync(
+                projectRoot +
+                  "/" +
+                  foundryConfig.default.src +
+                  `/jig/${layout.name}Jig.sol`,
+                jig,
+                {}
+              );
+            });
+          } else {
+            // Handle errors here
+          }
+        }
+      } else {
+        // Handle errors here
+      }
       process.exit(0);
     }
   )

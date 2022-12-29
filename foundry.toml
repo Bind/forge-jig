@@ -1,6 +1,6 @@
-[default]
+[profile.default]
 cache_path = "contracts-cache"
-libs = ['node_modules']
+libs = ["node_modules", "lib"]
 out = 'contracts-out'
 remappings = ['ds-test/=lib/ds-test/src/']
 src = 'contracts'

@@ -50,28 +50,38 @@ const helpers_1 = require("yargs/helpers");
   });
 }, async (argv) => {
   const { pattern } = argv;
-  const foundryConfig = (0, foundry_1.getFoundryConfig)();
-  const projectRoot = (0, foundry_1.getProjectRoot)();
-  const context = {
-    config: foundryConfig,
-    rootPath: projectRoot,
-    processPath: process.cwd()
-  };
-  const files = glob.sync(pattern);
-  for (let i = 0; i < files.length; i++) {
-    let file = files[i];
-    const layouts = await (0, layout_1.compileContractLayouts)(file);
-    layouts.forEach((layout) => {
-      const greeting = `crafting jig for ${file}
+  const foundryConfigResult = (0, foundry_1.getFoundryConfig)();
+  const projectRootResult = (0, foundry_1.getProjectRoot)();
+  if (foundryConfigResult.isOk() && projectRootResult.isOk()) {
+    const foundryConfig = foundryConfigResult.value;
+    const projectRoot = projectRootResult.value;
+    const context = {
+      config: foundryConfig,
+      rootPath: projectRoot,
+      processPath: process.cwd()
+    };
+    console.log(context);
+    const files = glob.sync(pattern);
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i];
+      const result = await (0, layout_1.compileContractLayouts)(file);
+      if (result.isOk()) {
+        const layouts = result.value;
+        layouts.forEach((layout) => {
+          const greeting = `crafting jig for ${file}
 `;
-      process.stdout.write(greeting);
-      const jig = (0, codegen_1.generateJig)(`${layout.name}`, layout, context);
-      console.log(`writing to ${foundryConfig.default.src + `/jig/${layout.name}Jig.sol`}`);
-      fs.mkdirSync(projectRoot + "/" + foundryConfig.default.src + `/jig/`, {
-        recursive: true
-      });
-      fs.writeFileSync(projectRoot + "/" + foundryConfig.default.src + `/jig/${layout.name}Jig.sol`, jig, {});
-    });
+          process.stdout.write(greeting);
+          const jig = (0, codegen_1.generateJig)(`${layout.name}`, layout, context);
+          console.log(`writing to ${foundryConfig.default.src + `/jig/${layout.name}Jig.sol`}`);
+          fs.mkdirSync(projectRoot + "/" + foundryConfig.default.src + `/jig/`, {
+            recursive: true
+          });
+          fs.writeFileSync(projectRoot + "/" + foundryConfig.default.src + `/jig/${layout.name}Jig.sol`, jig, {});
+        });
+      } else {
+      }
+    }
+  } else {
   }
   process.exit(0);
 }).strict().alias({ h: "help" }).argv;

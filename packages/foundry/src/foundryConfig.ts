@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import { findNearest } from "./findNearest";
 import * as toml from "toml";
+import { ok } from "neverthrow";
 
 const foundryConfigDefaults = {
   default: {
@@ -14,12 +15,16 @@ export function parseToml(fileContent: string) {
 }
 
 export function getFoundryConfig() {
-  const foundryConfigPath = findNearest("foundry.toml", process.cwd());
-  const fileContent = fs.readFileSync(foundryConfigPath, "utf-8");
-  return {
-    default: {
-      ...foundryConfigDefaults.default,
-      ...parseToml(fileContent).default,
-    },
-  };
+  const result = findNearest("foundry.toml", process.cwd());
+  if (result.isOk()) {
+    const foundryConfigPath = result.value;
+    const fileContent = fs.readFileSync(foundryConfigPath, "utf-8");
+    return ok({
+      default: {
+        ...foundryConfigDefaults.default,
+        ...parseToml(fileContent).profile.default,
+      },
+    });
+  }
+  return result;
 }
