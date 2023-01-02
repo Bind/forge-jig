@@ -1,4 +1,4 @@
-import type { Arguments, CommandBuilder } from "yargs";
+import type { Arguments, Argv, CommandBuilder } from "yargs";
 import { compileContractLayouts } from "@forge-jig/layout";
 import { generateJig } from "@forge-jig/codegen";
 import * as glob from "glob";
@@ -15,7 +15,7 @@ type Options = {
 export const command: string = "make <pattern> [options]";
 export const desc: string = "generate a jig for solidity contract";
 
-export const builder: CommandBuilder<Options, Options> = (yargs) =>
+export const builder = (yargs: Argv) =>
   yargs.positional("pattern", { type: "string", demandOption: true });
 
 export const handler = async (argv: Arguments<Options>): Promise<void> => {
@@ -27,7 +27,6 @@ export const handler = async (argv: Arguments<Options>): Promise<void> => {
     const foundryConfig = foundryConfigResult.value;
     const projectRoot = projectRootResult.value;
 
-    console.log(foundryConfig);
     const context: FoundryContext = {
       config: foundryConfig,
       rootPath: projectRoot,
@@ -72,3 +71,5 @@ export const handler = async (argv: Arguments<Options>): Promise<void> => {
   }
   process.exit(0);
 };
+
+export const cmdArgs = [command, desc, builder, handler] as const;
