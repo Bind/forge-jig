@@ -8,6 +8,7 @@ module.exports = {
     "<rootDir>/test/__fixtures__",
     "<rootDir>/node_modules",
     "<rootDir>/dist",
+    "dist",
   ],
   preset: "ts-jest",
   testTimeout: 10000,

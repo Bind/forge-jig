@@ -10,8 +10,6 @@ export async function compile(path: string, remappings?: string[]) {
     } else return result;
   }
   const { data } = await compileSol(path, "auto", remappings);
-  //@ts-ignore
-  console.log(data);
   return ok(data);
 }
 

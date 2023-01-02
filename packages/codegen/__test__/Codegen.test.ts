@@ -2,7 +2,12 @@ import * as dotenv from "dotenv";
 
 import * as fs from "fs";
 import { compileContractLayout } from "@forge-jig/layout";
-import { generateJig } from "../index";
+
+const remappings = [
+  `ds-test/=../../lib/ds-test/src/`,
+  `forge-std/=../../lib/forge-std/src/`,
+  `solmate/=../../lib/solmate/src/`,
+];
 
 import {
   getFoundryConfig,
@@ -123,6 +128,8 @@ const CONTRACT_DIR = process.env.CONTRACT_DIR || "../../contracts/";
 const files = fs.readdirSync(CONTRACT_DIR);
 const foundryConfig = getFoundryConfig()._unsafeUnwrap() as FoundryConfig;
 const projectRoot = getProjectRoot()._unsafeUnwrap();
+
+console.log(foundryConfig);
 const context: FoundryContext = {
   config: foundryConfig,
   rootPath: projectRoot,
@@ -138,11 +145,10 @@ for (let idx in files) {
     it("successfully generates jig contract", async () => {
       const result = await compileContractLayout(
         CONTRACT_DIR + file,
-        assertions[file].name
+        assertions[file].name,
+        remappings
       );
       expect(result.isOk()).toBe(true);
-      const layout = result._unsafeUnwrap();
-      console.log(generateJig(assertions[file].name, layout, context));
     });
   });
 }

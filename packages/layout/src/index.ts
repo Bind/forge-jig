@@ -16,9 +16,10 @@ import {
 
 export async function compileContractLayout(
   file: string,
-  contractName: string
+  contractName: string,
+  remappings?: string[]
 ): Promise<Result<StorageLayout, any>> {
-  const compileResult = await compile(file);
+  const compileResult = await compile(file, remappings);
   if (compileResult.isOk()) {
     const ast = await generateAST(compileResult.value);
     const contractDefinition = getContractDefinition(ast, contractName);

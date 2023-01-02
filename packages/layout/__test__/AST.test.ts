@@ -204,7 +204,11 @@ for (let idx in files) {
     });
     it("generated layout", async () => {
       const storage = (
-        await compileContractLayout(CONTRACT_DIR + file, assertions[file].name)
+        await compileContractLayout(
+          CONTRACT_DIR + file,
+          assertions[file].name,
+          remappings
+        )
       )._unsafeUnwrap();
 
       if (assertions[file].explicitSlotChecks) {
